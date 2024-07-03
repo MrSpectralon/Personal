@@ -1,0 +1,4 @@
+# Rust ignores
+
+rust/learning_rust/*/target
+
