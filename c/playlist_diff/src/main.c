@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include <curl/curl.h>
+#include <curl/curl.h> //Install: apt install libcurl4-openssl-dev
+
 
 int main(){
 	printf("Nu kjorar me!");
