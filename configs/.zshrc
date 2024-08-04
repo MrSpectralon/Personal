@@ -86,7 +86,7 @@ source ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search/zsh-history-subs
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='vim'
 else
-  export EDITOR='mvim'
+  export EDITOR='nvim'
 fi
 
 # Compilation flags
@@ -104,9 +104,9 @@ fi
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias v = "nvim"
+alias v="nvim"
 
-alias fe = "zdg-open ." #Opens file explorer in current folder.
+alias fe="zdg-open ." #Opens file explorer in current folder.
 
 
 eval "$(zoxide init zsh)"
