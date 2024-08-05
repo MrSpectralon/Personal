@@ -5,7 +5,7 @@ curl -X POST "https://accounts.spotify.com/api/token" \
 
 curl -X POST "https://accounts.spotify.com/api/token" \
      -H "Content-Type: application/x-www-form-urlencoded" \
-     -d "grant_type=client_credentials&client_id=d2761cd1241047ae9bd830a5005967f8&client_secret=d2868fe2426e4a9794c632301fc3d2e1"
+     -d "grant_type=client_credentials&client_id=CLIENT_ID&client_secret=CLIENT_SECRET"
 
 
 https://developer.spotify.com/documentation/web-api/reference/get-playlist
