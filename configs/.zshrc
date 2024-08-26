@@ -109,4 +109,4 @@ alias v="nvim"
 alias fe="zdg-open ." #Opens file explorer in current folder.
 
 
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
