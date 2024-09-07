@@ -2,13 +2,18 @@
 #include "../header_files/spotify_methods.h"
 
 FILE *fptr;
+
+
 int main(void)
 {
   char* clientID;
   char* clientSecret;
   char* playlist_ID;
   char* temp;
+  SpotifyAccess *access;
 
+  spotify_node_head = NULL;
+  
   fptr = fopen("secrets", "r");
   temp = malloc(100);
 
@@ -30,26 +35,23 @@ int main(void)
 
   char* auth_reply = getAuthTokenSpotify(clientID, clientSecret);
   printf("Spotify reply:\n%s\n", auth_reply);
-  SpotifyAccess *access; 
   
   access = spotify_access_init(auth_reply);
   print_spotify_access(access);
-  
-  char* all_songs = getPlaylistContentSpotify(playlist_ID, access);
-  parce_spotify_reply_data(all_songs);
-  
+
+  get_spotify_playlist(access, playlist_ID);
+
   cleanup:
 
   memset(temp, '\0', sizeof(temp));
   memset(clientID, '\0', sizeof(clientID));
   memset(clientSecret, '\0', sizeof(clientSecret));
   memset(auth_reply, '\0', sizeof(auth_reply));
-
   free(temp);
   free(clientID);
   free(clientSecret);
   free(auth_reply);
-  free(all_songs); 
+  free(playlist_ID);
   spotify_access_delete(access);
 
   return 0;

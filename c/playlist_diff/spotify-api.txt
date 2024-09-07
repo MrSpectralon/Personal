@@ -13,6 +13,37 @@ https://developer.spotify.com/documentation/web-api/reference/get-playlist
 playlist id: 18Y1uKbT84hUBRy6oqSH9Q
 name, description, uri, tracks(items(track(name, external_urls, album(name), artists(name))))
 
+{"tracks":
+     {"items":
+          [
+               {"track":
+               {
+                    "artists":
+                         [
+                              {
+                                   "name":"Alexisonfire"
+                              }
+                         ],
+                    "album":
+                    {
+                         "name":"Crisis"
+                    },
+                    "external_urls":
+                    {
+                         "spotify":"https://open.spotify.com/track/3mE1W8j5OZstBKtZhRKWXg"
+                    },
+                    "name":"Boiled Frogs"
+                    }
+               },
+
+
+curl --request GET \
+  --url 'https://api.spotify.com/v1/playlists/18Y1uKbT84hUBRy6oqSH9Q/tracks?fields=items%28track%28album%28name%29%2C+artists%28name%29%2C++preview_url%2C+name%2C+duration_ms%29%29&limit=100&offset=1400' \
+  --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
 
 
 
+get 100 tracks spotify
+https://api.spotify.com/v1/playlists/18Y1uKbT84hUBRy6oqSH9Q/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=100&offset=0
+
+items(track(name, external_urls, preview_url, duration_ms, album(name), artists(name))&limit=100&offset=0
