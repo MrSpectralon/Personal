@@ -36,7 +36,7 @@ typedef struct {
 
 } SpotifyNode;
 
-SpotifyNode *spotify_node_head;
+SpotifyNode *spotify_node_head = NULL;
 
 void free_spotify_list(SpotifyNode *list);
 //SpotifyTrackList *add_track(char *name, char *album, char *artist, int duration, char *preview_url, char *external_url);

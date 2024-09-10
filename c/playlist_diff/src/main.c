@@ -3,7 +3,6 @@
 
 FILE *fptr;
 
-
 int main(void)
 {
   char* clientID;
@@ -11,8 +10,6 @@ int main(void)
   char* playlist_ID;
   char* temp;
   SpotifyAccess *access;
-
-  spotify_node_head = NULL;
   
   fptr = fopen("secrets", "r");
   temp = malloc(100);
