@@ -61,8 +61,7 @@ char* getPlaylistContentSpotify(char* playlistID, SpotifyAccess* ad, int offset)
   char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
   
   // At the moment hardcoded for Norwegian music licensing. (market=NO)
-  char field_options[] = "/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=10&offset=";
-  //TODO: Set offset to 100.
+  char field_options[] = "/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=100&offset=";
   //Finds the number of digits in the offset number.
   int offset_length = snprintf( NULL, 0, "%d", offset)+1; //+1 cause space for \0
   char* offset_str = malloc( offset_length );
