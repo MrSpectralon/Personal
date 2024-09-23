@@ -1,0 +1,1810 @@
+{
+  "items": [
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Piece Of Mind (1998 Remastered Edition)"
+        },
+        "duration_ms": 250973,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2pxAohyJptQWTQ5ZRWYijN"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/44ed0e1d3b2183b4e3a3c0413a47b92ff9b0a485?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Trooper - 1998 Remastered Version"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Powerslave (1998 Remastered Edition)"
+        },
+        "duration_ms": 269466,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5lSbdSQAWAMjAcJDJPFGQr"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/53d1b487e9ac2d43dfeed40f9e442d315bdeac04?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Aces High - 1998 Remastered Version"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Powerslave (1998 Remastered Edition)"
+        },
+        "duration_ms": 359760,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6aYXSH9JZrD30Av2KlAOMY"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/b542c73a4babe3002f8fbe6922566162c4509856?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "2 Minutes to Midnight - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Powerslave (1998 Remastered Edition)"
+        },
+        "duration_ms": 407760,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/7vrCDLxUeeqmvX9FMstLcQ"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/587cd64d7e6f58b00908cc1b6050ebafa2a93373?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Powerslave - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Rock in Rio (Live)"
+        },
+        "duration_ms": 470293,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2FUJZ1HMAvXgGkEiqd9qa5"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/acf2e40548dd59d2febfddda33921af538f595df?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Fear of the Dark - Live '01"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Seventh Son Of A Seventh Son (1998 Remastered Edition)"
+        },
+        "duration_ms": 273973,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2FkxsINVws3o8Ox4fSvc3N"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/51023f962afe921750fbeba3f013ea75a0d4befa?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Evil That Men Do - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Somewhere Back in Time (The Best of 1980 - 1989)"
+        },
+        "duration_ms": 306160,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0ozNndH4mWI1bbcX0jT1X1"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/0c1d10516488c31d2f226a4aaa604e3ddbffaa05?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Wasted Years - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Somewhere Back in Time (The Best of 1980 - 1989)"
+        },
+        "duration_ms": 233946,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4Z4ZLBzCXSlHSCaxZ3WS7p"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/abba5fb347ff87153a7c716fde77a142c6b5f31c?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Run to the Hills - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Somewhere Back in Time (The Best of 1980 - 1989)"
+        },
+        "duration_ms": 211000,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4lXH1smoMUHWTUDc05Facc"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/5f30b04939347626e04fff4cbe77d9afba3c0a59?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Can I Play with Madness - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Iron Maiden"
+          }
+        ],
+        "album": {
+          "name": "Somewhere Back in Time (The Best of 1980 - 1989)"
+        },
+        "duration_ms": 432506,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4yCgJr54LTwk0xOvj4XoQk"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/a78a97d1341e8b11563e688b7c66343d0978e5df?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Hallowed Be Thy Name - 1998 Remaster"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "The Black Halo"
+        },
+        "duration_ms": 221466,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/77zx75xTbQe7KS9KAOTHf7"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/cbc62d2f042e1bae15acce1d43353faabe6e2d4c?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "When The Lights Are Down"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "The Black Halo"
+        },
+        "duration_ms": 340373,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0prDrnVr3uhvY6c40EypIp"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/2dbd9d37da5074cf06adf0dc69f751ed170e2717?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Haunting (Somewhere In Time)"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "The Black Halo"
+        },
+        "duration_ms": 257666,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/7baeeba0U8BqHOdP9LSYPy"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/306dc94051b2a79ef7389ac5d58d94b88381b15b?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Soul Society"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "Epica"
+        },
+        "duration_ms": 326946,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0x7kv3HIsgKfL6EgcOGVbE"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/9268bf1119aa43db88e03ed6306ecf11ab8c4ca9?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Center of the Universe"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "Silverthorn"
+        },
+        "duration_ms": 238106,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3V7kPWULwqwhnGWjL4nBRz"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/1b485bd30c08bda43a88bfc44a6046a182b6776c?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Ashes to Ashes"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "Silverthorn"
+        },
+        "duration_ms": 231080,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5236naLBwGiF8j0ORx4tC1"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/535366f861184438ba83861ecfa6bd44bb55194f?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Torn"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "Silverthorn"
+        },
+        "duration_ms": 273773,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1cpY3gPdm7deiEvpvnsM0I"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/613bfc25ddba1ec7063caec6f622a53a34d39e5a?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "My Confession"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Kamelot"
+          }
+        ],
+        "album": {
+          "name": "Silverthorn"
+        },
+        "duration_ms": 291400,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1IkFl7RS14NaIo97QWXt3T"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/f5df85a3a5cb2a3d02bed0023c67416b36764253?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Silverthorn"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "As Daylight Dies (Special Edition)"
+        },
+        "duration_ms": 224120,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/42lC6bnDdAjRqZtsFe1tmg"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/3a3b0096bb30e73533b8582fbac428577c11bd43?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Arms of Sorrow"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "As Daylight Dies (Special Edition)"
+        },
+        "duration_ms": 244773,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6zKF4293k44ItKWJJgrhXv"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/a723deb644338717f2180129e45e3382c1131676?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "My Curse"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "As Daylight Dies (Special Edition)"
+        },
+        "duration_ms": 189666,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/07ceEXOyS7ghQkyCOycXwP"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/e3b6e17e009fc2cc9e2d65608353f74a0e04a5f1?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "This Fire"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "As Daylight Dies (Special Edition)"
+        },
+        "duration_ms": 250253,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3a9urnht8HvfFzPwd0ipx6"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/8dcf298501526323431bc111a6caaf67666d3f51?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Holy Diver"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "Disarm the Descent (Special Edition)"
+        },
+        "duration_ms": 173800,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6g1TT1XmmMHnBaPGTaEx4Q"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/2fe2f686572724b92ea10910c566f68c182dfac9?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Beyond the Flames"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "Disarm the Descent (Special Edition)"
+        },
+        "duration_ms": 197573,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1HlOGL1p6wlpOZatJ2NwFk"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/d01afecb13896b10228aa384e0c022fe86592442?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "In Due Time"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "Disarm the Descent (Special Edition)"
+        },
+        "duration_ms": 242653,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/10s6GHAQKaMHSkeoJECCyE"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/d36c7d8eac759fdbc373bdfcaa49994004513326?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "A Tribute to the Fallen"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "Disarm the Descent (Special Edition)"
+        },
+        "duration_ms": 273053,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0fE5kL2rRlaSQ86OvZG1NX"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/d78d4da1ff680ed2c6a129a50ead2664baaef07e?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Always"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "Disarm the Descent"
+        },
+        "duration_ms": 177000,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2TwgW4OiENlUxxTZq5LicG"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/e84d17a3690c291a92e39e5f570220cc8a3d8c01?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Hell in Me"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Killswitch Engage"
+          }
+        ],
+        "album": {
+          "name": "The End of Heartache (Special Edition)"
+        },
+        "duration_ms": 298106,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2nUy0ifVE7UwtOK4rugFsP"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/26c5e7957260d2997c7d5bcfa47e948bc2fc195d?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The End of Heartache"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Knife Party"
+          }
+        ],
+        "album": {
+          "name": "100% No Modern Talking"
+        },
+        "duration_ms": 301122,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5qFL2uwfnGU8FccwLMgPNQ"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/7c646b612d65bc049160fcc1201a1a1df5c45617?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Internet Friends"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Knife Party"
+          }
+        ],
+        "album": {
+          "name": "Rage Valley"
+        },
+        "duration_ms": 299374,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2ZeTpxUpIHDdrRZdD8Vlh9"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/ecd124950929c24e40d257dc96c20ac6c6595eaa?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Rage Valley"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Knife Party"
+          }
+        ],
+        "album": {
+          "name": "Rage Valley"
+        },
+        "duration_ms": 246770,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0u2AIKDVafHwCFQ9LDnqxH"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/a0ee99c887d09e540d47ff407bb6a3a03f8b6496?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Centipede"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Korn"
+          }
+        ],
+        "album": {
+          "name": "Get Up! (feat. Skrillex)"
+        },
+        "duration_ms": 222640,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2n3mC1bqMMvcvYGyND6PsM"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/2da32f94714e18d0df95757ea5a238646b6d73d3?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Get Up! - feat. Skrillex"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Korn"
+          }
+        ],
+        "album": {
+          "name": "Greatest Hits, Vol. 1"
+        },
+        "duration_ms": 172666,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4eRfCcicjpjoCaYWylRU7m"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/2650a4d7de64834ec27f3542517c289dccb4fc6a?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Word Up!"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Korn"
+          },
+          {
+            "name": "Skrillex"
+          },
+          {
+            "name": "Kill The Noise"
+          }
+        ],
+        "album": {
+          "name": "Narcissistic Cannibal (feat. Skrillex & Kill the Noise)"
+        },
+        "duration_ms": 190706,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/26nHYdbEFBfIKgYfn6I9MY"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/0e9bc74def311eeba1aba013776ec02b48ffdff5?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Narcissistic Cannibal (feat. Skrillex & Kill the Noise)"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 184866,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1Vej0qeQ3ioKwpI6FUbRv1"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/dc49871bd9a79e4e75713689d9ccdfa008e62fb1?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Papercut"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 157333,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3K4HG9evC7dg3N0R9cYqk4"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/93915a6ffff1e702717623fe052e781e68bde91b?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "One Step Closer"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 203266,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5uuXtfqM7Wp3idCxyHeOll"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/f684e27561c1175c22fd64b1352fa6d50a1aff20?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "With You"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 200240,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5egqKwgK5r5rvGD1LrtR7J"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/7b2da33cc789b2f7d150e68b568b90973da87a79?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Points of Authority"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 208960,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/57BrRMwf9LrcmuOsyGilwr"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/757e39055aca3abc9157fe579869d63baca5a54e?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Crawling"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 183973,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6xtQ23d8GEXgcxyUKPtwc5"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/f46c6f8ff5980ae29cfcbb252fcf599daf1b9870?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Runaway"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 189800,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6UzeOH4bRPzKTo2wCXMZmC"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/50af8107a05b7d8a0eec0c7b6660888cd89cd0af?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "By Myself"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 216880,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/b5ee275ca337899f762b1c1883c11e24a04075b0?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "In the End"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 184640,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5rAxhWcgFng3s570sGO2F8"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/b892bb6e9dcacb0079f799e90405c30ef16b244d?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "A Place for My Head"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 194426,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/7kxM3UJwN6rHAW5kwdlAHK"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/5588382cf9929624f026d1e3bc324bdc97247964?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Forgotten"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Hybrid Theory (Bonus Edition)"
+        },
+        "duration_ms": 191440,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1gAaRSN57UYVRI4eWRyAvP"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/51abc61bdbed8f9ec8b407ec8ca3cc8e8fcdda76?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Pushing Me Away"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 187933,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2yss0n7KmvmSr4EHvjfFpn"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/596d56f64277a855418409e804ce82a3808562a6?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Don't Stay"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 213933,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3fjmSxt0PskST13CSdBUFx"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/e4cec97c55fab6b6360901c1da2525e08a029b03?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Somewhere I Belong"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 175053,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4qVR3CF8FuFvHN4L6vXlB1"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/d3ef53412e2a4b5972edfdcf454cdb8dea0c18e8?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Lying from You"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 164213,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4wHktoSf6C0C0fAO8IIWqs"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/6fb3025ae81db420583eabf0cdff06a62c950f2d?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Hit the Floor"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 162106,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/7AB0cUXnzuSlAnyHOqmrZr"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/93e66af3a92081740710b18e45dcc9eeff08edbf?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Faint"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 197506,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0rPTPahzhGx9LSzI8XX5OM"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/64cfbdc9c9a57506cc3b1b08b4ea5c97f796890d?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Figure.09"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 196133,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3dxiWIBVJRlqh9xk144rf4"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/c2d4c4690b3ac7dc7f8a1fe8d65c3629160f016a?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Breaking the Habit"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 175506,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/697M5JB8FDIyRXEXgl1pBZ"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/0bc0c425210ac22919007076cff89b0d0ef01839?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "From the Inside"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Meteora (Bonus Edition)"
+        },
+        "duration_ms": 187520,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1y1sChqjzdNWzwdHQADMrR"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/d6d67b4f23b4865e07821f78c45a98035da95d61?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Numb"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Minutes to Midnight"
+        },
+        "duration_ms": 189293,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/400lQTCx3wYGgqAIHSZbNA"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/2318105570df0a039486ba2cd4168b49b058f76a?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Given Up"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Minutes to Midnight"
+        },
+        "duration_ms": 209306,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/58AS4weYlUWvGztZbKIuAU"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/69d997177dbddfb23aeddc495afb40c52ceb8485?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Leave Out All The Rest"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Minutes to Midnight"
+        },
+        "duration_ms": 164760,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/78gsvivelCP8Kh0tSRTy8D"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/69106ec30ed07d8b2e300facd4cc3fd968fa6d63?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Bleed It Out"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Minutes to Midnight"
+        },
+        "duration_ms": 205613,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4wfyFIRnxdIN0v4OGtXcX3"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/965b294fcbb6166b82ca1171a8ebcb8c58b16a0a?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "What I've Done"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Linkin Park"
+          }
+        ],
+        "album": {
+          "name": "Minutes to Midnight"
+        },
+        "duration_ms": 221693,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/69vMDipMastHvYna7plBdS"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/7b9d417749a80d6bc49e4bc10f068ecc999b7ff3?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "No More Sorrow"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 401093,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0Zx5fEgwEjyljQsuZYPYj8"
+        },
+        "preview_url": null,
+        "name": "Blackened"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 586506,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2VIk1zgNk6aRiIQ9C1T4Yu"
+        },
+        "preview_url": null,
+        "name": "...And Justice For All"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 390026,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0onIqmzvDvsbhCbd66QgSV"
+        },
+        "preview_url": null,
+        "name": "Eye Of The Beholder"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 447440,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/64Ret7Tf2M8pDE4aqbW2tX"
+        },
+        "preview_url": null,
+        "name": "One"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 395960,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3ULvzZ5AGeGfhpcJVM7vT1"
+        },
+        "preview_url": null,
+        "name": "The Shortest Straw"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 343893,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6tVjcfkg648NG5bXrstJij"
+        },
+        "preview_url": null,
+        "name": "Harvester Of Sorrow"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 588933,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/7zb1n2Rdmh5arJ3WOp2Z5c"
+        },
+        "preview_url": null,
+        "name": "To Live Is To Die"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "...And Justice For All"
+        },
+        "duration_ms": 313360,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/30azggKYlwo666J7ICWyD4"
+        },
+        "preview_url": null,
+        "name": "Dyers Eve"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Death Magnetic"
+        },
+        "duration_ms": 385466,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5IpHNGT95ldM7zqYvvCi04"
+        },
+        "preview_url": null,
+        "name": "Broken, Beat & Scarred"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Death Magnetic"
+        },
+        "duration_ms": 476266,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/26i37IFvFmC3517jxxZAJP"
+        },
+        "preview_url": null,
+        "name": "The Day That Never Comes"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Death Magnetic"
+        },
+        "duration_ms": 477013,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6VpUZlL6wGaVm98gGUs8Qq"
+        },
+        "preview_url": null,
+        "name": "All Nightmare Long"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Death Magnetic"
+        },
+        "duration_ms": 466586,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6xcpkEEppRQOqmo5MWflyF"
+        },
+        "preview_url": null,
+        "name": "The Unforgiven III"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Garage, Inc."
+        },
+        "duration_ms": 304893,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/77gY3WsOnEsq9JOWgBmdLj"
+        },
+        "preview_url": null,
+        "name": "Whiskey In The Jar"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Master Of Puppets"
+        },
+        "duration_ms": 312706,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4A1jq5W97gi5ok44CgZiab"
+        },
+        "preview_url": null,
+        "name": "Battery"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Master Of Puppets"
+        },
+        "duration_ms": 516293,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6NwbeybX6TDtXlpXvnUOZC"
+        },
+        "preview_url": null,
+        "name": "Master Of Puppets"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Master Of Puppets"
+        },
+        "duration_ms": 387840,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/48Ih1FjoQ5KoCpsdKUk8Eu"
+        },
+        "preview_url": null,
+        "name": "Welcome Home (Sanitarium)"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 331573,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1hKdDCpiI9mqz1jVHRKG0E"
+        },
+        "preview_url": null,
+        "name": "Enter Sandman"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 324560,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5pQYjzkALsgYOcFTC8DMmU"
+        },
+        "preview_url": null,
+        "name": "Sad But True"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 227733,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1yOvj5DRzCxeQCts03MVTw"
+        },
+        "preview_url": null,
+        "name": "Holier Than Thou"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 387133,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5SnOyuBtyzufoXBAKOdcxD"
+        },
+        "preview_url": null,
+        "name": "The Unforgiven"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 404240,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4zJLpLsfY52ih6y8u4mhKH"
+        },
+        "preview_url": null,
+        "name": "Wherever I May Roam"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 244400,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1pHHcGYTlIc47MQv031XF9"
+        },
+        "preview_url": null,
+        "name": "Through The Never"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 388733,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3ZFwuJwUpIl0GeXsvF1ELf"
+        },
+        "preview_url": null,
+        "name": "Nothing Else Matters"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 256600,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1p9K2Qfhwvgi3hU9YV8Qd8"
+        },
+        "preview_url": null,
+        "name": "Of Wolf And Man"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 308533,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/4m7SprdGbCH9ifPX5SbdNA"
+        },
+        "preview_url": null,
+        "name": "The God That Failed"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 409640,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3vqsRpkzpPnOyQr18063s0"
+        },
+        "preview_url": null,
+        "name": "My Friend Of Misery"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Metallica"
+        },
+        "duration_ms": 233893,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/09pfTo6hoCr3biYPK8ZXvc"
+        },
+        "preview_url": null,
+        "name": "The Struggle Within"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Reload"
+        },
+        "duration_ms": 269733,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0NdidkH0EQwG7mx6F6SDkI"
+        },
+        "preview_url": null,
+        "name": "Fuel"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Reload"
+        },
+        "duration_ms": 279240,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/3FREWTEY2uFxOorJZMmZPX"
+        },
+        "preview_url": null,
+        "name": "The Memory Remains"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Reload"
+        },
+        "duration_ms": 396440,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2D1O6DE5aJDGHsb0W38EAN"
+        },
+        "preview_url": null,
+        "name": "The Unforgiven II"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metallica"
+          }
+        ],
+        "album": {
+          "name": "Ride The Lightning"
+        },
+        "duration_ms": 417400,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/12oSzrBIyirNs0aCwk6elL"
+        },
+        "preview_url": null,
+        "name": "Fade To Black"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Metric"
+          }
+        ],
+        "album": {
+          "name": "Fantasies"
+        },
+        "duration_ms": 245342,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6uYiwQoNB2jC5xz3VLyGJe"
+        },
+        "preview_url": null,
+        "name": "Gold Guns Girls"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nightwish"
+          }
+        ],
+        "album": {
+          "name": "Bloodrayne 2: Deliverance"
+        },
+        "duration_ms": 233866,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6eIveQ3SRArBxIE0RsUQKE"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/00aa2acb5d33121d23638fc559bc3f79955171b9?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Amaranth"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nightwish"
+          }
+        ],
+        "album": {
+          "name": "Dark Passion Play (Special Deluxe Edition)"
+        },
+        "duration_ms": 254615,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/1nizV50Nh1WwrVp0QUMisj"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/154075869edda7165034a95f25412688d7b109b3?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Bye Bye Beautiful"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nightwish"
+          }
+        ],
+        "album": {
+          "name": "Once"
+        },
+        "duration_ms": 279373,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2edSHS8PhbiPgLxQhMpMkO"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/1d46a2b1d7640d876794a2b191df30bfeb7dee43?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Nemo"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nightwish"
+          }
+        ],
+        "album": {
+          "name": "Storytime"
+        },
+        "duration_ms": 328466,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/0Age6UgFRAXDRAblYi0UsN"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/2d275af305dc3b518190bb3123369200a2583b3b?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Storytime"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nirvana"
+          }
+        ],
+        "album": {
+          "name": "Nirvana (International Version)"
+        },
+        "duration_ms": 219026,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/5r35Zd5Onw3aV3Gm9XdgtI"
+        },
+        "preview_url": null,
+        "name": "Come As You Are"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Nirvana"
+          }
+        ],
+        "album": {
+          "name": "Nirvana (International Version)"
+        },
+        "duration_ms": 257133,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2DrEeo4eMULdAVe1U7P9PB"
+        },
+        "preview_url": null,
+        "name": "Lithium"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pearl Jam"
+          }
+        ],
+        "album": {
+          "name": "rearviewmirror (greatest hits 1991-2003)"
+        },
+        "duration_ms": 303666,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/7A9r5ZkRVuBPzjzY2CGYfS"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/ea114404a46b5c5c329a4a45a5adbd06a15ed29f?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "Even Flow"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pendulum"
+          }
+        ],
+        "album": {
+          "name": "In Silico"
+        },
+        "duration_ms": 447200,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/6gTQubOSdry0ievEXvhzxd"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/839cfbdf88807e4d94072ed5aa2548c57bddd7d5?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Tempest"
+      }
+    },
+    {
+      "track": {
+        "artists": [
+          {
+            "name": "Pendulum"
+          }
+        ],
+        "album": {
+          "name": "The Island"
+        },
+        "duration_ms": 219244,
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/2xit5ObjfPmY14dKVFEcWJ"
+        },
+        "preview_url": "https://p.scdn.co/mp3-preview/0cc918421230f9ac6bf942a04107a3397c488b75?cid=d2761cd1241047ae9bd830a5005967f8",
+        "name": "The Island - Radio Edit [Radio Edit]"
+      }
+    }
+  ]
+}
