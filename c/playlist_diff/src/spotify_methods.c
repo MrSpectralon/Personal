@@ -1,37 +1,47 @@
 #include "../header_files/spotify_methods.h"
 
+char* getPlaylistInfoSpotify(char* playlistID, SpotifyAccess* access_data)
+{
+  char* requestURL; 
+  char* authorization;
+  int g_type_len = (int)strlen(access_data->type); 
 
-size_t write_callback(void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf) {
-    size_t total_size = size * nmemb;
+  //Preparing authentification
+  char auth[] = "Authorization: ";
+  char type[g_type_len+1];
+  type[0] = '\0'; 
+  strcat(type, access_data->type);  
+  type[g_type_len] = ' ';
 
-    // Reallocate memory to fit the new data
-    char *temp = realloc(res_buf->data, res_buf->size + total_size + 1);
-    if(temp == NULL) {
-        fprintf(stderr, "Failed to allocate memory.\n");
-        return 0; // Returning 0 will signal libcurl to abort the request
-    }
+  int auth_length = strlen(auth) + g_type_len + 1 + strlen(access_data->token);
+  authorization = malloc(auth_length);
+  authorization[0] = '\0';
+  strcat(authorization, auth);
+  strcat(authorization, type);
+  strcat(authorization, access_data->token);
 
-    res_buf->data = temp;
-    memcpy(&(res_buf->data[res_buf->size]), ptr, total_size);
-    res_buf->size += total_size;
-    res_buf->data[res_buf->size] = '\0'; // Null-terminate the string
+  //Preparing approperiate URL for fetching playlist data. 
+  char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
+  // At the moment hardcoded for Norwegian music licensing. (market=NO)
+  char field_options[] = "?market=NO&fields=name%2C+description%2C+tracks%28total%29";
 
-    return total_size;
+  int url_length = strlen(url_api_dest) + strlen(field_options) + strlen(playlistID);
+  requestURL = malloc(url_length);
+  requestURL[0] = '\0';
+  strcat(requestURL, url_api_dest);
+  strcat(requestURL, playlistID);
+  strcat(requestURL, field_options);
+
+  return curl_request(authorization, requestURL); 
 }
+
 
 
 char* getPlaylistContentSpotify(char* playlistID, SpotifyAccess* ad, int offset){
 
-  ResponseBuffer res_buf;
-  res_buf.data = malloc(1);
-  res_buf.size = 0;
-  
-  CURLcode ret;
-  CURL *hnd;
-  char* requestURL; 
-  char* authorization;
+  char* requestURL; // free used in curl_request func
+  char* authorization; // Same as above.
   int g_type_len = (int)strlen(ad->type); 
-  struct curl_slist *slist1;
 
 
   //Preparing authentification
@@ -49,14 +59,14 @@ char* getPlaylistContentSpotify(char* playlistID, SpotifyAccess* ad, int offset)
 
   //Preparing approperiate URL for fetching playlist data. 
   char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
+  
   // At the moment hardcoded for Norwegian music licensing. (market=NO)
-  char field_options[] = "/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=100&offset=";
-
-
+  char field_options[] = "/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=10&offset=";
+  //TODO: Set offset to 100.
+  //Finds the number of digits in the offset number.
   int offset_length = snprintf( NULL, 0, "%d", offset)+1; //+1 cause space for \0
   char* offset_str = malloc( offset_length );
   snprintf( offset_str, offset_length + 1, "%d", offset);
-
 
   int url_length = strlen(url_api_dest) + strlen(field_options) + strlen(playlistID) + offset_length;
   requestURL = calloc(url_length, sizeof(char));
@@ -69,48 +79,8 @@ char* getPlaylistContentSpotify(char* playlistID, SpotifyAccess* ad, int offset)
   free(offset_str);
   offset_str = NULL;
 
-  //printf("%s\n", requestURL); 
-  // printf("Auth string:\n%s\n", authorization);
-  // printf("\nRequest URL:\n%s\n", requestURL);
-  //goto end;
-  
-
-  
-  slist1 = NULL;
-  slist1 = curl_slist_append(slist1, authorization); 
-  hnd = curl_easy_init();
-
-  curl_easy_setopt(hnd, CURLOPT_BUFFERSIZE, 102400L);
-  curl_easy_setopt(hnd, CURLOPT_URL, requestURL); 
-  curl_easy_setopt(hnd, CURLOPT_NOPROGRESS, 1L);
-  curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, slist1);
-  curl_easy_setopt(hnd, CURLOPT_USERAGENT, "curl/8.5.0");
-  curl_easy_setopt(hnd, CURLOPT_MAXREDIRS, 50L);
-  curl_easy_setopt(hnd, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
-  curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
-  curl_easy_setopt(hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
-  curl_easy_setopt(hnd, CURLOPT_TCP_KEEPALIVE, 1L);
-  curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, write_callback);
-  curl_easy_setopt(hnd, CURLOPT_WRITEDATA, &res_buf);
-
-  ret = curl_easy_perform(hnd);
-
-  if(ret != CURLE_OK)
-	{
-    fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(ret));
-	}
-
-  curl_easy_cleanup(hnd);
-  curl_slist_free_all(slist1);
-  free(requestURL);
-  free(authorization);
-
-  hnd = NULL;
-  slist1 = NULL;
-  requestURL = NULL;
-  authorization = NULL;
-
-  return res_buf.data;
+ 
+  return curl_request(authorization, requestURL);
 }
 
 
@@ -222,19 +192,112 @@ void print_spotify_access(SpotifyAccess *access_obj){
 }
 
 
-void spotify_access_delete(SpotifyAccess *access_obj){
+void spotify_access_delete(SpotifyAccess **access_obj){
   
   if(access_obj ==  NULL) return;
-  memset(access_obj->token, '\0', sizeof(access_obj->token));
-  free(access_obj->token);
-  free(access_obj->type);
-  free(access_obj->time_recieved);
-  free(access_obj);
+  memset((*access_obj)->token, '\0', strlen((*access_obj)->token));
+  free((*access_obj)->token);
+  free((*access_obj)->type);
+  free((*access_obj)->time_recieved);
+  free((*access_obj));
+}
+
+SpotifyPlaylist* parce_spotify_playlist_data(const char* data)
+{ 
+  
+  SpotifyPlaylist* new_playlist;
+  new_playlist = spotify_playlist_init();
+  if (new_playlist == NULL)
+  {
+    fprintf(stderr, "Error occured when initializing spotify playlist.\n");
+    return NULL;
+  }
+  
+  cJSON *json = cJSON_Parse(data);
+  if (json == NULL)
+  {
+    fprintf(stderr, "Error parsing JSON.\n");
+    goto cleanup;
+  }
+
+  cJSON *name = cJSON_GetObjectItem(json, "name");
+  if (name == NULL)
+  {
+    fprintf(stderr, "Error fetching 'name' from tracks object string.\n");
+    goto cleanup;
+  }
+  
+  cJSON *description = cJSON_GetObjectItem(json, "description");
+  if (description == NULL)
+  {
+    fprintf(stderr, "Error fetching 'description' from tracks object string.\n");
+    goto cleanup;
+  }
+
+  cJSON *tracks = cJSON_GetObjectItem(json, "tracks");
+  if (tracks == NULL)
+  {
+    fprintf(stderr, "Error fetching 'description' from tracks object string.\n");
+    goto cleanup;
+  }
+  
+  cJSON *total_tracks = cJSON_GetObjectItem(tracks, "total");
+  if (total_tracks == NULL)
+  {
+    fprintf(stderr, "Error fetching 'description' from tracks object string.\n");
+    goto cleanup;
+  }
+  
+  new_playlist->name = malloc(strlen(name->valuestring));
+  if(new_playlist->name == NULL)
+  {
+    fprintf(stderr, "Error allocating memory for spotify playlist name\n");
+    goto cleanup;
+  }
+
+  new_playlist->name[0] = '\0';
+  strcpy(new_playlist->name, name->valuestring);
+
+  if (description->valuestring == NULL)
+  {
+    new_playlist->description = malloc(1);
+    if (new_playlist->description == NULL)
+    {
+      fprintf(stderr, "Error allocating memory for spotify playlist description.\n");
+      goto cleanup;
+    }
+    
+    new_playlist->description[0] = '\0';
+  }
+  else
+  {
+    new_playlist->description = malloc(strlen(description->valuestring));
+    if (new_playlist->description == NULL)
+    {
+      fprintf(stderr, "Error allocating memory for spotify playlist description.\n");
+      goto cleanup;
+    }
+    strcpy(new_playlist->description, description->valuestring);
+  }
+
+  new_playlist->total_tracks = total_tracks->valueint;
+
+  cJSON_Delete(json);
+  return new_playlist;
+
+  cleanup:
+  cJSON_Delete(json);
+  free(new_playlist->name);
+  free(new_playlist->description);
+
+  free(new_playlist);
+  return NULL;
 }
 
 
-int parce_spotify_reply_data(char* data)
+int parce_spotify_track_data(char* data, ListSpotifyTracks** list_head)
 { 
+
   cJSON *json = cJSON_Parse(data);
   if (json == NULL)
   {
@@ -250,6 +313,7 @@ int parce_spotify_reply_data(char* data)
   }
 
   int number_of_songs = cJSON_GetArraySize(items);
+  
   cJSON *item = NULL;
   cJSON_ArrayForEach(item, items)
   {
@@ -257,64 +321,79 @@ int parce_spotify_reply_data(char* data)
     if (track==NULL) continue;
     
     cJSON *track_name = cJSON_GetObjectItem(track, "name");
-
-    cJSON *external_urls = cJSON_GetObjectItem(track, "external_urls");
-    cJSON *spotify_url = cJSON_GetObjectItem(external_urls, "spotify");
-    cJSON *preview_url = cJSON_GetObjectItem(track, "preview_url");
-    cJSON *duration_ms = cJSON_GetObjectItem(track, "duration_ms");
-
     cJSON *album = cJSON_GetObjectItem(track, "album");
     cJSON *album_name = cJSON_GetObjectItem(album, "name");
-    cJSON *artists = cJSON_GetObjectItem(track, "artists");
-    int arr_size = cJSON_GetArraySize(artists);
-    char* artists_str = NULL;
+    //After artists
+    cJSON *duration_ms = cJSON_GetObjectItem(track, "duration_ms");
+    cJSON *preview_url = cJSON_GetObjectItem(track, "preview_url");
+    cJSON *external_urls = cJSON_GetObjectItem(track, "external_urls");
+    cJSON *spotify_url = cJSON_GetObjectItem(external_urls, "spotify");
 
-    for(int i = 0; i < arr_size; i++)
-    {
-      cJSON *artist = cJSON_GetArrayItem(artists, i);
-      cJSON *artist_name = cJSON_GetObjectItem(artist, "name");
+    cJSON *artists = cJSON_GetObjectItem(track, "artists");
+    char* artists_str = NULL;
+    int arr_size = cJSON_GetArraySize(artists);
+    cJSON *artist = NULL;
+    int i = 0;
+    cJSON_ArrayForEach(artist, artists){
       if(artist == NULL)
       {
         fprintf(stderr, "Error getting artist");
+        i++;
         continue;
       }
+
+      cJSON *artist_name = cJSON_GetObjectItem(artist, "name");
+      if(artist_name == NULL)
+      {
+        fprintf(stderr, "Error getting artist name");
+        i++;
+        continue;
+      }
+      
       if(arr_size == 1){
-        artists_str = calloc(strlen(artist_name->valuestring), sizeof(char));
-        strcat(artists_str, artist_name->valuestring);
+        artists_str = calloc(strlen(artist_name->valuestring) + 1, sizeof(char));
+        if(artists_str == NULL){
+          fprintf(stderr, "Error allocating Artists.");
+          return -1;
+        }
+        strcpy(artists_str, artist_name->valuestring);
       }
       else
       {
-        if (i = 0)
+        if (i == 0)
         {
-          artists_str = calloc(strlen(artist_name->valuestring), sizeof(char));
-          strcat(artists_str, artist_name->valuestring);
+          artists_str = calloc(strlen(artist_name->valuestring) + 1, sizeof(char));
+          if(artists_str == NULL){
+            fprintf(stderr, "Error allocating Artists.");
+            return -1;
+          }
+          strcpy(artists_str, artist_name->valuestring);
         }
         else{
-          size_t new_size = strlen(artists_str) + strlen(artist_name->valuestring) + 2;
-          artists_str = realloc(artists_str, new_size);
+          size_t artist_str_size = strlen(artists_str) + strlen(artist_name->valuestring) + strlen(", ") + 1;
+          artists_str = realloc(artists_str, artist_str_size); 
+          if (artists_str == NULL){
+            fprintf(stderr, "Error reallocating memory for artists.");
+            return -1;
+          }
           strcat(artists_str, ", ");
           strcat(artists_str, artist_name->valuestring);
         }
       }
+      i++;
     }
-    cJSON *track_URL= cJSON_GetObjectItem(track, "external_urls");
-    cJSON *spotify_URL = cJSON_GetObjectItem(track_URL, "spotify");
-    // printf("Song:\t\t%s\n", track_name->valuestring);
-    // printf("Album:\t\t%s\n", album_name->valuestring);
-    // printf("Artist:\t\t%s\n", artists_str);
-    // printf("Duration:\t%i\n", duration_ms->valueint);
-    // printf("External URL:\t%s\n", spotify_url->valuestring);
-    // printf("Preview URL:\t%s\n", preview_url->valuestring);    
-    
-    SpotifyNode *new = add_spotify_node(
+    if (!append_spotify_track(
+        list_head,
         track_name->valuestring, 
         album_name->valuestring, 
         artists_str, 
         duration_ms->valueint, 
         preview_url->valuestring, 
-        spotify_url->valuestring);  
-    
+        spotify_url->valuestring)){
+          printf("Failed to add spotify track.");
+        }  
     free(artists_str);
+    artists_str = NULL;
   }
 
   cleanup:
@@ -324,170 +403,57 @@ int parce_spotify_reply_data(char* data)
 }
 
 
-void free_spotify_list(SpotifyNode *list){
-  SpotifyNode *current = list;
-  while (current != NULL)
-  {
-    free(current->track_name);
-    free(current->track_album);
-    free(current->track_artist);
-    free(current->track_external_url);
-    free(current->track_preview_url);
-    current = current->next;
-  }
-  free(current);  
-}
+SpotifyPlaylist* get_spotify_playlist(SpotifyAccess *access, char *playlist_id ){
+  SpotifyPlaylist* playlist;
 
-void print_spotify_list(SpotifyNode **head){
-  SpotifyNode *temp = *head;
-  int i = 1;
-  while (temp != NULL)
+  int songs_recieved = 0;
+  int total = 0;
+  char* playlist_info = getPlaylistInfoSpotify(playlist_id, access);
+  if (playlist_info == NULL)
   {
-    printf("\nTrack #%i:\n", i);
-    printf("\t%s, %i ms, %s, %s\n", temp->track_name, temp->track_duration, temp->track_album, temp->track_artist);
-    printf("\tPreview: %s\n", temp->track_preview_url);
-    printf("\tSpotify URL: %s\n", temp->track_external_url);
-    i++;
-    temp = temp->next;
-
-    printf("Track name: %s\n", temp->track_name);
+    fprintf(stderr, "No playlist info receaved from spotify.\n");
+    goto cleanup;
   }
   
-
-}
-
-SpotifyNode *add_spotify_node(char *name, char *album, char *artist, int duration, char *preview_url, char *external_url){
-  SpotifyNode *new_node = NULL;
-
-  if (spotify_node_head == NULL){
-    new_node = malloc(sizeof(SpotifyNode));
-    if(new_node == NULL){
-      printf("Error allocating new spotify node.");
-      return NULL;
-    }
-
-    new_node->track_name = strdup(name);
-    new_node->track_album = strdup(album);
-    new_node->track_artist = strdup(artist);
-    new_node->track_duration = duration;
-    
-    if (preview_url != NULL){
-    new_node->track_preview_url = strdup(preview_url);
-    }
-    else{
-      new_node->track_preview_url = strdup("NA");
-    }
-    
-    if(external_url != NULL){
-    new_node->track_external_url = strdup(external_url);
-    }
-    
-    else{
-      new_node->track_external_url = strdup("NA");
-    }
-
-    if(new_node->track_name == NULL || 
-        new_node->track_album == NULL || 
-        new_node->track_artist == NULL || 
-        new_node->track_preview_url == NULL ||
-        new_node->track_external_url == NULL)
-    {
-      printf("Error allocating memory for spotify Node data.");
-      return NULL;
-    }
-    spotify_node_head = new_node;
-    new_node->next == NULL;
+  playlist = parce_spotify_playlist_data(playlist_info);
+  if (playlist == NULL)
+  {
+    fprintf(stderr, "Error occurred when parcing playlist data.\n");
+    goto cleanup;
   }
-  else{
-    new_node = malloc(sizeof(SpotifyNode));
-    
-    if(new_node == NULL){
-      printf("Error allocating new spotify node.");
-      return NULL;
-    }
+  
+  free(playlist_info);
+  playlist_info = NULL;
 
-    new_node->track_name = strdup(name);
-    new_node->track_album = strdup(album);
-    new_node->track_artist = strdup(artist);
-    new_node->track_duration = duration;
-    if(preview_url != NULL){
-    new_node->track_preview_url = strdup(preview_url);
-    }
-    else{
-      new_node->track_preview_url = strdup("NA");
-    }
-    if (external_url != NULL){
-    new_node->track_external_url = strdup(external_url);
-    }
-    else{
-      new_node->track_external_url = strdup("NA");
-    }
+  printf("Fetching playlist:\n");
+  printf("\tName: %s\n", playlist->name);
+  printf("\tTotal songs: %d\n", playlist->total_tracks);
+  printf("\tDescription: %s\n", playlist->description);
 
-    if(new_node->track_name == NULL || 
-        new_node->track_album == NULL || 
-        new_node->track_artist == NULL ||
-        new_node->track_preview_url == NULL ||
-        new_node->track_external_url == NULL)
+  do{
+    char* content = getPlaylistContentSpotify(playlist_id, access, total);
+    if (content == NULL)
     {
-      printf("Error allocating memory for spotify Node data.");
-      return NULL;
+      fprintf(stderr, "No tracks receved from spotify.\n");
+      goto cleanup;
     }
-    new_node->next = spotify_node_head;
-    spotify_node_head = new_node;
-  }
-
-  return new_node;
-}
-
-
-void get_spotify_playlist(SpotifyAccess *access, char *playlist_id ){
-  int offset = 0;
-  int songs_recieved = 0;
-  //do{
-    char* content = getPlaylistContentSpotify(playlist_id, access, offset);
-    printf("Content:\n%s\n", content);
     
-    songs_recieved = parce_spotify_reply_data(content);
-    printf("Songs recieved: %i\n", songs_recieved);
+    songs_recieved = parce_spotify_track_data(content, &playlist->track_list);
+    total += songs_recieved;
+    printf("\rReceved and parced %d of %d songs.", total, playlist->total_tracks);
+    free(content);
+    content = NULL;
+    fflush(stdout);
+    }
+    while (songs_recieved == 100);
+  printf("\nFinished fetching data from playlist '%s'.\n", playlist->name);
+  return playlist;
 
-    print_spotify_list(&spotify_node_head);
-  //}while (songs_recieved == 100);
+  cleanup:
+
+  free(playlist);
+  playlist = NULL;
+  free(playlist_info);
+  playlist_info = NULL;
+  return NULL;
 }
-
-// SpotifyTrack *new_track(char *name, char *album, char *artist, int duration, char *preview_url, char *external_url){
-//   SpotifyTrack *track;
-//   track->name = calloc(strlen(name), sizeof(char));
-//   if(track->name == NULL){
-//     return NULL;
-//   }
-//   strcpy(track->album, album);
-
-//   track->album = calloc(strlen(album), sizeof(char));
-//   if(track->album == NULL){
-//     return NULL;
-//   }
-//   strcpy(track->album, album);
-
-//   track->artist = calloc(strlen(artist), sizeof(char));
-//   if(track->artist == NULL){
-//     return NULL;
-//   }
-//   strcpy(track->artist, artist);
-
-//   track->duration = duration;
-
-//   track->preview_url = calloc(strlen(preview_url), sizeof(char));
-//   if(track->preview_url == NULL){
-//     return NULL;
-//   }
-//   strcpy(track->preview_url, preview_url);
-
-
-//   track->external_url = calloc(strlen(external_url), sizeof(char));
-//   if(track->external_url == NULL){
-//     return NULL;
-//   }
-//   strcpy(track->external_url, external_url);
-
-//   return track;
-// }
