@@ -1,6 +1,6 @@
 #include "../header_files/spotify_methods.h"
 
-char* getPlaylistInfoSpotify (char *playlistID, SpotifyAccess *access_data)
+char* getPlaylistInfoSpotify (char *playlistID, OauthAccess *access_data)
 {
     char *requestURL;
     char *authorization;
@@ -40,7 +40,7 @@ char* getPlaylistInfoSpotify (char *playlistID, SpotifyAccess *access_data)
 
 
 
-char* getPlaylistContentSpotify (char *playlistID, SpotifyAccess *ad, int offset)
+char* getPlaylistContentSpotify (char *playlistID, OauthAccess *ad, int offset)
 {
 
     char *requestURL;		// free used in curl_request func
@@ -74,8 +74,11 @@ char* getPlaylistContentSpotify (char *playlistID, SpotifyAccess *ad, int offset
     snprintf (offset_str, offset_length + 1, "%d", offset);
 
     int url_length =
-	strlen (url_api_dest) + strlen (field_options) + strlen (playlistID) +
-	offset_length;
+			strlen (url_api_dest) 
+			+ strlen (field_options) 
+			+ strlen (playlistID) 
+			+ offset_length;
+
     requestURL = calloc (url_length, sizeof (char));
 
     strcat (requestURL, url_api_dest);
@@ -85,11 +88,15 @@ char* getPlaylistContentSpotify (char *playlistID, SpotifyAccess *ad, int offset
 
     free (offset_str);
     offset_str = NULL;
-    return curl_request (authorization, requestURL);
+	char* request = curl_request (authorization, requestURL);
+	free(authorization);
+	free(requestURL);
+	return request;
+
 }
 
 
-char* getAuthTokenSpotify (char *clientID, char *clientSecret)
+char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
 {
     ResponseBuffer res_buf;
     res_buf.data = malloc (1);
@@ -153,68 +160,6 @@ char* getAuthTokenSpotify (char *clientID, char *clientSecret)
     curl_slist_free_all (slist1);
     slist1 = NULL;
     return res_buf.data;
-}
-
-SpotifyAccess* spotify_access_init (char *auth_reply)
-{
-    cJSON *json = cJSON_Parse (auth_reply);
-    if (json == NULL)
-	{
-		fprintf (stderr,
-			"An error occured when parcing Spotify authentication data.\n");
-		cJSON_Delete (json);
-		return NULL;
-	}
-
-    cJSON *access_token = cJSON_GetObjectItem (json, "access_token");
-    cJSON *token_type = cJSON_GetObjectItem (json, "token_type");
-    cJSON *expiration_time = cJSON_GetObjectItem (json, "expires_in");
-
-    SpotifyAccess *data = malloc (sizeof (SpotifyAccess));
-
-    if (!access_token->valuestring || !token_type->valuestring || !expiration_time->valueint)
-	{
-		fprintf (stderr, "Something wrong with access key.\n");
-		goto cleanup;
-	}
-
-    data->token = strdup (access_token->valuestring);
-    data->type = strdup (token_type->valuestring);
-    data->duration = expiration_time->valueint;
-    data->time_recieved = malloc (sizeof (struct tm));
-    if (data->time_recieved != NULL)
-	{
-		time_t now = time (NULL);
-		*(data->time_recieved) = *localtime (&now);
-	}
-
-    return data;
-	cleanup:
-	return NULL;
-}
-
-
-void print_spotify_access (SpotifyAccess *access_obj)
-{
-    char time_str[100];
-    strftime (time_str, sizeof (time_str), "%Y-%m-%d %H:%M:%S",
-	      access_obj->time_recieved);
-    printf ("Access token:\t%s\n", access_obj->token);
-    printf ("Grant type:\t%s\n", access_obj->type);
-    printf ("Duration:\t%i\n", access_obj->duration);
-    printf ("Time recieved:\t%s\n", time_str);
-}
-
-
-void spotify_access_delete (SpotifyAccess **access_obj)
-{
-    if (access_obj == NULL) return;
-
-    memset ((*access_obj)->token, '\0', strlen ((*access_obj)->token));
-    free ((*access_obj)->token);
-    free ((*access_obj)->type);
-    free ((*access_obj)->time_recieved);
-    free ((*access_obj));
 }
 
 
@@ -323,7 +268,7 @@ int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
     cJSON *items = cJSON_GetObjectItem (json, "items");
     if (items == NULL)
 	{
-		fprintf (stderr, "Error fetching 'items' object from tracks object string.");
+		fprintf (stderr, "Error fetching 'items' object from tracks object string.\n");
 		goto cleanup;
 	}
 
@@ -381,14 +326,14 @@ char* handle_artists_from_json(cJSON* artists_obj)
 	{
 		if (artist == NULL)
 		{
-			fprintf (stderr, "Error getting artist");
+			fprintf (stderr, "Error getting artist\n");
 			i++;
 			continue;
 		}
 		cJSON *artist_name = cJSON_GetObjectItem (artist, "name");
 		if (artist_name == NULL)
 		{
-			fprintf (stderr, "Error getting artist name");
+			fprintf (stderr, "Error getting artist name\n");
 			return NULL;
 		}
 
@@ -399,7 +344,7 @@ char* handle_artists_from_json(cJSON* artists_obj)
 			
 			if (artists_str == NULL)
 			{
-				fprintf (stderr, "Error allocating Artists.");
+				fprintf (stderr, "Error allocating Artists.\n");
 				return NULL;
 			}
 			strcpy (artists_str, artist_name->valuestring);
@@ -413,7 +358,7 @@ char* handle_artists_from_json(cJSON* artists_obj)
 			calloc (strlen (artist_name->valuestring) + 1, sizeof (char));
 			if (artists_str == NULL)
 			{
-				fprintf (stderr, "Error allocating Artists.");
+				fprintf (stderr, "Error allocating Artists.\n");
 				return NULL;
 			}
 			strcpy (artists_str, artist_name->valuestring);
@@ -429,7 +374,7 @@ char* handle_artists_from_json(cJSON* artists_obj)
 		if (artists_str == NULL)
 		{
 			fprintf (stderr,
-				"Error reallocating memory for artists.");
+				"Error reallocating memory for artists.\n");
 			return NULL;
 		}
 		strcat (artists_str, ", ");
@@ -440,7 +385,7 @@ char* handle_artists_from_json(cJSON* artists_obj)
 }
 
 
-SpotifyPlaylist* get_spotify_playlist (SpotifyAccess *access, char *playlist_id)
+SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
 {
     SpotifyPlaylist *playlist;
 

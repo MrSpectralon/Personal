@@ -12,29 +12,15 @@
 #include "./helper_methods.h"
 
 
-typedef struct {
-	char *token;
-	char *type;
-	int duration;
-	struct tm *time_recieved;
-    
-} SpotifyAccess;
 
 
-SpotifyPlaylist* get_spotify_playlist(SpotifyAccess *access, char *playlist_id);
+SpotifyPlaylist* get_spotify_playlist(OauthAccess *access, char *playlist_id);
 
-char* getPlaylistContentSpotify(char* playlistID, SpotifyAccess* ad, int offset);
+char* get_playlist_content_spotify(char* playlistID, OauthAccess* ad, int offset);
 int parce_spotify_track_data(char* data, ListSpotifyTracks** list_head);
 SpotifyPlaylist* parce_spotify_playlist_data(const char* data);
 
+void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head);
+char* handle_artists_from_json(cJSON* artists_obj);
 
-size_t write_callback(void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf);
-
-char* getAuthTokenSpotify(char* clientID, char* clientSecret);
-
-
-void getAuthKey(CURL *opts, CURLcode res);
-
-SpotifyAccess *spotify_access_init(char* auth_reply);
-void print_spotify_access(SpotifyAccess *access_obj); 
-void spotify_access_delete(SpotifyAccess** access_obj);
+char* get_auth_token_spotify(const char* clientID, const char* clientSecret);

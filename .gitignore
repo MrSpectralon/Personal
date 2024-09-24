@@ -3,6 +3,7 @@
 rust/learning_rust/*/target
 
 # C ignores
+*/.vscode/*
 
 c/playlist_diff/test/*
 c/playlist_diff/.vscode/*

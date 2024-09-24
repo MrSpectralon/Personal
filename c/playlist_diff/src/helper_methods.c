@@ -1,5 +1,8 @@
 #include "../header_files/helper_methods.h"
 
+const char* SERVICES[] = {"Spotify", "YouTube Music"};
+
+
 size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf)
 {
     size_t total_size = size * nmemb;
@@ -21,7 +24,7 @@ size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res
 }
 
 
-void removeNewline (char *str)
+void remove_new_line (char *str)
 {
     size_t len = strlen (str);
     if (len > 0 && str[len - 1] == '\n') 
@@ -63,7 +66,7 @@ int string_compare_64b (const char *str1, const char *str2)
 }
 
 
-char * curl_request (char *authorization, char *requestURL)
+char* curl_request (const char *authorization, const char *requestURL)
 {
     CURLcode ret;
     CURL *hnd;
@@ -100,13 +103,72 @@ char * curl_request (char *authorization, char *requestURL)
 
     curl_easy_cleanup (hnd);
     curl_slist_free_all (slist1);
-    free (requestURL);
-    free (authorization);
-
     hnd = NULL;
     slist1 = NULL;
-    requestURL = NULL;
-    authorization = NULL;
-
     return res_buf.data;
 }
+
+OauthAccess* oauth_access_init (const char *auth_reply, Service service)
+{
+    cJSON *json = cJSON_Parse (auth_reply);
+    if (json == NULL)
+	{
+		fprintf (stderr,
+			"An error occured when parcing Spotify authentication data.\n");
+		cJSON_Delete (json);
+		return NULL;
+	}
+
+    cJSON *access_token = cJSON_GetObjectItem (json, "access_token");
+    cJSON *token_type = cJSON_GetObjectItem (json, "token_type");
+    cJSON *expiration_time = cJSON_GetObjectItem (json, "expires_in");
+
+    OauthAccess *data = malloc (sizeof (OauthAccess));
+
+    if (!access_token->valuestring || !token_type->valuestring || !expiration_time->valueint)
+	{
+		fprintf (stderr, "Something wrong with access key.\n");
+		goto cleanup;
+	}
+
+    data->service = service;
+    data->token = strdup (access_token->valuestring);
+    data->type = strdup (token_type->valuestring);
+    data->duration = expiration_time->valueint;
+    data->time_recieved = malloc (sizeof (struct tm));
+    if (data->time_recieved != NULL)
+	{
+		time_t now = time (NULL);
+		*(data->time_recieved) = *localtime (&now);
+	}
+
+    return data;
+	cleanup:
+	return NULL;
+}
+
+
+void oauth_access_print (OauthAccess *access_obj)
+{
+    char time_str[100];
+    strftime (time_str, sizeof (time_str), "%Y-%m-%d %H:%M:%S",
+	      access_obj->time_recieved);
+    printf ("Access token:\t%s\n", access_obj->token);
+    printf ("Grant type:\t%s\n", access_obj->type);
+    printf ("Duration:\t%i\n", access_obj->duration);
+    printf ("Time recieved:\t%s\n", time_str);
+    printf ("Service: %s\n", SERVICES[access_obj->service]);
+}
+
+
+void oauth_access_delete (OauthAccess** access_obj)
+{
+    if (access_obj == NULL) return;
+
+    memset ((*access_obj)->token, '\0', strlen ((*access_obj)->token));
+    free ((*access_obj)->token);
+    free ((*access_obj)->type);
+    free ((*access_obj)->time_recieved);
+    free ((*access_obj));
+}
+

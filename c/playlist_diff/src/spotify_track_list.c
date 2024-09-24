@@ -21,7 +21,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
     SpotifyTrack *new_track = malloc (sizeof (SpotifyTrack));
     if (new_track == NULL)
     {
-        fprintf (stderr, "Error when allocating new track object.");
+        fprintf (stderr, "Error when allocating new track object.\n");
         return 0;
     }
 
@@ -38,7 +38,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
     if (new_track->name == NULL)
     {
         fprintf (stderr,
-            "Error allocating memory for Spotify list content.");
+            "Error allocating memory for Spotify list content.\n");
         goto cleanup;
     }
 
@@ -46,7 +46,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
     if (new_track->album == NULL)
     {
         fprintf (stderr,
-            "Error allocating memory for Spotify list content.");
+            "Error allocating memory for Spotify list content.\n");
         goto cleanup;
     }
 
@@ -54,7 +54,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
     if (new_track->artist == NULL)
     {
         fprintf (stderr,
-            "Error allocating memory for Spotify list content.");
+            "Error allocating memory for Spotify list content.\n");
         goto cleanup;
     }
 
@@ -65,7 +65,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
         if (new_track->preview_url == NULL)
         {
             fprintf (stderr,
-                    "Error allocating memory for Spotify list content.");
+                    "Error allocating memory for Spotify list content.\n");
             goto cleanup;
         }
     }
@@ -75,7 +75,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
         if (new_track->preview_url == NULL)
         {
             fprintf (stderr,
-                    "Error allocating memory for Spotify list content.");
+                    "Error allocating memory for Spotify list content.\n");
             goto cleanup;
         }
     }
@@ -87,7 +87,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
         if (new_track->external_url == NULL)
         {
             fprintf (stderr,
-                    "Error allocating memory for Spotify list content.");
+                    "Error allocating memory for Spotify list content.\n");
             goto cleanup;
         }
     }
@@ -97,7 +97,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
         if (new_track->external_url == NULL)
         {
             fprintf (stderr,
-                    "Error allocating memory for Spotify list content.");
+                    "Error allocating memory for Spotify list content.\n");
             goto cleanup;
         }
     }
@@ -105,7 +105,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
     ListSpotifyTracks *new_obj = malloc (sizeof (ListSpotifyTracks));
     if (new_obj == NULL)
     {
-        fprintf (stderr, "Error when allocating new list node.");
+        fprintf (stderr, "Error when allocating new list node.\n");
         goto cleanup;
     }
 
@@ -264,13 +264,13 @@ SpotifyPlaylist* spotify_playlist_init ()
     SpotifyPlaylist *playlist = malloc (sizeof (SpotifyPlaylist));
     if (playlist == NULL)
     {
-        fprintf (stderr, "Error when allocating memory for playlist.");
+        fprintf (stderr, "Error when allocating memory for playlist.\n");
         goto cleanup;
     }
     playlist->track_list = malloc (sizeof (ListSpotifyTracks));
     if (playlist->track_list == NULL)
     {
-        fprintf (stderr, "Error allocating memory for list of tracks.");
+        fprintf (stderr, "Error allocating memory for list of tracks.\n");
         goto cleanup;
     }
 
@@ -293,15 +293,15 @@ SpotifyPlaylist* spotify_playlist_init ()
 
 void spotify_free_playlist (SpotifyPlaylist **playlist)
 {
-    if (playlist == NULL)
+    if (*playlist == NULL)
     {
-        fprintf (stderr, "Tried to free non initialized playlist.");
+        fprintf (stderr, "Tried to free non initialized playlist.\n");
         return;
     }
     if ((*playlist)->track_list == NULL)
     {
         fprintf (stderr,
-            "Tried to free non initialized list of tracks in playlist.");
+            "Tried to free non initialized list of tracks in playlist.\n");
         return;
     }
     spotify_free_tracklist (&(*playlist)->track_list);
