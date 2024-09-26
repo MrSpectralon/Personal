@@ -305,6 +305,7 @@ void spotify_free_playlist (SpotifyPlaylist **playlist)
         return;
     }
     spotify_free_tracklist (&(*playlist)->track_list);
+    free((*playlist)->track_list);
     free ((*playlist)->name);
     (*playlist)->name = NULL;
     free ((*playlist)->description);

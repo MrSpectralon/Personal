@@ -119,15 +119,39 @@ OauthAccess* oauth_access_init (const char *auth_reply, Service service)
 		return NULL;
 	}
 
+
+    cJSON *error = cJSON_GetObjectItem (json, "error");
+    if (error != NULL)
+    {
+        cJSON *error_description = cJSON_GetObjectItem (json, "error_description");
+        printf("Authentication error:\n");
+        printf("\tError: %s\n", error->valuestring);
+        printf("\tDescription: %s\n", error_description->valuestring);
+        goto cleanup;
+    }
+
     cJSON *access_token = cJSON_GetObjectItem (json, "access_token");
     cJSON *token_type = cJSON_GetObjectItem (json, "token_type");
     cJSON *expiration_time = cJSON_GetObjectItem (json, "expires_in");
 
     OauthAccess *data = malloc (sizeof (OauthAccess));
 
-    if (!access_token->valuestring || !token_type->valuestring || !expiration_time->valueint)
+    if (access_token == NULL)
+    {
+		fprintf (stderr, "No access token found.\n");
+        goto cleanup;
+    }
+
+    if (token_type == NULL)
+    {
+        fprintf (stderr, "No token type found.\n");
+        goto cleanup;
+    }
+        
+
+    if (expiration_time)
 	{
-		fprintf (stderr, "Something wrong with access key.\n");
+		fprintf (stderr, "Got no expiration time for authorization key.\n");
 		goto cleanup;
 	}
 
@@ -142,8 +166,11 @@ OauthAccess* oauth_access_init (const char *auth_reply, Service service)
 		*(data->time_recieved) = *localtime (&now);
 	}
 
+    cJSON_Delete(json);
     return data;
 	cleanup:
+
+    cJSON_Delete(json);
 	return NULL;
 }
 
@@ -163,7 +190,7 @@ void oauth_access_print (OauthAccess *access_obj)
 
 void oauth_access_delete (OauthAccess** access_obj)
 {
-    if (access_obj == NULL) return;
+    if (*access_obj == NULL) return;
 
     memset ((*access_obj)->token, '\0', strlen ((*access_obj)->token));
     free ((*access_obj)->token);

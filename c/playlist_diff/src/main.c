@@ -3,7 +3,6 @@
 #include "../header_files/spotify_methods.h"
 #include "../header_files/google_methods.h"
 
-//File pointer
 
 OauthAccess* request_access_from_file(FILE** file_pointer);
 
@@ -12,7 +11,7 @@ int main (void)
     FILE *fptr;
     // OauthAccess* google_access = NULL;
     SpotifyPlaylist *spotify_playlist = NULL;
-    char* temp = NULL;
+    volatile char* temp = NULL;
     char *playlist_ID;
 
     fptr = fopen("secrets", "r");
@@ -24,12 +23,12 @@ int main (void)
 	}
 
     OauthAccess* spotify_access = request_access_from_file(&fptr);
-    oauth_access_print(spotify_access);
     if(spotify_access == NULL)
     {
         fprintf(stderr, "Failed to gain auth key.\n");
         goto cleanup;
     }
+    oauth_access_print(spotify_access);
 
     temp = malloc(100);
     if (temp == NULL)
@@ -38,15 +37,18 @@ int main (void)
     }
     temp[0] = '\0';
 
-    fgets(temp, 100, fptr);
-    playlist_ID = malloc (strlen (temp));
+    fgets((char*)temp, 100, fptr);
+    playlist_ID = malloc(strlen((const char*)temp));
     if (playlist_ID == NULL)
 	{
 		fprintf (stderr, "Failed to allocate memory for playlist ID.\n");
 		goto cleanup;
 	}
-    remove_new_line (temp);
-    strcpy (playlist_ID, temp);
+    remove_new_line ((char*)temp);
+    strcpy (playlist_ID, (const char*)temp);
+    memset ((char*)temp, '\0', strlen((const char*)temp));
+    free((char*)temp);
+    temp = NULL;
     fclose (fptr);
     spotify_playlist = get_spotify_playlist (spotify_access, playlist_ID);
     print_list_content (spotify_playlist->track_list);
@@ -54,6 +56,7 @@ int main (void)
 
 	cleanup:
     free (playlist_ID);
+    free((char*)temp);
     oauth_access_delete (&spotify_access);
     spotify_free_playlist (&spotify_playlist);
 
@@ -87,6 +90,7 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     remove_new_line((char*)temp);
     service_str[0] = '\0';
     strcpy(service_str, (const char*)temp);
+    printf("Service string: %s\n", service_str); 
 
     temp[0] = '\0';
     fgets ((char*)temp, 100, *file_pointer);
@@ -99,6 +103,7 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     remove_new_line ((char*)temp);
     clientID[0] = '\0';
     strcpy ((char*)clientID, (const char*)temp);
+    printf("Client ID: %s\n", clientID); 
 
     fgets ((char*)temp, 100, *file_pointer);
     clientSecret = malloc (strlen ((const char*)temp));
@@ -110,6 +115,7 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     remove_new_line ((char*)temp);
     clientSecret[0] = '\0';
     strcpy ((char*)clientSecret, (const char*)temp);
+    printf("Client secret: %s\n", clientSecret); 
 
     memset ((char*)temp, '\0', strlen ((const char*)temp));
     free ((char*)temp);
@@ -137,9 +143,10 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     memset ((char*)clientSecret, '\0', strlen ((const char*)clientSecret));
     free ((char*)clientID);
     free ((char*)clientSecret);
+    free(service_str);
     clientID = NULL;
     clientSecret = NULL;
-
+    service_str = NULL;
     access = oauth_access_init ((const char*)auth_reply, service);
     if(access == NULL)
     {
@@ -156,15 +163,29 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     cleanup:
     free(service_str);  
     oauth_access_delete((OauthAccess**)&access);
-    memset((char*)temp, '\0', strlen((const char*)temp));
+    if (temp != NULL)
+    {
+        memset((char*)temp, '\0', strlen((const char*)temp));
+    }
     free((char*)temp);
-    memset((char*)clientID, '\0', strlen((const char*)clientID));
-    free((char*)clientID);
-    memset((char*)clientSecret, '\0', strlen((const char*)clientSecret));
-    free((char*)clientSecret);
-    memset((char*)auth_reply, '\0', strlen((const char*)auth_reply));
-    free((char*)auth_reply); 
 
+    if (clientID != NULL)
+    {
+        memset((char*)clientID, '\0', strlen((const char*)clientID));
+    }
+    free((char*)clientID);
+    
+    if (clientSecret != NULL)
+    {
+        memset((char*)clientSecret, '\0', strlen((const char*)clientSecret));
+    }
+    free((char*)clientSecret);
+    
+    if (auth_reply == NULL)
+    {
+        memset((char*)auth_reply, '\0', strlen((const char*)auth_reply));
+    }
+    free((char*)auth_reply); 
     return NULL;
 }
 
