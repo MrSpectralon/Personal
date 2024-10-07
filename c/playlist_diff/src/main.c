@@ -12,7 +12,7 @@ int main (void)
     // OauthAccess* google_access = NULL;
     SpotifyPlaylist *spotify_playlist = NULL;
     volatile char* temp = NULL;
-    char *playlist_ID;
+    char *playlist_ID = NULL;
 
     fptr = fopen("secrets", "r");
     fprintf(stderr, "File opened.\n");
@@ -55,6 +55,7 @@ int main (void)
     
 
 	cleanup:
+
     free (playlist_ID);
     free((char*)temp);
     oauth_access_delete (&spotify_access);
@@ -81,7 +82,7 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     }
     temp[0] = '\0';
     fgets ((char*)temp, 100, *file_pointer);
-    service_str = malloc (strlen ((const char*)temp));
+    service_str = malloc (strlen ((const char*)temp) + 1);
     if (service_str == NULL)
 	{
 		fprintf (stderr, "Failed to allocate memory for service type.\n");
@@ -94,7 +95,7 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
 
     temp[0] = '\0';
     fgets ((char*)temp, 100, *file_pointer);
-    clientID = malloc (strlen ((const char*)temp));
+    clientID = malloc (strlen ((const char*)temp) + 1);
     if (clientID == NULL)
 	{
 		fprintf (stderr, "Failed to allocate memory for clientID.\n");

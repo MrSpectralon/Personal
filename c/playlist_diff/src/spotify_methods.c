@@ -12,6 +12,7 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
     type[0] = '\0';
     strcat (type, access_data->type);
     type[g_type_len] = ' ';
+    type[g_type_len + 1] = '\0';
 
     int auth_length = strlen (auth) + g_type_len + strlen (access_data->token) + 2; 
     authorization = malloc (auth_length);
@@ -26,9 +27,8 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
     char field_options[] =
 	"?market=NO&fields=name%2C+description%2C+tracks%28total%29";
 
-    int url_length =
-	strlen (url_api_dest) + strlen (field_options) + strlen (playlistID);
-    requestURL = malloc (url_length);
+    int url_length = strlen (url_api_dest) + strlen (field_options) + strlen (playlistID);
+    requestURL = malloc (url_length + 1);
     requestURL[0] = '\0';
     strcat (requestURL, url_api_dest);
     strcat (requestURL, playlistID);
@@ -36,7 +36,7 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
 	char* reply = curl_request (authorization, requestURL);
 	free(authorization);
 	free(requestURL);
-	return reply;
+	return reply;   
 }
 
 
@@ -55,9 +55,11 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
     type[0] = '\0';
     strcat (type, ad->type);
     type[g_type_len] = ' ';
+    type[g_type_len + 1] = '\0';
 
-    int auth_length = strlen (auth) + g_type_len + 1 + strlen (ad->token);
-    authorization = calloc (auth_length, sizeof (char));
+    
+    int auth_length = strlen (auth) + g_type_len + 1 + strlen (ad->token); // +1 because g_type is 1 short.
+    authorization = calloc (auth_length + 1, sizeof (char));
     strcat (authorization, auth);
     strcat (authorization, type);
     strcat (authorization, ad->token);
@@ -96,7 +98,76 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
 
 }
 
+//// OLD (WORKING) VERSION
 
+char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
+{
+    ResponseBuffer res_buf;
+    res_buf.data = malloc (1);
+    res_buf.size = 0;
+
+    CURLcode ret;
+    CURL *hnd;
+    char *curlPostField;
+    struct curl_slist *slist1;
+
+    char grantTypeAndClientID[] = "grant_type=client_credentials&client_id=";
+    char cliS[] = "&client_secret=";
+
+    int fieldSize = 
+        strlen (grantTypeAndClientID)
+        + strlen (clientID) 
+        + strlen (cliS) 
+        + strlen (clientSecret)
+        ;
+
+    curlPostField = calloc (fieldSize + 1, sizeof (char));
+    strcat (curlPostField, grantTypeAndClientID);
+    strcat (curlPostField, clientID);
+    strcat (curlPostField, cliS);
+    strcat (curlPostField, clientSecret);
+
+    slist1 = NULL;
+    slist1 =
+    curl_slist_append (slist1,
+               "Content-Type: application/x-www-form-urlencoded");
+    hnd = curl_easy_init ();
+
+    curl_easy_setopt (hnd, CURLOPT_BUFFERSIZE, 102400L);
+    curl_easy_setopt (hnd, CURLOPT_URL,
+              "https://accounts.spotify.com/api/token");
+    curl_easy_setopt (hnd, CURLOPT_NOPROGRESS, 1L);
+    curl_easy_setopt (hnd, CURLOPT_POSTFIELDS, curlPostField);
+    curl_easy_setopt (hnd, CURLOPT_POSTFIELDSIZE_LARGE,
+              (curl_off_t) fieldSize);
+    curl_easy_setopt (hnd, CURLOPT_HTTPHEADER, slist1);
+    curl_easy_setopt (hnd, CURLOPT_USERAGENT, "curl/8.5.0");
+    curl_easy_setopt (hnd, CURLOPT_MAXREDIRS, 50L);
+    curl_easy_setopt (hnd, CURLOPT_HTTP_VERSION,
+              (long) CURL_HTTP_VERSION_2TLS);
+    curl_easy_setopt (hnd, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_easy_setopt (hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
+    curl_easy_setopt (hnd, CURLOPT_TCP_KEEPALIVE, 1L);
+    curl_easy_setopt (hnd, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt (hnd, CURLOPT_WRITEDATA, &res_buf);
+
+    ret = curl_easy_perform (hnd);
+
+    if (ret != CURLE_OK)
+    {
+        fprintf (stderr, "curl_easy_perform() failed: %s\n",
+        curl_easy_strerror (ret));
+    }
+
+    curl_easy_cleanup (hnd);
+    hnd = NULL;
+    free (curlPostField);
+    curl_slist_free_all (slist1);
+    slist1 = NULL;
+    return res_buf.data;
+}
+
+/*
 char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
 {
     ResponseBuffer res_buf;
@@ -165,7 +236,7 @@ char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
     slist1 = NULL;
     return res_buf.data;
 }
-
+*/
 
 SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
 {
@@ -236,7 +307,7 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
 	}
     else
 	{
-		new_playlist->description = malloc (strlen (description->valuestring));
+		new_playlist->description = malloc (strlen(description->valuestring) + 1);
 		if (new_playlist->description == NULL)
 		{
 			fprintf (stderr, "Error allocating memory for spotify playlist description.\n");

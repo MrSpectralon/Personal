@@ -8,6 +8,11 @@ curl -X POST "https://accounts.spotify.com/api/token" \
      -d "grant_type=client_credentials&client_id=CLIENT_ID&client_secret=CLIENT_SECRET"
 
 
+x post https://accounts.google.com/o/oauth2/v2/auth
+
+
+
+
 https://developer.spotify.com/documentation/web-api/reference/get-playlist
 
 playlist id: 18Y1uKbT84hUBRy6oqSH9Q

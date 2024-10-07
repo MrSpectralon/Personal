@@ -102,7 +102,7 @@ int append_spotify_track (ListSpotifyTracks **list_head,
         }
     }
 
-    ListSpotifyTracks *new_obj = malloc (sizeof (ListSpotifyTracks));
+    ListSpotifyTracks *new_obj = calloc(1, sizeof (ListSpotifyTracks));
     if (new_obj == NULL)
     {
         fprintf (stderr, "Error when allocating new list node.\n");
@@ -305,7 +305,6 @@ void spotify_free_playlist (SpotifyPlaylist **playlist)
         return;
     }
     spotify_free_tracklist (&(*playlist)->track_list);
-    free((*playlist)->track_list);
     free ((*playlist)->name);
     (*playlist)->name = NULL;
     free ((*playlist)->description);

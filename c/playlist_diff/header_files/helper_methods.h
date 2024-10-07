@@ -43,3 +43,7 @@ void oauth_access_print (OauthAccess *access_obj);
 void oauth_access_delete(OauthAccess** access_obj);
 
 void get_auth_Key(CURL *opts, CURLcode res);
+
+
+// homemade base64 urlsafe encoding
+char* base64url_encode(const char* string);

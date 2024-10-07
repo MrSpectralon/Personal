@@ -149,7 +149,7 @@ OauthAccess* oauth_access_init (const char *auth_reply, Service service)
     }
         
 
-    if (expiration_time)
+    if (expiration_time == NULL)
 	{
 		fprintf (stderr, "Got no expiration time for authorization key.\n");
 		goto cleanup;
@@ -193,9 +193,76 @@ void oauth_access_delete (OauthAccess** access_obj)
     if (*access_obj == NULL) return;
 
     memset ((*access_obj)->token, '\0', strlen ((*access_obj)->token));
-    free ((*access_obj)->token);
+    free 
+    ((*access_obj)->token);
     free ((*access_obj)->type);
     free ((*access_obj)->time_recieved);
     free ((*access_obj));
 }
 
+
+char* base64url_encode(const char* string, const size_t len)
+{
+    //Base 64 encoded string.
+    char* encoded = NULL;
+    //Base 64 URL safe table. Base 64 decimal value = index value 
+    char b64urls_table[] = "ABCDEFGHIJKLMNOPQRSTUZWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    
+    //Decimal value for lookup table.
+    int8_t val = 0;
+    //Number of 6 bit chunks
+    uint64_t num_o_chunks = (len * 8) / 6;
+    //Counter for which base64 character is being worked on
+    uint64_t chunk_pos = 0;
+    //Counter for position in the base64 bit index.
+    uint8_t bit_chunk_pos = 5;
+
+    encoded = calloc(num_o_chunks + 1, sizeof(char));
+    if(encoded == NULL)
+    {
+        fprintf(stderr, "Error allocating memory for b64 encoded string.\n");
+        goto cleanup;        
+    }
+    
+    //Iterating through all characters in string
+    for (size_t c = 0; c < len; c++)
+    {
+
+        //Iterating throug all bits in current character.
+        for (int8_t b = 7; b >= 0; b--)
+        {
+            //Checking if current bit has value 1.    
+            if(string[c] >> b & 1)
+            {
+                //Adding 2^bit_chunk_pos to the base64 value
+                val += (uint8_t)1 << bit_chunk_pos;
+            }
+
+            //Check if we need to go to the next 6 bit chunk.
+            if (bit_chunk_pos == 0)
+            {
+                //Appends current character and resets.
+                encoded[chunk_pos] = b64urls_table[val];
+                chunk_pos++;
+                bit_chunk_pos = 5;
+                val = 0;
+            }
+            else
+            {
+                //Checking if on last character iteration
+                if (c == (len - 1) && b == 0)
+                {
+                    //Adding next encoded character if character iterations ended before finishing next complete base64 character.
+                    encoded[chunk_pos] = b64urls_table[val];
+                }
+                bit_chunk_pos--;
+            }
+        }
+    }
+    encoded[len + 1] = '\0';
+    return encoded;
+
+    cleanup:
+    free(encoded);
+    return NULL;
+}

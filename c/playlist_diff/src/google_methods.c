@@ -1,6 +1,11 @@
 #include "../header_files/google_methods.h"
 
 
+
+
+
+
+
 char* get_auth_token_google (const char *clientID, const char *clientSecret)
 {
     ResponseBuffer res_buf;
@@ -35,7 +40,7 @@ char* get_auth_token_google (const char *clientID, const char *clientSecret)
 
     curl_easy_setopt (hnd, CURLOPT_BUFFERSIZE, 102400L);
     curl_easy_setopt (hnd, CURLOPT_URL,
-		      "https://accounts.spotify.com/api/token");
+		      "https://accounts.google.com/o/oauth2/v2/auth");
     curl_easy_setopt (hnd, CURLOPT_NOPROGRESS, 1L);
     curl_easy_setopt (hnd, CURLOPT_POSTFIELDS, curlPostField);
     curl_easy_setopt (hnd, CURLOPT_POSTFIELDSIZE_LARGE,
