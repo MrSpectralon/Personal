@@ -2,6 +2,12 @@
 
 
 
+cJSON* create_JWT()
+{
+    cJSON* jwt = cJSON_CreateObject();
+    
+
+}
 
 
 

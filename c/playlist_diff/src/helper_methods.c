@@ -1,7 +1,3 @@
-#include "../header_files/helper_methods.h"
-
-const char* SERVICES[] = {"Spotify", "YouTube Music"};
-
 
 size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf)
 {
@@ -266,3 +262,11 @@ char* base64url_encode(const char* string, const size_t len)
     free(encoded);
     return NULL;
 }
+
+
+char* hmac256sha_encode(const char* string, const size_t len)
+{
+
+}
+
+char* __sha256();

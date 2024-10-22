@@ -46,4 +46,6 @@ void get_auth_Key(CURL *opts, CURLcode res);
 
 
 // homemade base64 urlsafe encoding
-char* base64url_encode(const char* string);
+char* base64url_encode(const char* string, const size_t len);
+
+char* hmac256sha_encode(const char* string, const size_t len);
