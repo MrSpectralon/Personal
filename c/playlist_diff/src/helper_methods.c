@@ -1,3 +1,7 @@
+#include "../header_files/helper_methods.h"
+
+const char* SERVICES[] = {"Spotify", "YouTube Music"};
+
 
 size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf)
 {

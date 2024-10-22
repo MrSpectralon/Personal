@@ -5,7 +5,6 @@ rust/learning_rust/*/target
 # C ignores
 */.vscode/*
 
-c/playlist_diff/test/*
 c/playlist_diff/.vscode/*
 c/playlist_diff/secrets
 c/playlist_diff/out/*
