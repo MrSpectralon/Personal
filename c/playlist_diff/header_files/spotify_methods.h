@@ -1,16 +1,15 @@
 #pragma once
 
-#include <time.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include <curl/curl.h> //Install: apt install libcurl4-openssl-dev
 #include <cjson/cJSON.h>
 #include "./spotify_track_list.h"
 #include "./helper_methods.h"
-
+#include "./curl_handler.h"
+#include "./oauth_handler.h"
 
 
 

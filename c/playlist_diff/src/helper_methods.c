@@ -1,27 +1,5 @@
 #include "../header_files/helper_methods.h"
 
-const char* SERVICES[] = {"Spotify", "YouTube Music"};
-
-
-size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf)
-{
-    size_t total_size = size * nmemb;
-
-    // Reallocate memory to fit the new data
-    char *temp = realloc (res_buf->data, res_buf->size + total_size + 1);
-    if (temp == NULL)
-    {
-        fprintf (stderr, "Failed to allocate memory.\n");
-        return 0;		// Returning 0 will signal libcurl to abort the request
-    }
-
-    res_buf->data = temp;
-    memcpy (&(res_buf->data[res_buf->size]), ptr, total_size);
-    res_buf->size += total_size;
-    res_buf->data[res_buf->size] = '\0';	// Null-terminate the string
-
-    return total_size;
-}
 
 
 void remove_new_line (char *str)
@@ -33,10 +11,12 @@ void remove_new_line (char *str)
     }
 }
 
+
+
 int string_compare_64b (const char *str1, const char *str2)
 {
-    size_t len = strlen (str1);
-    size_t len2 = strlen (str2);
+    size_t len = strlen(str1);
+    size_t len2 = strlen(str2);
 
     if (len != len2)
     {
@@ -63,141 +43,6 @@ int string_compare_64b (const char *str1, const char *str2)
         }
     }
     return 1;
-}
-
-
-char* curl_request (const char *authorization, const char *requestURL)
-{
-    CURLcode ret;
-    CURL *hnd;
-    ResponseBuffer res_buf;
-    struct curl_slist *slist1;
-    res_buf.data = malloc (1);
-    res_buf.size = 0;
-
-    slist1 = NULL;
-    slist1 = curl_slist_append (slist1, authorization);
-    hnd = curl_easy_init ();
-
-    curl_easy_setopt (hnd, CURLOPT_BUFFERSIZE, 102400L);
-    curl_easy_setopt (hnd, CURLOPT_URL, requestURL);
-    curl_easy_setopt (hnd, CURLOPT_NOPROGRESS, 1L);
-    curl_easy_setopt (hnd, CURLOPT_HTTPHEADER, slist1);
-    curl_easy_setopt (hnd, CURLOPT_USERAGENT, "curl/8.5.0");
-    curl_easy_setopt (hnd, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt (hnd, CURLOPT_HTTP_VERSION,
-		      (long) CURL_HTTP_VERSION_2TLS);
-    curl_easy_setopt (hnd, CURLOPT_CUSTOMREQUEST, "GET");
-    curl_easy_setopt (hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
-    curl_easy_setopt (hnd, CURLOPT_TCP_KEEPALIVE, 1L);
-    curl_easy_setopt (hnd, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt (hnd, CURLOPT_WRITEDATA, &res_buf);
-
-    ret = curl_easy_perform (hnd);
-
-    if (ret != CURLE_OK)
-      {
-	  fprintf (stderr, "curl_easy_perform() failed: %s\n",
-		   curl_easy_strerror (ret));
-      }
-
-    curl_easy_cleanup (hnd);
-    curl_slist_free_all (slist1);
-    hnd = NULL;
-    slist1 = NULL;
-    return res_buf.data;
-}
-
-OauthAccess* oauth_access_init (const char *auth_reply, Service service)
-{
-    cJSON *json = cJSON_Parse (auth_reply);
-    if (json == NULL)
-	{
-		fprintf (stderr,
-			"An error occured when parcing Spotify authentication data.\n");
-		cJSON_Delete (json);
-		return NULL;
-	}
-
-
-    cJSON *error = cJSON_GetObjectItem (json, "error");
-    if (error != NULL)
-    {
-        cJSON *error_description = cJSON_GetObjectItem (json, "error_description");
-        printf("Authentication error:\n");
-        printf("\tError: %s\n", error->valuestring);
-        printf("\tDescription: %s\n", error_description->valuestring);
-        goto cleanup;
-    }
-
-    cJSON *access_token = cJSON_GetObjectItem (json, "access_token");
-    cJSON *token_type = cJSON_GetObjectItem (json, "token_type");
-    cJSON *expiration_time = cJSON_GetObjectItem (json, "expires_in");
-
-    OauthAccess *data = malloc (sizeof (OauthAccess));
-
-    if (access_token == NULL)
-    {
-		fprintf (stderr, "No access token found.\n");
-        goto cleanup;
-    }
-
-    if (token_type == NULL)
-    {
-        fprintf (stderr, "No token type found.\n");
-        goto cleanup;
-    }
-        
-
-    if (expiration_time == NULL)
-	{
-		fprintf (stderr, "Got no expiration time for authorization key.\n");
-		goto cleanup;
-	}
-
-    data->service = service;
-    data->token = strdup (access_token->valuestring);
-    data->type = strdup (token_type->valuestring);
-    data->duration = expiration_time->valueint;
-    data->time_recieved = malloc (sizeof (struct tm));
-    if (data->time_recieved != NULL)
-	{
-		time_t now = time (NULL);
-		*(data->time_recieved) = *localtime (&now);
-	}
-
-    cJSON_Delete(json);
-    return data;
-	cleanup:
-
-    cJSON_Delete(json);
-	return NULL;
-}
-
-
-void oauth_access_print (OauthAccess *access_obj)
-{
-    char time_str[100];
-    strftime (time_str, sizeof (time_str), "%Y-%m-%d %H:%M:%S",
-	      access_obj->time_recieved);
-    printf ("Access token:\t%s\n", access_obj->token);
-    printf ("Grant type:\t%s\n", access_obj->type);
-    printf ("Duration:\t%i\n", access_obj->duration);
-    printf ("Time recieved:\t%s\n", time_str);
-    printf ("Service: %s\n", SERVICES[access_obj->service]);
-}
-
-
-void oauth_access_delete (OauthAccess** access_obj)
-{
-    if (*access_obj == NULL) return;
-
-    memset ((*access_obj)->token, '\0', strlen ((*access_obj)->token));
-    free 
-    ((*access_obj)->token);
-    free ((*access_obj)->type);
-    free ((*access_obj)->time_recieved);
-    free ((*access_obj));
 }
 
 
@@ -228,7 +73,7 @@ char* base64url_encode(const char* string, const size_t len)
     for (size_t c = 0; c < len; c++)
     {
 
-        //Iterating throug all bits in current character.
+        //Iterating through all bits in current character.
         for (int8_t b = 7; b >= 0; b--)
         {
             //Checking if current bit has value 1.    
@@ -267,10 +112,191 @@ char* base64url_encode(const char* string, const size_t len)
     return NULL;
 }
 
-
-char* hmac256sha_encode(const char* string, const size_t len)
+/**
+ * Rotates the bits in an unsigned integer to the right.
+ * I.E; Bits rightshifted out of memory 'scope' will be added to the left of memory scope.
+ * Returns this shifted value - does not tamper with the original variable.
+ */
+uint32_t bit_rotate_right(const uint32_t data, const int rotations)
 {
+    uint32_t temp = data;
+    unsigned char flip = 0b10000000;
+    uint8_t* byte_ptr = (uint8_t*)&temp;
+    for (size_t i = 0; i < rotations; i++)
+    {
+        if(temp & 1)
+        {
+            temp >>= 1;
+            byte_ptr[3] |= flip;
+        }
+        else
+        {
+            temp >>= 1;
+        }    
+    }
+    
+    return temp;
+}
+
+void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k)
+{
+    uint32_t w[64] = {0}; //Message schedule - 64x 32bit words.
+
+    uint32_t* word_ptr = (uint32_t*)padded_string_chunk;
+    
+    //Aparently interpreting strings as int will make the string a big endian.
+    //So here i need to reverse the orders so that the strings are interpreted correctly. 
+    for (size_t i = 0; i < 16; i++)
+    {
+        unsigned char* bptr = (unsigned char*)&word_ptr[i];
+        unsigned char* bptr2 = (unsigned char*)&w[i];
+        bptr2[0] = bptr[3];
+        bptr2[1] = bptr[2];
+        bptr2[2] = bptr[1];
+        bptr2[3] = bptr[0];
+    }
+    
+
+    //Actually have no idea of what is happening here, but i'm following the algorithm specified here:
+    // https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/#step-5---create-message-schedule-w
+    for (size_t i = 16; i < 64; i++) //w for words.
+    {        
+        uint32_t s0 = (bit_rotate_right(w[i-15], 7)) ^ (bit_rotate_right(w[i-15], 18)) ^ (w[i-15] >> 3);
+        uint32_t s1 = (bit_rotate_right(w[i-2], 17)) ^ (bit_rotate_right(w[i-2], 19)) ^ (w[i-2] >> 10);
+        uint64_t tmp = w[i-16] + s0 + w[i-7] + s1;
+        w[i] = (uint32_t)tmp;
+    }
+
+    uint32_t a = hash_values[0];
+    uint32_t b = hash_values[1];    
+    uint32_t c = hash_values[2];
+    uint32_t d = hash_values[3];
+    uint32_t e = hash_values[4];
+    uint32_t f = hash_values[5];
+    uint32_t g = hash_values[6];
+    uint32_t h = hash_values[7];
+
+    for (size_t i = 0; i < 64; i++)
+    {
+        uint32_t S1 = bit_rotate_right(e, 6) ^ bit_rotate_right(e, 11) ^ bit_rotate_right(e, 25);  
+        uint32_t ch = (e & f) ^ ((~e) & g);        
+        uint32_t SO = bit_rotate_right(a, 2) ^ bit_rotate_right(a, 13) ^ bit_rotate_right(a, 22);
+        uint32_t maj = (a & b) ^ (a & c) ^ (b & c);
+
+        uint64_t temp1 = h + S1 + ch + k[i] + w[i];
+        uint64_t temp2 = SO + maj;
+        
+        uint64_t rtmp1 = temp1 + d;
+        uint64_t rtmp2 = temp1 + temp2;
+
+        h = g;  
+        g = f;
+        f = e;
+
+        e = (uint32_t)rtmp1; 
+        d = c;
+        c = b;
+        b = a;
+        a = (uint32_t)rtmp2; 
+   }
+    
+    hash_values[0] =  (uint32_t)((uint64_t)(hash_values[0] + a) % UINT32_MAX);
+    hash_values[1] =  (uint32_t)((uint64_t)(hash_values[1] + b) % UINT32_MAX);
+    hash_values[2] =  (uint32_t)((uint64_t)(hash_values[2] + c) % UINT32_MAX);
+    hash_values[3] =  (uint32_t)((uint64_t)(hash_values[3] + d) % UINT32_MAX);
+    hash_values[4] =  (uint32_t)((uint64_t)(hash_values[4] + e) % UINT32_MAX);
+    hash_values[5] =  (uint32_t)((uint64_t)(hash_values[5] + f) % UINT32_MAX);
+    hash_values[6] =  (uint32_t)((uint64_t)(hash_values[6] + g) % UINT32_MAX);
+    hash_values[7] =  (uint32_t)((uint64_t)(hash_values[7] + h) % UINT32_MAX);
 
 }
 
-char* __sha256();
+
+char* hmac256sha_encode(const char* string, const size_t len)
+{
+    char* hash = NULL;
+
+    // Round constants
+    const uint32_t k[] = {
+        0x428a2f98 ,0x71374491 ,0xb5c0fbcf ,0xe9b5dba5 ,0x3956c25b ,0x59f111f1 ,0x923f82a4 ,0xab1c5ed5
+        ,0xd807aa98 ,0x12835b01 ,0x243185be ,0x550c7dc3 ,0x72be5d74 ,0x80deb1fe ,0x9bdc06a7 ,0xc19bf174
+        ,0xe49b69c1 ,0xefbe4786 ,0x0fc19dc6 ,0x240ca1cc ,0x2de92c6f ,0x4a7484aa ,0x5cb0a9dc ,0x76f988da
+        ,0x983e5152 ,0xa831c66d ,0xb00327c8 ,0xbf597fc7 ,0xc6e00bf3 ,0xd5a79147 ,0x06ca6351 ,0x14292967
+        ,0x27b70a85 ,0x2e1b2138 ,0x4d2c6dfc ,0x53380d13 ,0x650a7354 ,0x766a0abb ,0x81c2c92e ,0x92722c85
+        ,0xa2bfe8a1 ,0xa81a664b ,0xc24b8b70 ,0xc76c51a3 ,0xd192e819 ,0xd6990624 ,0xf40e3585 ,0x106aa070
+        ,0x19a4c116 ,0x1e376c08 ,0x2748774c ,0x34b0bcb5 ,0x391c0cb3 ,0x4ed8aa4a ,0x5b9cca4f ,0x682e6ff3
+        ,0x748f82ee ,0x78a5636f ,0x84c87814 ,0x8cc70208 ,0x90befffa ,0xa4506ceb ,0xbef9a3f7 ,0xc67178f2
+    };
+
+    //Initialized hash values.
+    uint32_t h[] = {
+                0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a
+                ,0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+               };
+    
+    uint64_t padding_fill_size = 0;
+
+    const uint64_t orig_size = len * 8;
+    uint64_t size = orig_size;
+    // + 1 because of the first bit insertion.
+    int remainder = (size % 512);
+    if (remainder > 448)
+    {
+        padding_fill_size = 512 - remainder;
+        padding_fill_size += 512;       
+    }
+    else
+    {
+        padding_fill_size = 512 - remainder;
+    }
+
+    size +=  padding_fill_size;
+    if (!size % 512)
+    {
+        fprintf(stderr, "Size of data is not a multiple of 512 termenating hashing function.\n");
+        return NULL;
+    }
+    
+    size_t byte_size = size/8;
+    
+    printf("Original size: %ld, S = %ld, P = %ld, Remainder: %d\n", len*8, size, padding_fill_size, remainder);
+    
+    uint64_t data_chunks = size/512;
+
+    //Using calloc to sanitize data and not have to manually do padding with zeroes.
+    //This will be a lot slower for large files, but since this function is intended to be used only with O-auth2, total bit size will likely never exceed 1500 bits.
+    b512_t* padded_data = calloc(data_chunks, sizeof(b512_t));
+    if (!padded_data)
+    {
+        fprintf(stderr, "Error allocating memory for padded data.\n");
+    }
+
+    memcpy(padded_data, string, len);
+    unsigned char* byte_ptr = (unsigned char*)padded_data;
+
+    //Adds a 1 to the first bit after the input data.
+    byte_ptr[len] |= 0b10000000; 
+
+    //Copies the length of original data as a big-endian at the end of my data blob.
+    uint8_t* big_endian_ptr = (uint8_t*)&orig_size;
+    for (size_t i = 0; i < 8; i++)
+    {
+        byte_ptr[byte_size-i-1] = big_endian_ptr[i];
+    }
+
+    for (size_t i = 0; i < data_chunks; i++)
+    {
+        sha256_chunk_processing(padded_data[i], h, k);
+    }
+
+    hash = malloc(65);
+    hash[0] = '\0';
+    char hex_str[9];
+    for (size_t i = 0; i < 8; i++)
+    {
+        sprintf(hex_str, "%08x", h[i]);
+        strcat(hash, hex_str);
+    }
+    free(padded_data);
+    return hash; 
+}

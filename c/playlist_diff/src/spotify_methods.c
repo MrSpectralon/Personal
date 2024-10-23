@@ -1,14 +1,58 @@
 #include "../header_files/spotify_methods.h"
 
+
+char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
+{
+    //Should be marked as volatile so memset actually executes.
+    char *curlPostField = NULL;
+
+    const char grantTypeAndClientID[] = "grant_type=client_credentials&client_id=";
+    const char cliS[] = "&client_secret=";
+    const char content_type[] = "Content-Type: application/x-www-form-urlencoded";
+    const char destination_url[] = "https://accounts.spotify.com/api/token";
+
+    long fieldSize = 
+        strlen (grantTypeAndClientID)
+        + strlen (clientID) 
+        + strlen (cliS) 
+        + strlen (clientSecret);
+
+    curlPostField = calloc (fieldSize + 1, sizeof (char));
+    if (curlPostField == NULL)
+    {
+        fprintf(stderr, "Failed to allocate memory for curl post field.\n");
+        return NULL;
+    }
+    strcat (curlPostField, grantTypeAndClientID);
+    strcat (curlPostField, clientID);
+    strcat (curlPostField, cliS);
+    strcat (curlPostField, clientSecret);
+
+    char* response = curl_post_request(destination_url, 
+                content_type, curlPostField, fieldSize);
+    
+    memset(curlPostField, 0, fieldSize);
+    free (curlPostField);
+    curlPostField = NULL;
+    return response;
+}
+
+
 char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
 {
-    char *requestURL; //free called in curl_request method.
-    char *authorization; //Same as above.
+    //Preparing approperiate URL for fetching playlist data. 
+    char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
+    // At the moment hardcoded for Norwegian music licensing. (market=NO)
+    char field_options[] =
+	"?market=NO&fields=name%2C+description%2C+tracks%28total%29";
+
+    char *requestURL; 
+    char *authorization; 
     int g_type_len = (int) strlen (access_data->type);
 
     //Preparing authentification
     char auth[] = "Authorization: ";
-    char type[g_type_len + 1];
+    char type[g_type_len + 2];
     type[0] = '\0';
     strcat (type, access_data->type);
     type[g_type_len] = ' ';
@@ -21,19 +65,13 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
     strcat (authorization, type);
     strcat (authorization, access_data->token);
 
-    //Preparing approperiate URL for fetching playlist data. 
-    char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
-    // At the moment hardcoded for Norwegian music licensing. (market=NO)
-    char field_options[] =
-	"?market=NO&fields=name%2C+description%2C+tracks%28total%29";
-
     int url_length = strlen (url_api_dest) + strlen (field_options) + strlen (playlistID);
     requestURL = malloc (url_length + 1);
     requestURL[0] = '\0';
     strcat (requestURL, url_api_dest);
     strcat (requestURL, playlistID);
     strcat (requestURL, field_options);
-	char* reply = curl_request (authorization, requestURL);
+	char* reply = curl_get_request (authorization, requestURL);
 	free(authorization);
 	free(requestURL);
 	return reply;   
@@ -44,6 +82,13 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
 char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offset)
 {
 
+    //Preparing approperiate URL for fetching playlist data. 
+    char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
+
+    // At the moment hardcoded for Norwegian music licensing. (market=NO)
+    char field_options[] =
+	"/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=100&offset=";
+
     char *requestURL;		// free used in curl_request func
     char *authorization;	// Same as above.
     int g_type_len = (int) strlen (ad->type);
@@ -51,7 +96,7 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
 
     //Preparing authentification
     char auth[] = "Authorization: ";
-    char type[g_type_len + 1];
+    char type[g_type_len + 2];
     type[0] = '\0';
     strcat (type, ad->type);
     type[g_type_len] = ' ';
@@ -64,13 +109,7 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
     strcat (authorization, type);
     strcat (authorization, ad->token);
 
-    //Preparing approperiate URL for fetching playlist data. 
-    char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
 
-    // At the moment hardcoded for Norwegian music licensing. (market=NO)
-    char field_options[] =
-	"/tracks?market=NO&fields=items%28track%28name%2C+external_urls%2C+preview_url%2C+duration_ms%2C+album%28name%29%2C+artists%28name%29%29&limit=100&offset=";
-    
 	//Finds the number of digits in the offset number.
     int offset_length = snprintf (NULL, 0, "%d", offset) + 1;	//+1 cause space for \0
     char *offset_str = malloc (offset_length);
@@ -91,152 +130,13 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
 
     free (offset_str);
     offset_str = NULL;
-	char* request = curl_request (authorization, requestURL);
+	char* request = curl_get_request(authorization, requestURL);
 	free(authorization);
 	free(requestURL);
 	return request;
 
 }
 
-//// OLD (WORKING) VERSION
-
-char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
-{
-    ResponseBuffer res_buf;
-    res_buf.data = malloc (1);
-    res_buf.size = 0;
-
-    CURLcode ret;
-    CURL *hnd;
-    char *curlPostField;
-    struct curl_slist *slist1;
-
-    char grantTypeAndClientID[] = "grant_type=client_credentials&client_id=";
-    char cliS[] = "&client_secret=";
-
-    int fieldSize = 
-        strlen (grantTypeAndClientID)
-        + strlen (clientID) 
-        + strlen (cliS) 
-        + strlen (clientSecret)
-        ;
-
-    curlPostField = calloc (fieldSize + 1, sizeof (char));
-    strcat (curlPostField, grantTypeAndClientID);
-    strcat (curlPostField, clientID);
-    strcat (curlPostField, cliS);
-    strcat (curlPostField, clientSecret);
-
-    slist1 = NULL;
-    slist1 =
-    curl_slist_append (slist1,
-               "Content-Type: application/x-www-form-urlencoded");
-    hnd = curl_easy_init ();
-
-    curl_easy_setopt (hnd, CURLOPT_BUFFERSIZE, 102400L);
-    curl_easy_setopt (hnd, CURLOPT_URL,
-              "https://accounts.spotify.com/api/token");
-    curl_easy_setopt (hnd, CURLOPT_NOPROGRESS, 1L);
-    curl_easy_setopt (hnd, CURLOPT_POSTFIELDS, curlPostField);
-    curl_easy_setopt (hnd, CURLOPT_POSTFIELDSIZE_LARGE,
-              (curl_off_t) fieldSize);
-    curl_easy_setopt (hnd, CURLOPT_HTTPHEADER, slist1);
-    curl_easy_setopt (hnd, CURLOPT_USERAGENT, "curl/8.5.0");
-    curl_easy_setopt (hnd, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt (hnd, CURLOPT_HTTP_VERSION,
-              (long) CURL_HTTP_VERSION_2TLS);
-    curl_easy_setopt (hnd, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_easy_setopt (hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
-    curl_easy_setopt (hnd, CURLOPT_TCP_KEEPALIVE, 1L);
-    curl_easy_setopt (hnd, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt (hnd, CURLOPT_WRITEDATA, &res_buf);
-
-    ret = curl_easy_perform (hnd);
-
-    if (ret != CURLE_OK)
-    {
-        fprintf (stderr, "curl_easy_perform() failed: %s\n",
-        curl_easy_strerror (ret));
-    }
-
-    curl_easy_cleanup (hnd);
-    hnd = NULL;
-    free (curlPostField);
-    curl_slist_free_all (slist1);
-    slist1 = NULL;
-    return res_buf.data;
-}
-
-/*
-char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
-{
-    ResponseBuffer res_buf;
-    res_buf.data = malloc (1);
-    res_buf.size = 0;
-
-    CURLcode ret;
-    CURL *hnd;
-    char *curlPostField;
-    struct curl_slist *slist1;
-
-    char grantTypeAndClientID[] = "grant_type=client_credentials&client_id=";
-    char cliS[] = "&client_secret=";
-
-    int fieldSize = 
-		strlen (grantTypeAndClientID)
-		+ strlen (clientID) 
-		+ strlen (cliS) 
-		+ strlen (clientSecret);
-
-    curlPostField = calloc (fieldSize, sizeof (char));
-    strcat (curlPostField, grantTypeAndClientID);
-    strcat (curlPostField, clientID);
-    strcat (curlPostField, cliS);
-    strcat (curlPostField, clientSecret);
-	printf("%s\n", curlPostField);
-	for (size_t i = 0; i < strlen(curlPostField); i++)
-	{
-		printf("Post field index: %ld: %c\n", i, curlPostField[i]);
-	}
-	
-    slist1 = NULL;
-    slist1 =
-	curl_slist_append (slist1,
-			   "Content-Type: application/x-www-form-urlencoded");
-    hnd = curl_easy_init ();
-    curl_easy_setopt (hnd, CURLOPT_BUFFERSIZE, 102400L);
-    curl_easy_setopt (hnd, CURLOPT_URL,
-		      "https://accounts.spotify.com/api/token");
-    curl_easy_setopt (hnd, CURLOPT_NOPROGRESS, 1L);
-    curl_easy_setopt (hnd, CURLOPT_POSTFIELDS, curlPostField);
-    curl_easy_setopt (hnd, CURLOPT_POSTFIELDSIZE_LARGE,
-		      (curl_off_t) fieldSize);
-    curl_easy_setopt (hnd, CURLOPT_HTTPHEADER, slist1);
-    curl_easy_setopt (hnd, CURLOPT_USERAGENT, "curl/8.5.0");
-    curl_easy_setopt (hnd, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt (hnd, CURLOPT_HTTP_VERSION,
-		      (long) CURL_HTTP_VERSION_2TLS);
-    curl_easy_setopt (hnd, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_easy_setopt (hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
-    curl_easy_setopt (hnd, CURLOPT_TCP_KEEPALIVE, 1L);
-    curl_easy_setopt (hnd, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt (hnd, CURLOPT_WRITEDATA, &res_buf);
-
-    ret = curl_easy_perform (hnd);
-
-    if (ret != CURLE_OK)
-	{
-		fprintf (stderr, "curl_easy_perform() failed: %s\n",
-		curl_easy_strerror (ret));
-	}
-    curl_easy_cleanup (hnd);
-    hnd = NULL;
-    free (curlPostField);
-    curl_slist_free_all (slist1);
-    slist1 = NULL;
-    return res_buf.data;
-}
-*/
 
 SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "helper_methods.h"
-
+#include "cjson/cJSON.h"
 
 cJSON* create_JWT();
 
