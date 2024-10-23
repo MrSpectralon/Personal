@@ -1,6 +1,9 @@
 #include "../header_files/spotify_methods.h"
 
-
+/**
+ * Requests an authentication token from spotify.
+ * Returns a string containing the JSON
+ */
 char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
 {
     //Should be marked as volatile so memset actually executes.
@@ -37,7 +40,10 @@ char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
     return response;
 }
 
-
+/**
+ * fetches information about a specified spotify playlist.
+ * Needs a valid playlist ID and valid access token before use.
+ */
 char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
 {
     //Preparing approperiate URL for fetching playlist data. 
@@ -78,7 +84,11 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
 }
 
 
-
+/**
+ * Fetches up to 100 songs from a playlist.
+ * The offset parameter is used when the playlist contains more than 100 songs.
+ * Offset should start at 0 and iterate by 100.
+ */
 char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offset)
 {
 
@@ -137,7 +147,10 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
 
 }
 
-
+/**
+ * Parces the JSON reply from spotify, adding all track information into a linked list of tracks.
+ * 
+ */
 SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
 {
     SpotifyPlaylist* new_playlist;
@@ -229,9 +242,14 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
     return NULL;
 }
 
-
+/**
+ * Sub module of a bigger function.
+ * As the name implies - Parces json and adds the findings into a linked list of tracks.
+ * Returns the number of songs parced.
+ */
 int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
 {
+	int number_of_songs = 0;
     cJSON *json = cJSON_Parse (data);
     if (json == NULL)
 	{
@@ -246,14 +264,13 @@ int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
 		goto cleanup;
 	}
 
-    int number_of_songs = cJSON_GetArraySize (items);
-
     cJSON *item = NULL;
     cJSON_ArrayForEach (item, items)
     {
 		cJSON *track = cJSON_GetObjectItem (item, "track");
 		if (track == NULL) continue;
-		
+
+		number_of_songs++;	
 		handle_json_track_data(track, list_head);
     }
 
@@ -263,6 +280,12 @@ int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
     return number_of_songs;
 }
 
+
+/**
+ * Sub module of a bigger function.
+ * Looks through JSON objects for spotify track data.
+ * Adds matching data into a list of tracks.
+ */
 void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head)
 {
 	cJSON *track_name = cJSON_GetObjectItem (track_obj, "name");
@@ -290,6 +313,11 @@ void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head)
 	free (artists_str);
 }
 
+
+/**
+ * Sub module of a larger funtion.
+ * Finds all artists participating in a song and returns the findings in a string.
+ */
 char* handle_artists_from_json(cJSON* artists_obj)
 {
 	int arr_size = cJSON_GetArraySize (artists_obj);
@@ -359,6 +387,9 @@ char* handle_artists_from_json(cJSON* artists_obj)
 }
 
 
+/**
+ * Fetches a spotify playlist by ID.
+ */
 SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
 {
     SpotifyPlaylist *playlist;

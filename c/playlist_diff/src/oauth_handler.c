@@ -2,7 +2,11 @@
 
 const char* SERVICES[] = {"Spotify", "YouTube Music"};
 
-
+/**
+ * In hindsight this function does way more than just simply initialize the struct...
+ * This function parces json and adds the findings into a OauthAccess object and returns it.
+ * Returns NULL if an error occurs.
+ */
 OauthAccess* oauth_access_init (const char *auth_reply, Service service)
 {
     cJSON *json = cJSON_Parse (auth_reply);
@@ -70,6 +74,9 @@ OauthAccess* oauth_access_init (const char *auth_reply, Service service)
 }
 
 
+/**
+ * Prints whatever is in the OauthAccess object in a somewhat presentable manner.
+ */
 void oauth_access_print (OauthAccess *access_obj)
 {
     char time_str[100];
@@ -82,6 +89,10 @@ void oauth_access_print (OauthAccess *access_obj)
     printf ("Service: %s\n", SERVICES[access_obj->service]);
 }
 
+
+/**
+ * Frees all memory related to the OauthAccess object and deletes it. 
+ */
 void oauth_access_delete (OauthAccess** access_obj)
 {
     if (*access_obj == NULL) return;

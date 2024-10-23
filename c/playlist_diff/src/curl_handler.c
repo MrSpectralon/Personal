@@ -1,6 +1,9 @@
 #include "../header_files/curl_handler.h"
 
 
+/**
+ * Simple initialiation function for the response buffer used in curl calls.
+ */
 int response_buffer_init(ResponseBuffer* rb)
 {
     rb->data = malloc (1);
@@ -13,6 +16,14 @@ int response_buffer_init(ResponseBuffer* rb)
     return 1;
 }
 
+/**
+ * Function passed in as value in curl.
+ * 
+ * A function that dynamically reallocates memory to contain data responses from curl calls.
+ * 
+ * Made through the specification found here:
+ * https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html
+ */
 size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res_buf)
 {
     size_t total_size = size * nmemb;
@@ -33,7 +44,20 @@ size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res
     return total_size;
 }
 
-char* curl_get_request (const char* authorization, const char* requestURL)
+/**
+ * @brief Sends an HTTP GET request call to the specified url with the header. 
+ * Example normal curl call: 
+ *   curl --request GET \
+ *   --url https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n \
+ *   --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
+ *  
+ * Equivilant using this function:
+ * @param header -> 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
+ * @param requestURL -> https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n 
+ * 
+ * @return A null terminated string if siccessfull, NULL if an error occurs. 
+ */
+char* curl_get_request (const char* header, const char* requestURL)
 {
     CURLcode ret;
     CURL *hnd;
@@ -47,7 +71,7 @@ char* curl_get_request (const char* authorization, const char* requestURL)
 
     struct curl_slist *slist1;
     slist1 = NULL;
-    slist1 = curl_slist_append (slist1, authorization);
+    slist1 = curl_slist_append (slist1, header);
     hnd = curl_easy_init ();
 
     curl_easy_setopt (hnd, CURLOPT_BUFFERSIZE, 102400L);
@@ -79,6 +103,23 @@ char* curl_get_request (const char* authorization, const char* requestURL)
     return res_buf.data;
 }
 
+
+
+/**
+ * @brief Sends an HTTP POST request to the specified URL with custom data and headers.
+ *
+ * This function performs an HTTP POST request using libcurl, sending the provided data
+ * to the destination URL. The response is returned as a dynamically allocated string.
+ * The caller is responsible for freeing the returned string.
+ *
+ * @param destination_url The URL to which the POST request is sent.
+ * @param content_type The content type header for the POST request (e.g., "Content-Type: application/json").
+ * @param post_field The data to be sent in the POST request.
+ * @param request_len The length of the data to be sent.
+ *
+ * @return char* The response data as a null-terminated string
+ * @return NULL if an error occurs.
+ */
 char* curl_post_request(
 
     const char* destination_url,
@@ -87,7 +128,6 @@ char* curl_post_request(
     const long request_len)
 
 {
-    
     //Initialize buffer struct.
     ResponseBuffer res_buf;
     if (!response_buffer_init(&res_buf))

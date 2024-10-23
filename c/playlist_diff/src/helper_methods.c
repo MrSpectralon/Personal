@@ -1,7 +1,10 @@
 #include "../header_files/helper_methods.h"
 
 
-
+/**
+ * Removes '\n' from the end of a null terminated string if it has one.
+ * This function does NOT realloc to the new approperiate string length.
+ */
 void remove_new_line (char *str)
 {
     size_t len = strlen (str);
@@ -11,13 +14,16 @@ void remove_new_line (char *str)
     }
 }
 
-
-
+/**
+ * Homemade version of strcmp that aims to use 64bit system architecture to 
+ * reduce the total number of comparison operations(compared to checking each character individually).
+ * 
+ * I'd be gobsmacked if this is somehow faster than the proper strcmp implementation.
+ */
 int string_compare_64b (const char *str1, const char *str2)
 {
     size_t len = strlen(str1);
     size_t len2 = strlen(str2);
-
     if (len != len2)
     {
         return 0;
@@ -46,9 +52,14 @@ int string_compare_64b (const char *str1, const char *str2)
 }
 
 
+/**
+ * Encodes input string into base 64.
+ * Encoding will not tamper with string parameter.
+ * @return A new null terminated - base64 url safe - encoded string of input string. 
+ * @return NULL if an error occurs.
+ */
 char* base64url_encode(const char* string, const size_t len)
 {
-    //Base 64 encoded string.
     char* encoded = NULL;
     //Base 64 URL safe table. Base 64 decimal value = index value 
     char b64urls_table[] = "ABCDEFGHIJKLMNOPQRSTUZWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
@@ -61,6 +72,7 @@ char* base64url_encode(const char* string, const size_t len)
     uint64_t chunk_pos = 0;
     //Counter for position in the base64 bit index.
     uint8_t bit_chunk_pos = 5;
+
 
     encoded = calloc(num_o_chunks + 1, sizeof(char));
     if(encoded == NULL)
@@ -104,11 +116,12 @@ char* base64url_encode(const char* string, const size_t len)
             }
         }
     }
-    encoded[len + 1] = '\0';
+    encoded[len] = '\0';
     return encoded;
 
     cleanup:
     free(encoded);
+    encoded = NULL;
     return NULL;
 }
 
@@ -134,10 +147,14 @@ uint32_t bit_rotate_right(const uint32_t data, const int rotations)
             temp >>= 1;
         }    
     }
-    
     return temp;
 }
 
+
+/**
+ * Supporting function for @fn hmac256sha_encoding
+ * Does the actual hashing by mutating the @param hash_values based on data in @param padded_string_chunk
+ */
 void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k)
 {
     uint32_t w[64] = {0}; //Message schedule - 64x 32bit words.
@@ -167,6 +184,7 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
         w[i] = (uint32_t)tmp;
     }
 
+    //Copies the current hash values to temporary variables for mutation.
     uint32_t a = hash_values[0];
     uint32_t b = hash_values[1];    
     uint32_t c = hash_values[2];
@@ -183,6 +201,9 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
         uint32_t SO = bit_rotate_right(a, 2) ^ bit_rotate_right(a, 13) ^ bit_rotate_right(a, 22);
         uint32_t maj = (a & b) ^ (a & c) ^ (b & c);
 
+        // All addition is supposed to be a modulo of 2^32.
+        // The workaround i settled for is to just add everything to a 64 bit int to contain everything
+        // then later cast it back to 32 bit - throwing away all but the 32 first bits.
         uint64_t temp1 = h + S1 + ch + k[i] + w[i];
         uint64_t temp2 = SO + maj;
         
@@ -192,7 +213,6 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
         h = g;  
         g = f;
         f = e;
-
         e = (uint32_t)rtmp1; 
         d = c;
         c = b;
@@ -200,18 +220,24 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
         a = (uint32_t)rtmp2; 
    }
     
-    hash_values[0] =  (uint32_t)((uint64_t)(hash_values[0] + a) % UINT32_MAX);
-    hash_values[1] =  (uint32_t)((uint64_t)(hash_values[1] + b) % UINT32_MAX);
-    hash_values[2] =  (uint32_t)((uint64_t)(hash_values[2] + c) % UINT32_MAX);
-    hash_values[3] =  (uint32_t)((uint64_t)(hash_values[3] + d) % UINT32_MAX);
-    hash_values[4] =  (uint32_t)((uint64_t)(hash_values[4] + e) % UINT32_MAX);
-    hash_values[5] =  (uint32_t)((uint64_t)(hash_values[5] + f) % UINT32_MAX);
-    hash_values[6] =  (uint32_t)((uint64_t)(hash_values[6] + g) % UINT32_MAX);
-    hash_values[7] =  (uint32_t)((uint64_t)(hash_values[7] + h) % UINT32_MAX);
+    //Same workaround principle as explained in the previous comment block.
+    hash_values[0] =  (uint32_t)((uint64_t)(hash_values[0] + a));
+    hash_values[1] =  (uint32_t)((uint64_t)(hash_values[1] + b));
+    hash_values[2] =  (uint32_t)((uint64_t)(hash_values[2] + c));
+    hash_values[3] =  (uint32_t)((uint64_t)(hash_values[3] + d));
+    hash_values[4] =  (uint32_t)((uint64_t)(hash_values[4] + e));
+    hash_values[5] =  (uint32_t)((uint64_t)(hash_values[5] + f));
+    hash_values[6] =  (uint32_t)((uint64_t)(hash_values[6] + g));
+    hash_values[7] =  (uint32_t)((uint64_t)(hash_values[7] + h));
 
 }
 
 
+/**
+ * Encodes the input string into a sha256 hash.
+ * Function does not mutate parameter string.
+ * Returns NULL if an error occurs, and a 64 character hexadecimal string.
+ */
 char* hmac256sha_encode(const char* string, const size_t len)
 {
     char* hash = NULL;

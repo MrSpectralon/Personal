@@ -3,15 +3,18 @@
 #include "../header_files/spotify_methods.h"
 #include "../header_files/google_methods.h"
 
-
+//Declaration for temporary functionality.
 OauthAccess* request_access_from_file(FILE** file_pointer);
 
 int main (void)
 {
+
     FILE *fptr;
+
     // OauthAccess* google_access = NULL;
     SpotifyPlaylist *spotify_playlist = NULL;
-    volatile char* temp = NULL;
+    
+    volatile char* temp = NULL; //Volatile only to prevent optimilizations as the content needs a guarantee of being cleared in memory.
     char *playlist_ID = NULL;
 
     fptr = fopen("secrets", "r");
@@ -44,16 +47,19 @@ int main (void)
 		fprintf (stderr, "Failed to allocate memory for playlist ID.\n");
 		goto cleanup;
 	}
+    
     remove_new_line ((char*)temp);
-    strcpy (playlist_ID, (const char*)temp);
-    memset ((char*)temp, '\0', strlen((const char*)temp));
+    strcpy (playlist_ID, (char*)temp);
+    
+    //clears buffer and file pointer out of memory.
+    memset ((char*)temp, '\0', strlen((char*)temp));
     free((char*)temp);
     temp = NULL;
     fclose (fptr);
+
     spotify_playlist = get_spotify_playlist (spotify_access, playlist_ID);
     print_list_content (spotify_playlist->track_list);
     
-
 	cleanup:
 
     free (playlist_ID);

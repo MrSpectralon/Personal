@@ -8,7 +8,9 @@ int add_playlist_info (const char *name, const char *description,
     return 0;
 }
 
-
+/**
+ * Appends track data into a linked list of spotify tracks.
+ */
 int append_spotify_track (ListSpotifyTracks **list_head,
 		      const char *name,
 		      const char *album,
@@ -146,7 +148,10 @@ int append_spotify_track (ListSpotifyTracks **list_head,
     return 0;
 }
 
-
+/**
+ * Deletes the entire linked list from memory.
+ * Deletes as in free up memory.
+ */
 void spotify_free_tracklist (ListSpotifyTracks **list_head)
 {
     ListSpotifyTracks *temp = *list_head;
@@ -162,6 +167,10 @@ void spotify_free_tracklist (ListSpotifyTracks **list_head)
     pop_spotify_track (temp, *list_head);
 }
 
+
+/**
+ * Deletes a single track from the linked list.
+ */
 void pop_spotify_track (ListSpotifyTracks *track_node, ListSpotifyTracks *list_head)
 {
     if (track_node == NULL)
@@ -205,6 +214,9 @@ void pop_spotify_track (ListSpotifyTracks *track_node, ListSpotifyTracks *list_h
     track_node = NULL;
 }
 
+/**
+ * Frees the data in a spotify track.
+ */
 void free_spotify_track (SpotifyTrack **track)
 {
     if (!*track)
@@ -219,6 +231,9 @@ void free_spotify_track (SpotifyTrack **track)
     *track = NULL;
 }
 
+/**
+ * Prints all tracks in the track list in a somewhat presentable way.
+ */
 void print_list_content (ListSpotifyTracks *list_head)
 {
     ListSpotifyTracks *temp = list_head;
@@ -239,6 +254,10 @@ void print_list_content (ListSpotifyTracks *list_head)
 }
 
 
+/**
+ * Should look for identical tracks.
+ * Not sure if i've used it or even tested this function yet.
+ */
 ListSpotifyTracks* find_same_track (ListSpotifyTracks *list_head, const SpotifyTrack *track)
 {
     ListSpotifyTracks *temp = list_head;
@@ -254,12 +273,20 @@ ListSpotifyTracks* find_same_track (ListSpotifyTracks *list_head, const SpotifyT
     return NULL;
 }
 
+
+/**
+ * WIP
+ */
 int same_song (const SpotifyTrack *track1, const SpotifyTrack *track2)
 {
     return 0;
 }
 
-SpotifyPlaylist* spotify_playlist_init ()
+
+/**
+ * Initializes the linked list of spotify tracks.
+ */
+SpotifyPlaylist* spotify_playlist_init()
 {
     SpotifyPlaylist *playlist = malloc (sizeof (SpotifyPlaylist));
     if (playlist == NULL)
@@ -291,6 +318,9 @@ SpotifyPlaylist* spotify_playlist_init ()
 }
 
 
+/**
+ * Deletes the entire playlist from memory.
+ */
 void spotify_free_playlist (SpotifyPlaylist **playlist)
 {
     if (*playlist == NULL)
