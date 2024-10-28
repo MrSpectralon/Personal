@@ -16,12 +16,14 @@ void remove_new_line(char* str);
 
 uint32_t bit_rotate_right(const uint32_t data, const int rotations);
 
+//Homemade strcmp that compares 8 bytes at a time - as far as possible.
 int string_compare_64b(const char* str1, const char* str2);
-
 
 // homemade base64 urlsafe encoding
 char* base64url_encode(const char* string, const size_t len);
 
-char* sha256_encode(const char* string, const size_t len);
 
-void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k);
+unsigned char* sha256_encode(const char* string, const size_t len);
+
+
+unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg, const size_t msg_s);

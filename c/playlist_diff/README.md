@@ -21,7 +21,8 @@ Implementation checklist:
   - [ ] Request auth token.
     - [ ] Making JWT
       - [x] Base 64 encoding.
-      - [ ] SHA256 encoding.
+      - [x] SHA256 encoding.
+      - [x] HMAC-SHA256 encoding
   - [ ] Parce reply.
 - [ ] Request playlist data.
 - [ ] Parce reply data.
@@ -44,5 +45,13 @@ Implementation checklist:
 sudo apt install libcurl4-openssl-dev
 ```
 > Cjson
+
 [cJSON github page](https://github.com/DaveGamble/cJSON?tab=readme-ov-file#cmake)
 
+# Compiling the application.
+
+I have not bothered to figure out how the Makefiles work yet, so i am currently just using the following command:
+```sh
+gcc -g -fsanitize=address -Wall -o  out/p_diff src/* -lcurl -lcjson 
+```
+Will get to make a proper makefile eventually.

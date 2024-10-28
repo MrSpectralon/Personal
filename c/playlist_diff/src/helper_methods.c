@@ -1,6 +1,10 @@
 #include "../header_files/helper_methods.h"
 
 
+static void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k);
+
+
+
 /**
  * Removes '\n' from the end of a null terminated string if it has one.
  * This function does NOT realloc to the new approperiate string length.
@@ -240,7 +244,7 @@ static void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* 
  */
 unsigned char* sha256_encode(const char* string, const size_t len)
 {
-    char* hash = NULL;
+    unsigned char* hash = NULL;
     b512_t* padded_data = NULL;
 
     // Round constants
@@ -324,7 +328,7 @@ unsigned char* sha256_encode(const char* string, const size_t len)
     }
     for (size_t i = 0; i < 8; i++)
     {
-        unsigned char* bptr = (char*)&h[i];
+        unsigned char* bptr = (unsigned char*)&h[i];
         int bpos = i*4;
         hash[bpos] = bptr[3];
         hash[bpos + 1] = bptr[2];
@@ -340,59 +344,53 @@ unsigned char* sha256_encode(const char* string, const size_t len)
 
 unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg, const size_t msg_s)
 {
-    unsigned char* inner_hash = NULL;
+    unsigned char* restrict inner_hash = NULL;
+    unsigned char* inner_msg = NULL;    
 
     b512_t prepared_key = {};
     uint64_t* kptr = (uint64_t*)prepared_key; 
     
     b512_t inner_pad = {}; 
-    uint64_t* iptr = (uint64_t*)inner_pad; 
-    unsigned char* inner_msg = NULL;
-    
-
     b512_t outer_pad = {};    
-    uint64_t* optr = (uint64_t*)outer_pad; 
-    
+
     char outer_key[96] = {};
-    uint64_t* okptr = (uint64_t*)outer_key;
-
-    uint64_t ipad = 0;
-    memset(&ipad, 0x36, sizeof(uint64_t));
-    uint64_t opad = 0;
-    memset(&opad, 0x5c, sizeof(uint64_t));
-
-
 
     if (key_s > 64)
     {
         unsigned char* temp_key = sha256_encode(key, key_s);
         if (temp_key == NULL) goto cleanup;
         
-        for (size_t i = 0; i < 32; i++) prepared_key[i] = temp_key[i];
+        memcpy(prepared_key, temp_key, 32);
         free(temp_key);
     }
     else 
     {
-        for (size_t i = 0; i < key_s; i++) prepared_key[i] = key[i];
+        memcpy(prepared_key, key, key_s); 
     }
 
-    for (size_t i = 0; i < 8; i++)
     {
-        iptr[i] = kptr[i] ^ ipad;    
-        optr[i] = kptr[i] ^ opad;
+        uint64_t ipad = 0;
+        memset(&ipad, 0x36, sizeof(uint64_t));
+        uint64_t opad = 0;
+        memset(&opad, 0x5c, sizeof(uint64_t));
+        uint64_t* iptr = (uint64_t*)inner_pad; 
+        uint64_t* optr = (uint64_t*)outer_pad;
+
+        for (size_t i = 0; i < 8; i++)
+        {
+            iptr[i] = kptr[i] ^ ipad;    
+            optr[i] = kptr[i] ^ opad;
+        }
     }
 
-   
-    
     inner_msg = malloc(65+msg_s);
     if (inner_msg == NULL)
     {
         fprintf(stderr, "Error allocating memory for inner message in HMAC.\n");
         goto cleanup;
     }
-    
     inner_msg[0] = '\0';
-    
+        
     {
         unsigned char* bptr = &inner_msg[64];
         memcpy(inner_msg, inner_pad, 64);
@@ -400,38 +398,24 @@ unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg,
     }
 
     inner_hash = sha256_encode((char*)inner_msg, 64+msg_s);
-    if(inner_hash == NULL)
-    {
-        goto cleanup;
-    }
+    if(inner_hash == NULL) goto cleanup;
+    
     free(inner_msg);
     inner_msg = NULL;
-
-    // Just could not be bothered to fix memory overflow and underflow with strcpy functions
-    // So i'm just manually going through each index and duplicating the values.
-    // Not that big of a performance dip as it is only 96 iterations.
     
-    for (size_t i = 0; i < 12; i++)
     {
-        if (i < 64)
-        {
-            okptr[i] = optr[i];
-        }
-        else
-        {
-            okptr[i] = (uint64_t*)inner_hash[i-8];
-        }
+        char* bptr = &outer_key[64];
+        memcpy(outer_key, outer_pad, 64);
+        memcpy(bptr, inner_hash, 32);
     }
+
     free(inner_hash);
     inner_hash = NULL;
     
     return sha256_encode(outer_key, 96);
     
-        
-    cleanup:
+  cleanup:
     free(inner_msg);
     free(inner_hash);
     return NULL;
-
 }
-

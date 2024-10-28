@@ -139,7 +139,7 @@ uint32_t bit_rotate_right(const uint32_t data, const int rotations)
  * Supporting function for @fn hmac256sha_encoding
  * Does the actual hashing by mutating the @param hash_values based on data in @param padded_string_chunk
  */
-void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k)
+void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* restrict hash_values, const uint32_t* k)
 {
     uint32_t w[64] = {0}; //Message schedule - 64x 32bit words.
 
@@ -222,9 +222,9 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
  * Function does not mutate parameter string.
  * Returns NULL if an error occurs, and a 32 byte unsigned string of the hash value.
  */
-unsigned char* sha256_encode(const char* string, const size_t len)
+unsigned char* sha256_encode(const char* restrict string, const size_t len)
 {
-    unsigned char* hash = NULL;
+    unsigned char* restrict hash = NULL;
     b512_t* padded_data = NULL;
 
     // Round constants
@@ -325,29 +325,16 @@ unsigned char* sha256_encode(const char* string, const size_t len)
 
 unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg, const size_t msg_s)
 {
-    unsigned char* inner_hash = NULL;
+    unsigned char* restrict inner_hash = NULL;
+    unsigned char* inner_msg = NULL;    
 
     b512_t prepared_key = {};
     uint64_t* kptr = (uint64_t*)prepared_key; 
     
     b512_t inner_pad = {}; 
-    uint64_t* iptr = (uint64_t*)inner_pad; 
-    unsigned char* inner_msg = NULL;
-    
-
     b512_t outer_pad = {};    
-    uint64_t* optr = (uint64_t*)outer_pad; 
-    
-    
+
     char outer_key[96] = {};
-
-
-    uint64_t ipad = 0;
-    memset(&ipad, 0x36, sizeof(uint64_t));
-    uint64_t opad = 0;
-    memset(&opad, 0x5c, sizeof(uint64_t));
-
-
 
     if (key_s > 64)
     {
@@ -362,22 +349,29 @@ unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg,
         memcpy(prepared_key, key, key_s); 
     }
 
-    for (size_t i = 0; i < 8; i++)
     {
-        iptr[i] = kptr[i] ^ ipad;    
-        optr[i] = kptr[i] ^ opad;
+        uint64_t ipad = 0;
+        memset(&ipad, 0x36, sizeof(uint64_t));
+        uint64_t opad = 0;
+        memset(&opad, 0x5c, sizeof(uint64_t));
+        uint64_t* iptr = (uint64_t*)inner_pad; 
+        uint64_t* optr = (uint64_t*)outer_pad;
+
+        for (size_t i = 0; i < 8; i++)
+        {
+            iptr[i] = kptr[i] ^ ipad;    
+            optr[i] = kptr[i] ^ opad;
+        }
     }
 
-    
     inner_msg = malloc(65+msg_s);
     if (inner_msg == NULL)
     {
         fprintf(stderr, "Error allocating memory for inner message in HMAC.\n");
         goto cleanup;
     }
-    
     inner_msg[0] = '\0';
-    
+        
     {
         unsigned char* bptr = &inner_msg[64];
         memcpy(inner_msg, inner_pad, 64);
@@ -385,14 +379,11 @@ unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg,
     }
 
     inner_hash = sha256_encode((char*)inner_msg, 64+msg_s);
-    if(inner_hash == NULL)
-    {
-        goto cleanup;
-    }
+    if(inner_hash == NULL) goto cleanup;
+    
     free(inner_msg);
     inner_msg = NULL;
-
-   
+    
     {
         char* bptr = &outer_key[64];
         memcpy(outer_key, outer_pad, 64);
@@ -404,12 +395,10 @@ unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg,
     
     return sha256_encode(outer_key, 96);
     
-        
-    cleanup:
+  cleanup:
     free(inner_msg);
     free(inner_hash);
     return NULL;
-
 }
 
 
