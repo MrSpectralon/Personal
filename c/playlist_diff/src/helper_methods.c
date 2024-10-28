@@ -155,7 +155,7 @@ uint32_t bit_rotate_right(const uint32_t data, const int rotations)
  * Supporting function for @fn hmac256sha_encoding
  * Does the actual hashing by mutating the @param hash_values based on data in @param padded_string_chunk
  */
-void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k)
+static void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k)
 {
     uint32_t w[64] = {0}; //Message schedule - 64x 32bit words.
 
@@ -236,11 +236,12 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
 /**
  * Encodes the input string into a sha256 hash.
  * Function does not mutate parameter string.
- * Returns NULL if an error occurs, and a 64 character hexadecimal string.
+ * Returns NULL if an error occurs, and a 32 byte unsigned string of the hash value.
  */
-char* hmac256sha_encode(const char* string, const size_t len)
+unsigned char* sha256_encode(const char* string, const size_t len)
 {
     char* hash = NULL;
+    b512_t* padded_data = NULL;
 
     // Round constants
     const uint32_t k[] = {
@@ -277,7 +278,7 @@ char* hmac256sha_encode(const char* string, const size_t len)
     }
 
     size +=  padding_fill_size;
-    if (!size % 512)
+    if (size % 512)
     {
         fprintf(stderr, "Size of data is not a multiple of 512 termenating hashing function.\n");
         return NULL;
@@ -291,7 +292,7 @@ char* hmac256sha_encode(const char* string, const size_t len)
 
     //Using calloc to sanitize data and not have to manually do padding with zeroes.
     //This will be a lot slower for large files, but since this function is intended to be used only with O-auth2, total bit size will likely never exceed 1500 bits.
-    b512_t* padded_data = calloc(data_chunks, sizeof(b512_t));
+    padded_data = calloc(data_chunks, sizeof(b512_t));
     if (!padded_data)
     {
         fprintf(stderr, "Error allocating memory for padded data.\n");
@@ -315,14 +316,122 @@ char* hmac256sha_encode(const char* string, const size_t len)
         sha256_chunk_processing(padded_data[i], h, k);
     }
 
-    hash = malloc(65);
-    hash[0] = '\0';
-    char hex_str[9];
+    hash = malloc(32);
+    if (hash == NULL)
+    {
+        fprintf(stderr, "Error occured when allocating memory for the comlpeted hash.\n");
+        goto cleanup;
+    }
     for (size_t i = 0; i < 8; i++)
     {
-        sprintf(hex_str, "%08x", h[i]);
-        strcat(hash, hex_str);
+        unsigned char* bptr = (char*)&h[i];
+        int bpos = i*4;
+        hash[bpos] = bptr[3];
+        hash[bpos + 1] = bptr[2];
+        hash[bpos + 2] = bptr[1];
+        hash[bpos + 3] = bptr[0];
     }
+
+    cleanup:
     free(padded_data);
     return hash; 
 }
+
+
+unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg, const size_t msg_s)
+{
+    unsigned char* inner_hash = NULL;
+
+    b512_t prepared_key = {};
+    uint64_t* kptr = (uint64_t*)prepared_key; 
+    
+    b512_t inner_pad = {}; 
+    uint64_t* iptr = (uint64_t*)inner_pad; 
+    unsigned char* inner_msg = NULL;
+    
+
+    b512_t outer_pad = {};    
+    uint64_t* optr = (uint64_t*)outer_pad; 
+    
+    char outer_key[96] = {};
+    uint64_t* okptr = (uint64_t*)outer_key;
+
+    uint64_t ipad = 0;
+    memset(&ipad, 0x36, sizeof(uint64_t));
+    uint64_t opad = 0;
+    memset(&opad, 0x5c, sizeof(uint64_t));
+
+
+
+    if (key_s > 64)
+    {
+        unsigned char* temp_key = sha256_encode(key, key_s);
+        if (temp_key == NULL) goto cleanup;
+        
+        for (size_t i = 0; i < 32; i++) prepared_key[i] = temp_key[i];
+        free(temp_key);
+    }
+    else 
+    {
+        for (size_t i = 0; i < key_s; i++) prepared_key[i] = key[i];
+    }
+
+    for (size_t i = 0; i < 8; i++)
+    {
+        iptr[i] = kptr[i] ^ ipad;    
+        optr[i] = kptr[i] ^ opad;
+    }
+
+   
+    
+    inner_msg = malloc(65+msg_s);
+    if (inner_msg == NULL)
+    {
+        fprintf(stderr, "Error allocating memory for inner message in HMAC.\n");
+        goto cleanup;
+    }
+    
+    inner_msg[0] = '\0';
+    
+    {
+        unsigned char* bptr = &inner_msg[64];
+        memcpy(inner_msg, inner_pad, 64);
+        memcpy(bptr, msg, msg_s);
+    }
+
+    inner_hash = sha256_encode((char*)inner_msg, 64+msg_s);
+    if(inner_hash == NULL)
+    {
+        goto cleanup;
+    }
+    free(inner_msg);
+    inner_msg = NULL;
+
+    // Just could not be bothered to fix memory overflow and underflow with strcpy functions
+    // So i'm just manually going through each index and duplicating the values.
+    // Not that big of a performance dip as it is only 96 iterations.
+    
+    for (size_t i = 0; i < 12; i++)
+    {
+        if (i < 64)
+        {
+            okptr[i] = optr[i];
+        }
+        else
+        {
+            okptr[i] = (uint64_t*)inner_hash[i-8];
+        }
+    }
+    free(inner_hash);
+    inner_hash = NULL;
+    
+    return sha256_encode(outer_key, 96);
+    
+        
+    cleanup:
+    free(inner_msg);
+    free(inner_hash);
+    return NULL;
+
+}
+

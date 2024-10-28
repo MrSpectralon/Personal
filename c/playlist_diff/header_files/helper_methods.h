@@ -22,6 +22,6 @@ int string_compare_64b(const char* str1, const char* str2);
 // homemade base64 urlsafe encoding
 char* base64url_encode(const char* string, const size_t len);
 
-char* hmac256sha_encode(const char* string, const size_t len);
+char* sha256_encode(const char* string, const size_t len);
 
 void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k);

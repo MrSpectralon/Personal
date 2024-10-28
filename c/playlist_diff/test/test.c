@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -132,12 +133,20 @@ uint32_t bit_rotate_right(const uint32_t data, const int rotations)
     return temp;
 }
 
+
+
+/**
+ * Supporting function for @fn hmac256sha_encoding
+ * Does the actual hashing by mutating the @param hash_values based on data in @param padded_string_chunk
+ */
 void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_values, const uint32_t* k)
 {
     uint32_t w[64] = {0}; //Message schedule - 64x 32bit words.
 
     uint32_t* word_ptr = (uint32_t*)padded_string_chunk;
-    unsigned char* word_ptr2 = (unsigned char*)padded_string_chunk;
+    
+    //Aparently interpreting strings as int will make the string a big endian.
+    //So here i need to reverse the orders so that the strings are interpreted correctly. 
     for (size_t i = 0; i < 16; i++)
     {
         unsigned char* bptr = (unsigned char*)&word_ptr[i];
@@ -148,47 +157,18 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
         bptr2[3] = bptr[0];
     }
     
-    // for (size_t i = 0; i < 64; i++)
-    // {
-    //     printf("Index %02ld: ", i);
-    //     print_binary(w[i], 4);
-    // }
 
     //Actually have no idea of what is happening here, but i'm following the algorithm specified here:
     // https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/#step-5---create-message-schedule-w
     for (size_t i = 16; i < 64; i++) //w for words.
-    {
-        
-        uint32_t s01 = bit_rotate_right(w[i-15], 7);
-        uint32_t s02 = bit_rotate_right(w[i-15], 18);
-        uint32_t s03 = w[i-15] >> 3;
-
+    {        
         uint32_t s0 = (bit_rotate_right(w[i-15], 7)) ^ (bit_rotate_right(w[i-15], 18)) ^ (w[i-15] >> 3);
-        
         uint32_t s1 = (bit_rotate_right(w[i-2], 17)) ^ (bit_rotate_right(w[i-2], 19)) ^ (w[i-2] >> 10);
         uint64_t tmp = w[i-16] + s0 + w[i-7] + s1;
-        w[i] = (uint32_t)(tmp % UINT32_MAX);
+        w[i] = (uint32_t)tmp;
     }
 
-    for (size_t i = 0; i < 64; i++)
-    {
-        if(i == 0)
-        {
-            print_binary(w[i], 4); 
-            continue;
-        }
-        if (i % 2 == 0)
-        {
-            printf("\n");
-        }
-        else
-        {
-            printf(" ");
-        }
-        print_binary(w[i], 4);
-        
-    }
-
+    //Copies the current hash values to temporary variables for mutation.
     uint32_t a = hash_values[0];
     uint32_t b = hash_values[1];    
     uint32_t c = hash_values[2];
@@ -205,73 +185,47 @@ void sha256_chunk_processing(const b512_t padded_string_chunk, uint32_t* hash_va
         uint32_t SO = bit_rotate_right(a, 2) ^ bit_rotate_right(a, 13) ^ bit_rotate_right(a, 22);
         uint32_t maj = (a & b) ^ (a & c) ^ (b & c);
 
+        // All addition is supposed to be a modulo of 2^32.
+        // The workaround i settled for is to just add everything to a 64 bit int to contain everything
+        // then later cast it back to 32 bit - throwing away all but the 32 first bits.
         uint64_t temp1 = h + S1 + ch + k[i] + w[i];
         uint64_t temp2 = SO + maj;
+        
         uint64_t rtmp1 = temp1 + d;
         uint64_t rtmp2 = temp1 + temp2;
 
-        uint32_t r1p = (uint32_t)rtmp1;
-        uint32_t r2p = (uint32_t)rtmp2;
         h = g;  
         g = f;
         f = e;
-        // printf("\nd: ");
-        // print_binary(d, 4);
-        // printf("\ntemp: ");
-        // print_binary(temp1, 4);
-        // printf("\nrtemp: ");
-        // print_binary(r1p, 4);
-
-
-
-        e = r1p; 
-        e = r1p; 
+        e = (uint32_t)rtmp1; 
         d = c;
         c = b;
         b = a;
-        a = r2p; 
-
-    //     printf("\na = ");
-    //     print_binary(a, 4);
-    //     printf("\n");
-    //     printf("b = ");
-    //     print_binary(b, 4);
-    //     printf("\n");
-    //     printf("c = ");
-    //     print_binary(c, 4);
-    //     printf("\n");
-    //     printf("d = ");
-    //     print_binary(d, 4);
-    //     printf("\n");
-    //     printf("e = ");
-    //     print_binary(e, 4);
-    //     printf("\n");
-    //     printf("f = ");
-    //     print_binary(f, 4);
-    //     printf("\n");
-    //     printf("g = ");
-    //     print_binary(g, 4);
-    //     printf("\n");
-    //     printf("h = ");
-    //     print_binary(h, 4);
-    //     printf("\n");
-    // return;
-    }
+        a = (uint32_t)rtmp2; 
+   }
     
-    hash_values[0] =  (uint32_t)((uint64_t)(hash_values[0] + a) % UINT32_MAX);
-    hash_values[1] =  (uint32_t)((uint64_t)(hash_values[1] + b) % UINT32_MAX);
-    hash_values[2] =  (uint32_t)((uint64_t)(hash_values[2] + c) % UINT32_MAX);
-    hash_values[3] =  (uint32_t)((uint64_t)(hash_values[3] + d) % UINT32_MAX);
-    hash_values[4] =  (uint32_t)((uint64_t)(hash_values[4] + e) % UINT32_MAX);
-    hash_values[5] =  (uint32_t)((uint64_t)(hash_values[5] + f) % UINT32_MAX);
-    hash_values[6] =  (uint32_t)((uint64_t)(hash_values[6] + g) % UINT32_MAX);
-    hash_values[7] =  (uint32_t)((uint64_t)(hash_values[7] + h) % UINT32_MAX);
+    //Same workaround principle as explained in the previous comment block.
+    hash_values[0] =  (uint32_t)((uint64_t)(hash_values[0] + a));
+    hash_values[1] =  (uint32_t)((uint64_t)(hash_values[1] + b));
+    hash_values[2] =  (uint32_t)((uint64_t)(hash_values[2] + c));
+    hash_values[3] =  (uint32_t)((uint64_t)(hash_values[3] + d));
+    hash_values[4] =  (uint32_t)((uint64_t)(hash_values[4] + e));
+    hash_values[5] =  (uint32_t)((uint64_t)(hash_values[5] + f));
+    hash_values[6] =  (uint32_t)((uint64_t)(hash_values[6] + g));
+    hash_values[7] =  (uint32_t)((uint64_t)(hash_values[7] + h));
 
 }
 
-char* sha256_encode(const char* string, const size_t len)
+
+/**
+ * Encodes the input string into a sha256 hash.
+ * Function does not mutate parameter string.
+ * Returns NULL if an error occurs, and a 32 byte unsigned string of the hash value.
+ */
+unsigned char* sha256_encode(const char* string, const size_t len)
 {
-    char* hash = NULL;
+    unsigned char* hash = NULL;
+    b512_t* padded_data = NULL;
 
     // Round constants
     const uint32_t k[] = {
@@ -308,7 +262,7 @@ char* sha256_encode(const char* string, const size_t len)
     }
 
     size +=  padding_fill_size;
-    if (!size % 512)
+    if (size % 512)
     {
         fprintf(stderr, "Size of data is not a multiple of 512 termenating hashing function.\n");
         return NULL;
@@ -316,13 +270,11 @@ char* sha256_encode(const char* string, const size_t len)
     
     size_t byte_size = size/8;
     
-    printf("Original size: %ld, S = %ld, P = %ld, Remainder: %d\n", len*8, size, padding_fill_size, remainder);
-    
     uint64_t data_chunks = size/512;
 
     //Using calloc to sanitize data and not have to manually do padding with zeroes.
     //This will be a lot slower for large files, but since this function is intended to be used only with O-auth2, total bit size will likely never exceed 1500 bits.
-    b512_t* padded_data = calloc(data_chunks, sizeof(b512_t));
+    padded_data = calloc(data_chunks, sizeof(b512_t));
     if (!padded_data)
     {
         fprintf(stderr, "Error allocating memory for padded data.\n");
@@ -333,11 +285,6 @@ char* sha256_encode(const char* string, const size_t len)
 
     //Adds a 1 to the first bit after the input data.
     byte_ptr[len] |= 0b10000000; 
-    
-    // 10 11 10 00
-    // 00 01 11 01
-
-
 
     //Copies the length of original data as a big-endian at the end of my data blob.
     uint8_t* big_endian_ptr = (uint8_t*)&orig_size;
@@ -345,35 +292,126 @@ char* sha256_encode(const char* string, const size_t len)
     {
         byte_ptr[byte_size-i-1] = big_endian_ptr[i];
     }
- 
-    for (size_t i = 0; i < byte_size; i++)
-    {
-        print_char_binary(byte_ptr[i]);
-
-    }
-    printf("\n");
-
-
 
     for (size_t i = 0; i < data_chunks; i++)
     {
         sha256_chunk_processing(padded_data[i], h, k);
     }
 
-    hash = malloc(65);
-    hash[0] = '\0';
-    char hex_str[9];
+    hash = malloc(32);
+    if (hash == NULL)
+    {
+        fprintf(stderr, "Error occured when allocating memory for the comlpeted hash.\n");
+        goto cleanup;
+    }
     for (size_t i = 0; i < 8; i++)
     {
-        sprintf(hex_str, "%08x", h[i]);
-        strcat(hash, hex_str);
+        unsigned char* bptr = (unsigned char*)&h[i];
+        int bpos = i*4;
+        hash[bpos] = bptr[3];
+        hash[bpos + 1] = bptr[2];
+        hash[bpos + 2] = bptr[1];
+        hash[bpos + 3] = bptr[0];
+    }
+
+    cleanup:
+    free(padded_data);
+    return hash; 
+}
+
+
+
+
+
+unsigned char* hmac_sha256(const char* key, const size_t key_s, const char* msg, const size_t msg_s)
+{
+    unsigned char* inner_hash = NULL;
+
+    b512_t prepared_key = {};
+    uint64_t* kptr = (uint64_t*)prepared_key; 
+    
+    b512_t inner_pad = {}; 
+    uint64_t* iptr = (uint64_t*)inner_pad; 
+    unsigned char* inner_msg = NULL;
+    
+
+    b512_t outer_pad = {};    
+    uint64_t* optr = (uint64_t*)outer_pad; 
+    
+    
+    char outer_key[96] = {};
+
+
+    uint64_t ipad = 0;
+    memset(&ipad, 0x36, sizeof(uint64_t));
+    uint64_t opad = 0;
+    memset(&opad, 0x5c, sizeof(uint64_t));
+
+
+
+    if (key_s > 64)
+    {
+        unsigned char* temp_key = sha256_encode(key, key_s);
+        if (temp_key == NULL) goto cleanup;
+        
+        memcpy(prepared_key, temp_key, 32);
+        free(temp_key);
+    }
+    else 
+    {
+        memcpy(prepared_key, key, key_s); 
+    }
+
+    for (size_t i = 0; i < 8; i++)
+    {
+        iptr[i] = kptr[i] ^ ipad;    
+        optr[i] = kptr[i] ^ opad;
+    }
+
+    
+    inner_msg = malloc(65+msg_s);
+    if (inner_msg == NULL)
+    {
+        fprintf(stderr, "Error allocating memory for inner message in HMAC.\n");
+        goto cleanup;
     }
     
-    free(padded_data);
+    inner_msg[0] = '\0';
+    
+    {
+        unsigned char* bptr = &inner_msg[64];
+        memcpy(inner_msg, inner_pad, 64);
+        memcpy(bptr, msg, msg_s);
+    }
 
-    return hash; 
+    inner_hash = sha256_encode((char*)inner_msg, 64+msg_s);
+    if(inner_hash == NULL)
+    {
+        goto cleanup;
+    }
+    free(inner_msg);
+    inner_msg = NULL;
+
+   
+    {
+        char* bptr = &outer_key[64];
+        memcpy(outer_key, outer_pad, 64);
+        memcpy(bptr, inner_hash, 32);
+    }
+
+    free(inner_hash);
+    inner_hash = NULL;
+    
+    return sha256_encode(outer_key, 96);
+    
+        
+    cleanup:
+    free(inner_msg);
+    free(inner_hash);
+    return NULL;
 
 }
+
 
 int main(){
     
@@ -387,13 +425,20 @@ int main(){
     string1 = calloc(s_len + 1, sizeof(char));
     if (string1 == NULL)
     {
-        return -1;
+        goto end;
     }
     
     strcpy(string1, buffer);
 
-    char* hash = sha256_encode(string1, s_len);
-    printf("\nHash value:\n%s\n", hash);
+    unsigned char* hash = hmac_sha256((const char*)"ffb4675ff00162f515c3fd4bc4d4b80bad02868e03417cc4a82e1fc2af5122f6bbb", 67, string1, s_len);
+    printf("\n");
+    for (size_t i = 0; i < 32; i++)
+    {
+        printf("%02x", hash[i]);
+    }
+    
+    printf("\n");
+    
 
     end:
     free(hash);
@@ -401,5 +446,3 @@ int main(){
     return 0;
 
 }
-
-

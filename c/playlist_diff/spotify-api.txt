@@ -54,4 +54,29 @@ https://api.spotify.com/v1/playlists/18Y1uKbT84hUBRy6oqSH9Q/tracks?market=NO&fie
 items(track(name, external_urls, preview_url, duration_ms, album(name), artists(name))&limit=100&offset=0
 
 
+function HMAC_SHA256(key, message):
+    // Step 1: Key preparation
+    if length(key) > 64:
+        key = SHA256(key)   // Hash key if too long
+    if length(key) < 64:
+        key = pad(key, 64)  // Pad key with zeros to 64 bytes
+
+    // Step 2: Create ipad and opad
+    ipad = 0x36 * 64
+    opad = 0x5C * 64
+
+    // Step 3: XOR key with ipad and opad
+    inner_padded_key = XOR(key, ipad)
+    outer_padded_key = XOR(key, opad)
+
+    // Step 4: Inner hash
+    inner_hash = SHA256(inner_padded_key + message)
+
+    // Step 5: Outer hash
+    final_hmac = SHA256(outer_padded_key + inner_hash)
+
+    // Step 6: Return result
+    return final_hmac
+
+
 HGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhtHGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhHGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhtHGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhtt

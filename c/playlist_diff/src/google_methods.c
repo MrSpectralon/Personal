@@ -4,8 +4,11 @@
 
 cJSON* create_JWT()
 {
+    cJSON* jwt_header = cJSON_CreateObject();
+    
+    cJSON_AddStringToObject(jwt_header, "alg", "HS256");
+    
     return NULL;
-    //cJSON* jwt = cJSON_CreateObject();
     
 
 }
