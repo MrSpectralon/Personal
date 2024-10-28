@@ -40,5 +40,9 @@ Implementation checklist:
 # External packages
 
 > Libcurlc
-
+```sh
+sudo apt install libcurl4-openssl-dev
+```
 > Cjson
+[cJSON github page](https://github.com/DaveGamble/cJSON?tab=readme-ov-file#cmake)
+
