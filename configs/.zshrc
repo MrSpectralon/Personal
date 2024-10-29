@@ -72,7 +72,7 @@ ENABLE_CORRECTION="true"
 plugins=(git zoxide zsh-history-substring-search zsh-syntax-highlighting )
 
 source $ZSH/oh-my-zsh.sh
-source ~/.oh-my-zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.oh-my-zsh/custom/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # User configuration
