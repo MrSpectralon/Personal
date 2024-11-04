@@ -80,3 +80,40 @@ function HMAC_SHA256(key, message):
 
 
 HGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhtHGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhHGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhtHGERWOISDJHFLEIWUVASsdflgkuhretiwsgundfsvfslerfiguhhbsdkuvsrigubhwsefloiuhalsidufhaslewrkjgvbnsdlfiugsdigufshdergfuilfaerghsfhtt
+
+
+1. JWT Structure Overview
+A JWT consists of three parts:
+
+Header (base64url encoded)
+Payload (base64url encoded)
+Signature (HMAC-SHA256 of the header and payload)
+Each part is separated by a dot (.)
+
+
+
+JWT
+<base64url-encoded header>.<base64url-encoded payload>.<signature>
+
+
+
+JWT header
+{
+  "alg": "HS256",
+  "typ": "JWT"
+}
+
+
+
+JWT payload
+{
+  "iss": "your-service-account-email@project-id.iam.gserviceaccount.com",
+  "scope": "https://www.googleapis.com/auth/youtube.readonly",
+  "aud": "https://oauth2.googleapis.com/token",
+  "exp": 1623443462,
+  "iat": 1623441662
+}
+
+4. HMAC-SHA256 Signature
+The signature is created by hashing the concatenation of the encoded header and payload using HMAC-SHA256 and your service account's private key.
+

@@ -82,9 +82,9 @@ char* base64url_encode(const char* string, const size_t len)
     if(encoded == NULL)
     {
         fprintf(stderr, "Error allocating memory for b64 encoded string.\n");
-        goto cleanup;        
+        goto cleanup;
     }
-    
+
     //Iterating through all characters in string
     for (size_t c = 0; c < len; c++)
     {
