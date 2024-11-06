@@ -91,10 +91,10 @@ char* curl_get_request (const char* header, const char* requestURL)
     ret = curl_easy_perform (hnd);
 
     if (ret != CURLE_OK)
-      {
-	  fprintf (stderr, "curl_easy_perform() failed: %s\n",
-		   curl_easy_strerror (ret));
-      }
+    {
+        fprintf (stderr, "curl_easy_perform() failed: %s\n",
+        curl_easy_strerror (ret));
+    }
 
     curl_easy_cleanup (hnd);
     curl_slist_free_all (slist1);

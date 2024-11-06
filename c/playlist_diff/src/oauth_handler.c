@@ -1,4 +1,6 @@
 #include "../header_files/oauth_handler.h"
+#include <stdlib.h>
+#include <string.h>
 
 const char* SERVICES[] = {"Spotify", "YouTube Music"};
 
@@ -7,16 +9,25 @@ const char* SERVICES[] = {"Spotify", "YouTube Music"};
  * This function parces json and adds the findings into a OauthAccess object and returns it.
  * Returns NULL if an error occurs.
  */
-OauthAccess* oauth_access_init (const char *auth_reply, Service service)
+OauthAccess* oauth_access_init (const char *auth_reply, Service service, const char* playlist_id)
 {
+    OauthAccess* data = NULL; 
+    data = malloc(sizeof(OauthAccess));
+    if (data == NULL) {
+	goto cleanup;
+    }
+    data->token = NULL;
+    data->type = NULL;
+    data->playlist = NULL;
+    data->time_recieved = NULL;
+
     cJSON *json = cJSON_Parse (auth_reply);
     if (json == NULL)
-	{
-		fprintf (stderr,
-			"An error occured when parcing Spotify authentication data.\n");
-		cJSON_Delete (json);
-		return NULL;
-	}
+    {
+	fprintf (stderr, "An error occured when parcing Spotify authentication data.\n");
+	cJSON_Delete (json);
+	return NULL;
+    }
 
 
     cJSON *error = cJSON_GetObjectItem (json, "error");
@@ -33,11 +44,10 @@ OauthAccess* oauth_access_init (const char *auth_reply, Service service)
     cJSON *token_type = cJSON_GetObjectItem (json, "token_type");
     cJSON *expiration_time = cJSON_GetObjectItem (json, "expires_in");
 
-    OauthAccess *data = malloc (sizeof (OauthAccess));
 
     if (access_token == NULL)
     {
-		fprintf (stderr, "No access token found.\n");
+	fprintf (stderr, "No access token found.\n");
         goto cleanup;
     }
 
@@ -49,28 +59,35 @@ OauthAccess* oauth_access_init (const char *auth_reply, Service service)
         
 
     if (expiration_time == NULL)
-	{
-		fprintf (stderr, "Got no expiration time for authorization key.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Got no expiration time for authorization key.\n");
+	goto cleanup;
+    }
 
+    data->playlist = strdup(playlist_id);
     data->service = service;
     data->token = strdup (access_token->valuestring);
     data->type = strdup (token_type->valuestring);
     data->duration = expiration_time->valueint;
     data->time_recieved = malloc (sizeof (struct tm));
-    if (data->time_recieved != NULL)
-	{
-		time_t now = time (NULL);
-		*(data->time_recieved) = *localtime (&now);
-	}
+    if (data->time_recieved == NULL || data->playlist == NULL 
+	|| data->type == NULL || data->token == NULL)
+    {
+	goto cleanup;
+    }
 
+    time_t now = time (NULL);
+    *(data->time_recieved) = *localtime (&now);
     cJSON_Delete(json);
     return data;
-	cleanup:
 
+    cleanup:
+    free(data->playlist);
+    free(data->type);
+    free(data->token);
+    free(data->time_recieved);
     cJSON_Delete(json);
-	return NULL;
+    return NULL;
 }
 
 
@@ -87,6 +104,7 @@ void oauth_access_print (OauthAccess *access_obj)
     printf ("Duration:\t%i\n", access_obj->duration);
     printf ("Time recieved:\t%s\n", time_str);
     printf ("Service: %s\n", SERVICES[access_obj->service]);
+    printf ("Playlist ID: %s\n", access_obj->playlist);
 }
 
 
@@ -100,6 +118,7 @@ void oauth_access_delete (OauthAccess** access_obj)
     memset ((*access_obj)->token, '\0', strlen((*access_obj)->token));
     free ((*access_obj)->token);
     free ((*access_obj)->type);
+    free((*access_obj)->playlist);
     free ((*access_obj)->time_recieved);
     free (*access_obj);
     *access_obj = NULL;
