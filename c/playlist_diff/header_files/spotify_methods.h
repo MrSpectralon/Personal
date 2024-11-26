@@ -1,9 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
 #include <curl/curl.h> //Install: apt install libcurl4-openssl-dev
 #include <cjson/cJSON.h>
 #include "./spotify_track_list.h"

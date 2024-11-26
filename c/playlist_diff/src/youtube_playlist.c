@@ -27,9 +27,7 @@ static void duration_pr_inner_loop(char** pd, size_t* pdi, char* str, size_t sta
 {
     for (size_t i = start_index; i < stop_index; i++) {
         (*pd)[(*pdi)] = str[i];
-        printf("pdi = %lu\n", (*pdi));
         (*pdi)++;
-        printf("Iterated: pdi = %lu\n", (*pdi));
     }
 }
 
@@ -51,6 +49,8 @@ static char* duration_printable(char* duration)
     for (size_t i = indx_tmp; i < len; i++) {
         switch (duration[i]) {
             case 'D':
+                //TODO: Test with videos that are more than 24 hours long. 
+                //- Probably won't work.
                 duration_pr_inner_loop(&d, &d_indx, duration, indx_tmp, i);
                 i+=2;
                 indx_tmp = i;
@@ -168,10 +168,13 @@ void yt_track_print(YtTrack* track)
     printf("\tDescription: \n\t\t%s\n", track->description);
     printf("\tDuration: %s\n", duration);
     printf("\tURL: https://www.youtube.com/watch?v=%s\n", track->id);
+    free(duration);
 }
 
 void yt_track_list_print(YoutubeTrackList* track_list)
 {
+    if (track_list == NULL) return;
+
     if (track_list->track == NULL ) {
         fprintf(stderr, "Attempted to print empty YT track list.\n"); 
         return;
@@ -193,3 +196,57 @@ void yt_playlist_print(YoutubePlaylist *playlist)
     printf("URL: https://youtube.com/playlist?list=%s\n", playlist->id);
     yt_track_list_print(playlist->track_list_head);
 }
+
+
+void yt_track_free(YtTrack** track)
+{
+    if (*track == NULL) {
+        return;
+    }
+    free((*track)->id);
+    free((*track)->title);
+    free((*track)->artist);
+    free((*track)->duration);
+    free((*track)->description);
+    free((*track));
+    *track = NULL;
+}
+
+
+void yt_track_list_free(YoutubeTrackList** track_list)
+{
+    YoutubeTrackList* tmp = NULL;
+    if (*track_list == NULL) {
+        return;
+    }
+    if ((*track_list)->prev != NULL) {
+        fprintf(stderr, "Attempted to delete youtube track list from another point than head.");
+        return;
+    }
+    while ((*track_list)->next != NULL)
+    {
+        tmp = (*track_list)->next;
+        (*track_list)->next = tmp->next;
+        yt_track_free(&tmp->track);
+        free(tmp);
+        
+    }
+    yt_track_free(&(*track_list)->track);
+    free(*track_list);
+    *track_list = NULL;
+}
+
+
+void yt_playlist_free(YoutubePlaylist** playlist)
+{
+    if (*playlist == NULL) {
+        return;
+    }
+    yt_track_list_free(&(*playlist)->track_list_head);
+    free((*playlist)->name);
+    free((*playlist)->description);
+    free((*playlist)->id);
+    free(*playlist);
+    *playlist = NULL;
+}
+

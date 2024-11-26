@@ -208,7 +208,6 @@ void pop_spotify_track (ListSpotifyTracks *track_node, ListSpotifyTracks *list_h
             track_node->next->prev = track_node->prev;
         }
     }
-
     free_spotify_track (&track_node->track);
     free (track_node);
     track_node = NULL;
@@ -325,7 +324,6 @@ void spotify_free_playlist (SpotifyPlaylist **playlist)
 {
     if (*playlist == NULL)
     {
-        fprintf (stderr, "Tried to free non initialized playlist.\n");
         return;
     }
     if ((*playlist)->track_list == NULL)

@@ -28,7 +28,7 @@ typedef struct {
 
 YtTrack* yt_track_create(char* id, char* title, char* artist, char* description, char* duration_ms);
 void yt_track_print(YtTrack* track);
-int yt_track_free(YtTrack** track);
+void yt_track_free(YtTrack** track);
 
 int yt_track_list_append(YoutubeTrackList** track_list, YtTrack* track);
 void yt_track_list_print(YoutubeTrackList* track_list);

@@ -17,7 +17,6 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr);
 
 void test();
 
-
 int main (void)
 {
     FILE *fptr = NULL;
@@ -30,7 +29,6 @@ int main (void)
 
     test();
     goto cleanup;
-
 
     fptr = fopen("hidden_from_git/secrets", "r");
     fprintf(stderr, "File opened.\n");
@@ -439,10 +437,6 @@ end:
     free(duration);
     free(artist); 
     free(id);
-    yt_track_list_free(&(ytp->track_list_head));
-    free(ytp->description);
-    free(ytp->name);
-    free(ytp->id);
-    free(ytp);
+    yt_playlist_free(&ytp);
 }
 
