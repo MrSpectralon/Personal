@@ -117,3 +117,81 @@ JWT payload
 4. HMAC-SHA256 Signature
 The signature is created by hashing the concatenation of the encoded header and payload using HMAC-SHA256 and your service account's private key.
 
+
+Fetch playlist details
+https://youtube.googleapis.com/youtube/v3/playlists?part=snippet, contentDetails&fields=items(snippet(title, description), contentDetails)&id=PLnV88qJ1K6U-HdOaaoAvJJpM4EC6i8A1r
+{
+  "items": [
+    {
+      "snippet": {
+        "description": "Use shuffle play.", 
+        "title": "Alt Mulig Rart Faenskap Reboot"
+      }, 
+      "contentDetails": {
+        "itemCount": 901
+      }
+    }
+  ]
+}
+
+
+
+Fetch songs from playlist
+https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&fields=nextPageToken, pageInfo(totalResults), items(snippet(title, videoOwnerChannelTitle, resourceId(videoId)))&playlistId=PLnV88qJ1K6U-HdOaaoAvJJpM4EC6i8A1r
+
+{
+  "nextPageToken": "EAAajgFQVDpDQU1pRUVWRFFqTXpNa1F3UVVJd1JqVTRRaklvQVVqcW5xcmZ1ZS1KQTFBQldrVWlRMmxLVVZSSE5WZFBSR2g0VTJwR1RFNXNWWFJUUjFKUVdWZEdkbEZZV2t0VGJrSk9Ua1ZXUkU1dGF6UlJWRVo1UldkM1NYcDFOa0YxWjFsUmEwNVVRMnBSU1NJ", 
+  "items": [
+    {
+      "snippet": {
+        "resourceId": {
+          "videoId": "7XyHOdMvHg0"
+        }, 
+        "videoOwnerChannelTitle": "Dio - Topic", 
+        "title": "Rainbow In The Dark"
+      }
+    }, 
+    {
+      "snippet": {
+        "resourceId": {
+          "videoId": "YJ3XDfghs_o"
+        }, 
+        "videoOwnerChannelTitle": "Lunatic Soul - Topic", 
+        "title": "Untamed"
+      }
+    }, 
+    {
+      "snippet": {
+        "resourceId": {
+          "videoId": "gEr_TnIp6Yg"
+        }, 
+        "videoOwnerChannelTitle": "Buckethead - Topic", 
+        "title": "Fastpass"
+      }
+    }
+  ], 
+  "pageInfo": {
+    "totalResults": 901
+  }
+}
+
+
+Fetch song/video data.
+https://youtube.googleapis.com/youtube/v3/videos?id=G2iKRrrzIss&part=snippet, contentDetails&fields=items(id, snippet(channelTitle, localized), contentDetails(duration))
+{
+  "items": [
+    {
+      "snippet": {
+        "channelTitle": "Noise Records", 
+        "localized": {
+          "description": "Kamelot - Where I Reign is available now for purchase, streaming or download. http://apple.co/29t8Jbw http://amzn.to/29L7UvH", 
+          "title": "Kamelot - Karma"
+        }
+      }, 
+      "contentDetails": {
+        "duration": "PT5M9S"
+      }, 
+      "id": "G2iKRrrzIss"
+    }
+  ]
+}

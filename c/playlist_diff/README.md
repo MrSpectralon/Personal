@@ -19,12 +19,16 @@ Implementation checklist:
 ### YouTube Music support;
 - [ ] Authentication > O-Auth-v2.0.
   - [ ] Request auth token.
-    - [ ] Making JWT
+    - [ ] Make a webserver to handle redirect with authentication key
+      - [x] using hidden python web server until above checkbox is ready. 
+    - [x] Making JWT  -- Probably not needed, this is for different API usage...
       - [x] Base 64 encoding.
       - [x] SHA256 encoding.
       - [x] HMAC-SHA256 encoding
   - [ ] Parce reply.
+  
 - [ ] Request playlist data.
+
 - [ ] Parce reply data.
 - [ ] Save reply data.
 - [ ] Track lookup.

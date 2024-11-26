@@ -6,5 +6,5 @@ rust/learning_rust/*/target
 */.vscode/*
 
 c/playlist_diff/.vscode/*
-c/playlist_diff/secrets
-c/playlist_diff/out/*
+c/playlist_diff/hidden_from_git
+c/playlist_diff/out
