@@ -35,7 +35,7 @@ size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res
         fprintf (stderr, "Failed to reallocate memory in write_callback.\n");
         return 0; // Returning 0 will signal libcurl to abort the request
     }
-
+    
     res_buf->data = temp;
     memcpy (&(res_buf->data[res_buf->size]), ptr, total_size);
     res_buf->size += total_size;
@@ -44,18 +44,19 @@ size_t write_callback (void *ptr, size_t size, size_t nmemb, ResponseBuffer *res
     return total_size;
 }
 
+
 /**
  * @brief Sends an HTTP GET request call to the specified url with the header. 
  * Example normal curl call: 
  *   curl --request GET \
  *   --url https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n \
  *   --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
- *  
+ *
  * Equivilant using this function:
  * @param header -> 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
  * @param requestURL -> https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n 
- * 
- * @return A null terminated string if siccessfull, NULL if an error occurs. 
+ *
+ * @return A null terminated string if siccessfull, NULL if an error occurs.
  */
 char* curl_get_request (const char* header, const char* requestURL)
 {
@@ -126,7 +127,6 @@ char* curl_post_request(
     const char* content_type,
     const char* post_field, 
     const long request_len)
-
 {
     //Initialize buffer struct.
     ResponseBuffer res_buf;

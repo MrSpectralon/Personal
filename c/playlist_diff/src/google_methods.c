@@ -5,9 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
-char* create_JWT(const char* service_account, const char* service_acc_private_key, const size_t key_len)
+char* create_JWT(const char* service_account, const char* user_email, const char* service_acc_private_key, const size_t key_len)
 {
     char* jwt_p_str = NULL;
     char* jwt_h_str = NULL;
@@ -47,6 +45,7 @@ char* create_JWT(const char* service_account, const char* service_acc_private_ke
     //######### Making the JWT paylaod ############
     //{
     //   "iss": "your-service-account-email@project-id.iam.gserviceaccount.com",
+    //   "aud": "user-you-want_access-to@gmail.com",
     //   "scope": https://www.googleapis.com/auth/youtube",
     //   "aud": "https://oauth2.googleapis.com/token",
     //   "exp": <integer>unix time + iat,
@@ -58,6 +57,7 @@ char* create_JWT(const char* service_account, const char* service_acc_private_ke
     
 
     cJSON_AddStringToObject(jwt_payload, "iss", service_account);
+    cJSON_AddStringToObject(jwt_payload, "sub", user_email);
     cJSON_AddStringToObject(jwt_payload, "scope", "https://www.googleapis.com/auth/youtube");
     cJSON_AddStringToObject(jwt_payload, "aud", "https://oauth2.googleapis.com/token");
     cJSON_AddNumberToObject(jwt_payload, "iat", iat);
@@ -115,6 +115,7 @@ char* create_JWT(const char* service_account, const char* service_acc_private_ke
     cJSON_Delete(jwt_header);
     cJSON_Delete(jwt_payload);
     free(signature_str);
+    free(jwt);
     free(signature);
     free(jwt_h_str);
     free(header_b64);
@@ -129,16 +130,45 @@ char* create_JWT(const char* service_account, const char* service_acc_private_ke
 
 char* get_auth_token_google (const char* service_account, const char* service_account_secret, const size_t secret_len)
 {
+    char *curlPostField = NULL;
+    char user_email[] = "stian.pedersen1996@gmail.com";
     char* jwt = NULL;
-    jwt = create_JWT(service_account, service_account_secret, secret_len);
+    jwt = create_JWT(service_account, user_email, service_account_secret, secret_len);
     if (jwt == NULL) {
         fprintf(stderr, "Error occured whilst making JWT for google.\n");
         goto cleanup;
     }
-    printf("JWT: %s\n", jwt);
     
-    cleanup:
 
+
+    const char grantTypeAndClientID[] = "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=";
+    const char content_type[] = "Content-Type: application/x-www-form-urlencoded";
+    const char destination_url[] = "oauth2.googleapis.com";
+
+    long fieldSize = strlen (grantTypeAndClientID) + strlen(jwt);
+
+    curlPostField = calloc(fieldSize + 1, sizeof (char));
+    if (curlPostField == NULL)
+    {
+        fprintf(stderr, "Failed to allocate memory for curl post field.\n");
+        return NULL;
+    }
+    strcpy(curlPostField, grantTypeAndClientID);
+    strcat (curlPostField, jwt);
+    printf("\n\n%s\n\n", jwt);
+    char* response = curl_post_request(destination_url, content_type, curlPostField, fieldSize);
+    if (response == NULL) {
+        goto cleanup;
+    }
+    free(curlPostField);
+    curlPostField = NULL;
+    free(jwt);
+    jwt = NULL;
+    return response;
+    
+cleanup:
+    
+    free(curlPostField);
     free(jwt);
     return NULL;
 }

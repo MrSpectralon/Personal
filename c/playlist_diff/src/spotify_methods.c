@@ -49,8 +49,7 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
     //Preparing approperiate URL for fetching playlist data. 
     char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
     // At the moment hardcoded for Norwegian music licensing. (market=NO)
-    char field_options[] =
-	"?market=NO&fields=name%2C+description%2C+tracks%28total%29";
+    char field_options[] = "?market=NO&fields=name%2C+description%2C+tracks%28total%29";
 
     char *requestURL; 
     char *authorization; 
@@ -66,7 +65,7 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
 
     int auth_length = strlen (auth) + g_type_len + strlen (access_data->token) + 2; 
     authorization = malloc (auth_length);
-	authorization[0] = '\0';
+    authorization[0] = '\0';
     strcat (authorization, auth);
     strcat (authorization, type);
     strcat (authorization, access_data->token);
@@ -77,10 +76,10 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
     strcat (requestURL, url_api_dest);
     strcat (requestURL, playlistID);
     strcat (requestURL, field_options);
-	char* reply = curl_get_request (authorization, requestURL);
-	free(authorization);
-	free(requestURL);
-	return reply;   
+    char* reply = curl_get_request (authorization, requestURL);
+    free(authorization);
+    free(requestURL);
+    return reply;
 }
 
 

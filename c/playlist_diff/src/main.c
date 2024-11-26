@@ -2,6 +2,8 @@
 #include "../header_files/helper_methods.h"
 #include "../header_files/spotify_methods.h"
 #include "../header_files/google_methods.h"
+#include "../header_files/youtube_playlist.h"
+#include <curl/curl.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,15 +15,24 @@ OauthAccess* request_access_from_file(FILE** file_pointer);
 static OauthAccess* spotify_credentials_from_file(FILE** file_ptr);
 static OauthAccess* ytm_credentials_from_file(FILE** file_ptr);
 
+void test();
+
+
 int main (void)
 {
-    FILE *fptr;
-    
+    FILE *fptr = NULL;
+    OauthAccess* google_access = NULL;
     SpotifyPlaylist *spotify_playlist = NULL;
-    
-    char* temp = NULL; //Volatile only to prevent optimilizations as the content needs a guarantee of being cleared in memory.
+    OauthAccess* spotify_access = NULL;
 
-    fptr = fopen("secrets", "r");
+    char* temp = NULL; //Volatile only to prevent optimilizations as the content needs a guarantee of being cleared in memory.
+    
+
+    test();
+    goto cleanup;
+
+
+    fptr = fopen("hidden_from_git/secrets", "r");
     fprintf(stderr, "File opened.\n");
     if (fptr == NULL)
     {
@@ -29,7 +40,7 @@ int main (void)
 	goto cleanup;
     }
 
-    OauthAccess* spotify_access = request_access_from_file(&fptr);
+    spotify_access = request_access_from_file(&fptr);
     if(spotify_access == NULL)
     {
         fprintf(stderr, "Failed to gain auth key.\n");
@@ -38,7 +49,7 @@ int main (void)
     oauth_access_print(spotify_access);
 
    
-    OauthAccess* google_access = request_access_from_file(&fptr);
+    google_access = request_access_from_file(&fptr);
     if (google_access == NULL) {
         fprintf(stderr, "Failed to gain auth key.\n");
 	goto cleanup;
@@ -202,7 +213,7 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
 
     return access;
 
-  cleanup:
+cleanup:
 
     if (temp != NULL)
     {
@@ -228,13 +239,13 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
 
 static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
 {
-    const int BUFFER_SIZE = 100; 
-    
-    volatile char* s_acc_key = NULL;
-    size_t s_acc_key_len = 0;
+    const int BUFFER_SIZE = 1800; 
     
     char* service_acc = NULL;
     size_t s_acc_len = 0;
+    
+    volatile char* s_acc_p_key= NULL;
+    size_t s_acc_p_key_len = 0;
     
     char* playlist_id = NULL;
     size_t p_id_len = 0;
@@ -261,14 +272,13 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
     memset((char*)temp, 0, BUFFER_SIZE); 
     fgets((char*)temp, BUFFER_SIZE, *file_ptr);
     remove_new_line((char*)temp);
-    s_acc_key_len = strlen((char*)temp);
-    s_acc_key = malloc(s_acc_key_len + 1);
-    if (s_acc_key == NULL) {
+    s_acc_p_key_len = strlen((char*)temp);
+    s_acc_p_key= malloc(s_acc_p_key_len + 1);
+    if (s_acc_p_key== NULL) {
         goto cleanup;
     }
-    s_acc_key[0] = '\0';
-    strcpy((char*)s_acc_key, (char*)temp);
-    
+    s_acc_p_key[0] = '\0';
+    strcpy((char*)s_acc_p_key, (char*)temp);
     memset((char*)temp, 0, BUFFER_SIZE); 
     fgets((char*)temp, BUFFER_SIZE, *file_ptr);
     remove_new_line((char*)temp);
@@ -279,8 +289,7 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
     }
     playlist_id[0] = '\0';
     strcpy(playlist_id, (char*)temp);
-
-    auth_reply = get_auth_token_google(service_acc, (char*)s_acc_key, s_acc_key_len);
+    auth_reply = get_auth_token_google(service_acc, (char*)s_acc_p_key, s_acc_p_key_len);
     if (auth_reply == NULL) {
         goto cleanup;
     }
@@ -289,10 +298,10 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
     temp = NULL;
 
 cleanup:
-    if (s_acc_key != NULL) {
-        memset((char*)s_acc_key, 0, s_acc_key_len);
+    if (s_acc_p_key!= NULL) {
+        memset((char*)s_acc_p_key, 0, s_acc_p_key_len);
     }
-    free((char*)s_acc_key);
+    free((char*)s_acc_p_key);
     if (temp != NULL) {
         memset((char*)temp, 0, BUFFER_SIZE);
     }
@@ -304,4 +313,136 @@ cleanup:
     return NULL;
 }
 
+char* get_usr_input(char* print_msg)
+{
+    char buffer[600];
+    printf("%s", print_msg); 
+    scanf("%s", buffer);
+    size_t s_len = strlen(buffer);
+    char* temp = calloc(s_len + 1, sizeof(char));
+    if (temp == NULL)
+    {
+       return NULL; 
+    }
+    strcpy(temp, buffer);
+
+    return temp;
+}
+
+void test()
+{
+
+    char* play_name = NULL;
+    char* play_desc = NULL;
+    char* play_id = NULL;
+
+    char* name = NULL; 
+    char* description = NULL; 
+    char* duration = NULL; 
+    char* artist = NULL; 
+    char* id = NULL;
+
+    YoutubePlaylist* ytp = NULL;
+
+    char tmp[2];
+    ytp = malloc(sizeof(YoutubePlaylist));
+    if (ytp == NULL) {
+        goto end;
+    }
+    yt_playlist_init(&ytp);
+
+    printf("P - Set playlist data.\n");
+    printf("T - Add track data.\n");
+    printf("L - List all added tracks.\n");
+    printf("D - Delete all tracks.\n");
+    printf("Q - Quit.\n");
+    while (1) {
+        printf("OPTION: ");
+        scanf("%s", tmp);
+        
+        switch(tmp[0])
+        {
+            case 'P':
+                free(play_name);free(play_desc); free(play_id);
+
+                printf("Playlist:\n");
+                play_name = get_usr_input("\tName: ");
+                if(play_name == NULL) goto end; 
+                play_desc = get_usr_input("\tDescription: ");
+                if(play_desc == NULL) goto end; 
+                play_id = get_usr_input("\tID: ");
+                if(play_id == NULL) goto end; 
+                
+                free(ytp->name); free(ytp->description); free(ytp->id); 
+                
+                ytp->name = strdup(play_name);
+                if (ytp->name == NULL) goto end;
+                ytp->description = strdup(play_desc);
+                if (ytp->description == NULL) goto end;
+                ytp->id = strdup(play_id);
+                if (ytp->id == NULL) goto end;
+
+                break;
+
+            case 'T':
+                free(name); free(description); free(duration); free(artist); free(id);
+                printf("Song:\n");
+                name = get_usr_input("\tName: ");
+                if(name == NULL) goto end; 
+                artist = get_usr_input("\tArtist: ");
+                if(artist == NULL) goto end; 
+                description = get_usr_input("\tDescription: ");
+                if(description == NULL) goto end; 
+                duration = get_usr_input("\tDuration: ");
+                if(duration == NULL) goto end; 
+                id = get_usr_input("\tID: ");
+                if(id == NULL) goto end; 
+                
+                YtTrack* new_track = yt_track_create(id, name, artist, description, duration);
+                if (new_track == NULL) {
+                    goto end;
+                }
+                yt_track_list_append(&ytp->track_list_head, new_track);
+                break;
+            
+            case 'L':
+                yt_playlist_print(ytp);
+                break;
+            
+            case 'D':
+                yt_track_list_free(&(ytp->track_list_head));
+                break;
+
+            case 'H':
+                printf("P - Set playlist data.\n");
+                printf("T - Add track data.\n");
+                printf("L - List all added tracks.\n");
+                printf("D - Delete all tracks.\n");
+                printf("Q - Quit.\n");
+                break;
+            case 'Q':
+                goto end;
+            default:
+                break;
+        }
+
+    }
+
+end:
+
+    free(play_name); 
+    free(play_desc); 
+    free(play_id); 
+
+    free(name); 
+    free(description); 
+    free(duration);
+    free(artist); 
+    free(id);
+    yt_track_list_free(&(ytp->track_list_head));
+    free(ytp->description);
+    free(ytp->name);
+    free(ytp->id);
+    free(ytp);
+}
 
