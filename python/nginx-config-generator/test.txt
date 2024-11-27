@@ -1,0 +1,5 @@
+# Example: gitlab.tanvgs.no 172.16.100.11 80
+# Redirects all http/https trafic from the url 'gitlab.tanvgs.no'
+# To the server on ip '172.16.100.11' through the port 80.
+
+endaEnTest.tanvgs.no 172.16.100.15 80

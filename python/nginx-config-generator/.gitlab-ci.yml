@@ -1,0 +1,16 @@
+stages:
+  - deploy
+deploy:
+  tags: 
+    - docker
+  image: python:3
+  stage: deploy
+  script:
+    - pip install -U pyinstaller
+    #  # Install any other dependencies if needed
+    - pyinstaller nginx_spg.py
+    - chmod 600 $SSH_PRIVATE_KEY
+    - scp -r -i $SSH_PRIVATE_KEY -o "StrictHostKeyChecking no" dist/nginx_spg/* $SSH_USR@$SERVER_IP:~/.nginx_generator/
+  only:
+    - master 
+
