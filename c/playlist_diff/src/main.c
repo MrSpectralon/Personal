@@ -372,7 +372,6 @@ void test()
                 if(play_id == NULL) goto end; 
                 
                 free(ytp->name); free(ytp->description); free(ytp->id); 
-                
                 ytp->name = strdup(play_name);
                 if (ytp->name == NULL) goto end;
                 ytp->description = strdup(play_desc);

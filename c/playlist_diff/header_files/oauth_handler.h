@@ -33,18 +33,21 @@ typedef enum{
  * @time_recieved: Pointer to a `struct tm` representing the date and time when the token was received,
  *                 used to calculate expiration based on the `duration` field.
  */
+
 typedef struct {
-	char *token;
-	char *type;
-	char *playlist;
+	char* token;
+	char* type;
+	char* playlist;
+	char* scope;
+	char* refresh_token;
 	int duration;
 	Service service;
-	struct tm *time_recieved;
+	struct tm* time_recieved;
     
 } OauthAccess;
 
 
-OauthAccess *oauth_access_init(const char* auth_reply, Service service, const char* playlist_id);
+OauthAccess* oauth_access_init(const char* auth_reply, Service service, const char* playlist_id);
 void oauth_access_delete(OauthAccess** access_obj);
 
 void oauth_access_print (OauthAccess *access_obj);

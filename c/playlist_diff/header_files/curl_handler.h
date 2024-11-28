@@ -6,8 +6,8 @@
 #include <string.h>
 
 typedef struct {
-  char *data;
-  size_t size;
+    char *data;
+    size_t size;
 
 } ResponseBuffer;
 

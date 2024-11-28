@@ -137,7 +137,7 @@ https://youtube.googleapis.com/youtube/v3/playlists?part=snippet, contentDetails
 
 
 Fetch songs from playlist
-https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&fields=nextPageToken, pageInfo(totalResults), items(snippet(title, videoOwnerChannelTitle, resourceId(videoId)))&playlistId=PLnV88qJ1K6U-HdOaaoAvJJpM4EC6i8A1r
+https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&fields=nextPageToken, pageInfo(resultsPerPage), items(snippet(title, videoOwnerChannelTitle, resourceId(videoId)))&playlistId=PLnV88qJ1K6U-HdOaaoAvJJpM4EC6i8A1r
 
 {
   "nextPageToken": "EAAajgFQVDpDQU1pRUVWRFFqTXpNa1F3UVVJd1JqVTRRaklvQVVqcW5xcmZ1ZS1KQTFBQldrVWlRMmxLVVZSSE5WZFBSR2g0VTJwR1RFNXNWWFJUUjFKUVdWZEdkbEZZV2t0VGJrSk9Ua1ZXUkU1dGF6UlJWRVo1UldkM1NYcDFOa0YxWjFsUmEwNVVRMnBSU1NJ", 

@@ -50,7 +50,7 @@ static char* duration_printable(char* duration)
         switch (duration[i]) {
             case 'D':
                 //TODO: Test with videos that are more than 24 hours long. 
-                //- Probably won't work.
+                // Probably won't work.
                 duration_pr_inner_loop(&d, &d_indx, duration, indx_tmp, i);
                 i+=2;
                 indx_tmp = i;
@@ -86,13 +86,14 @@ YtTrack* yt_track_create(char* id, char* title, char* artist, char* description,
     track->id = NULL;
     track->title = NULL;
     track->artist = NULL;
-    track->description = NULL;
-    
+    // track->description = NULL;
+    // track->duration = NULL;
+
     if (!allocate_and_populate(&track->id, id)) goto cleanup;
     if (!allocate_and_populate(&track->title, title)) goto cleanup;
     if (!allocate_and_populate(&track->artist, artist)) goto cleanup;
-    if (!allocate_and_populate(&track->description, description)) goto cleanup;
-    if (!allocate_and_populate(&track->duration, duration)) goto cleanup;
+    // if (!allocate_and_populate(&track->description, description)) goto cleanup;
+    // if (!allocate_and_populate(&track->duration, duration)) goto cleanup;
     
     return track;
 
@@ -102,7 +103,8 @@ cleanup:
         free(track->id);
         free(track->title);
         free(track->artist);
-        free(track->description);
+        // free(track->duration);
+        // free(track->description);
     }
     free(track);
     return NULL;
@@ -145,6 +147,7 @@ void yt_playlist_init(YoutubePlaylist** playlist)
     (*playlist)->name = NULL;
     (*playlist)->description = NULL;
     (*playlist)->id = NULL;
+    (*playlist)->total_tracks = 0;
     (*playlist)->track_list_head = malloc(sizeof(YoutubeTrackList));
     if ((*playlist)->track_list_head == NULL) {
         fprintf(stderr, "Failed to initialize track list in playlist.");
@@ -157,18 +160,17 @@ void yt_playlist_init(YoutubePlaylist** playlist)
 
 void yt_track_print(YtTrack* track)
 {
-
-    char* duration = NULL;
-    duration = duration_printable(track->duration);
-    if (duration == NULL) {
-        return;
-    }
+    // char* duration = NULL;
+    // duration = duration_printable(track->duration);
+    // if (duration == NULL) {
+    //     return;
+    // }
     printf("\n\tName: %s\n", track->title);
     printf("\tAccount: %s\n", track->artist);
-    printf("\tDescription: \n\t\t%s\n", track->description);
-    printf("\tDuration: %s\n", duration);
+    // printf("\tDescription: \n\t\t%s\n", track->description);
+    // printf("\tDuration: %s\n", duration);
     printf("\tURL: https://www.youtube.com/watch?v=%s\n", track->id);
-    free(duration);
+    // free(duration);
 }
 
 void yt_track_list_print(YoutubeTrackList* track_list)
@@ -206,8 +208,8 @@ void yt_track_free(YtTrack** track)
     free((*track)->id);
     free((*track)->title);
     free((*track)->artist);
-    free((*track)->duration);
-    free((*track)->description);
+    // free((*track)->duration);
+    // free((*track)->description);
     free((*track));
     *track = NULL;
 }

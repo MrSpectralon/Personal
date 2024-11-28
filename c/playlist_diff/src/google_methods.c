@@ -173,3 +173,120 @@ cleanup:
     return NULL;
 }
 
+int parce_youtube_playlist_data(YoutubePlaylist** playlist, char* data)
+{
+    cJSON* json = cJSON_Parse(data);
+    if (json == NULL)
+    {
+        fprintf(stderr, "Failed to parce youtube playlist data.\n");
+        return 1;
+    }
+    cJSON* items = cJSON_GetObjectItem(json, "items");
+    if (items == NULL) {
+        fprintf(stderr, "Could not fetch items from youtube JSON object.\n");
+        goto cleanup;
+    }
+    cJSON* items_content = cJSON_GetArrayItem(items, 0);
+    if (items_content == NULL) {
+        fprintf(stderr, "Could not fetch index 0 from youtube items JSON object.\n");
+        goto cleanup;
+    }
+    cJSON* snippet = cJSON_GetObjectItem(items_content, "snippet");
+    if (snippet == NULL) {
+        fprintf(stderr, "Could not fetch snippet from JSON object.\n");
+        goto cleanup;
+    }
+    cJSON* content_details = cJSON_GetObjectItem(items_content, "contentDetails");
+    if (content_details == NULL) {
+        fprintf(stderr, "Could not fetch contentDetails from JSON object.\n");
+        goto cleanup;
+    }
+
+    cJSON* title = cJSON_GetObjectItem(snippet, "title");
+    if(title == NULL )
+    {
+        fprintf(stderr, "Could not get title string from snippet obj.\n");
+        goto cleanup;
+    }
+    cJSON* description = cJSON_GetObjectItem(snippet, "description");
+    if(description == NULL )
+    {
+        fprintf(stderr, "Could not get description string from snippet obj.\n");
+        goto cleanup;
+    }
+    cJSON* item_count = cJSON_GetObjectItem(content_details, "itemCount");
+    if(item_count == NULL )
+    {
+        fprintf(stderr, "Could not get item count from content details obj.\n");
+        goto cleanup;
+    }
+
+    (*playlist)->name = strdup(title->valuestring);
+    if((*playlist)->name == NULL )
+    {
+        fprintf(stderr, "Could not duplicate name string.\n");
+        goto cleanup;
+    }
+    (*playlist)->description = strdup(description->valuestring);
+    if((*playlist)->description == NULL )
+    {
+        fprintf(stderr, "Could not duplicate description string.\n");
+        goto cleanup;
+    }
+    (*playlist)->total_tracks = item_count->valueint; 
+    
+    cJSON_Delete(json);
+    return 0;
+cleanup:
+    cJSON_Delete(json);
+    return 1;
+}
+
+char* get_youtube_playlist_details(char* playlist_id, OauthAccess* access)
+{
+
+
+
+    return NULL;
+}
+
+YoutubePlaylist* get_youtube_playlist(OauthAccess *access, char *playlist_id)
+{   
+    char* playlist_details_json = NULL;
+    
+    YoutubePlaylist* playlist = NULL;
+    yt_playlist_init(&playlist);
+    if (playlist == NULL) {
+        fprintf(stderr, "Failed to initialize youtube playlist object.\n");
+    }
+
+    playlist->id = strdup(playlist_id);
+    if (playlist->id == NULL) {
+        fprintf(stderr, "Failed to allocate youtube id in object.\n");
+        goto cleanup;
+    }
+
+    playlist_details_json = get_youtube_playlist_details(playlist_id, access);
+    if (playlist_details_json == NULL) {
+        goto cleanup;
+    }
+    
+    if (parce_youtube_playlist_data(&playlist, playlist_details_json)) goto cleanup;
+    
+    free(playlist_details_json);
+    
+    
+
+    return playlist;
+  cleanup:
+
+    free(playlist_details_json);
+    yt_playlist_free(&playlist);
+    return  NULL;
+}
+
+char* get_youtube_playlist_tracks(char* playlist_id, OauthAccess* access, char* page_token)
+{
+    return NULL;
+}
+

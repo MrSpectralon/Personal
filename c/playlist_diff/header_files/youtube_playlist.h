@@ -5,8 +5,10 @@ typedef struct {
     char* id;
     char* title;
     char* artist;
-    char* description;
-    char* duration; // ISO 8601
+    //Skipping these members, as i will have to go a seperate API call for each track/video
+    //And each call costs one unit of query quota.
+    // char* description;
+    // char* duration; // ISO 8601
 
 } YtTrack;
 
@@ -22,6 +24,7 @@ typedef struct {
     char* name;
     char* description;
     char* id;
+    int total_tracks;
     YoutubeTrackList* track_list_head;
     
 } YoutubePlaylist;

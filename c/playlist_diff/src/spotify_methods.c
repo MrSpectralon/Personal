@@ -119,16 +119,16 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
     strcat (authorization, ad->token);
 
 
-	//Finds the number of digits in the offset number.
+    //Finds the number of digits in the offset number.
     int offset_length = snprintf (NULL, 0, "%d", offset) + 1;	//+1 cause space for \0
     char *offset_str = malloc (offset_length);
     snprintf (offset_str, offset_length + 1, "%d", offset);
 
     int url_length =
-			strlen (url_api_dest) 
-			+ strlen (field_options) 
-			+ strlen (playlistID) 
-			+ offset_length;
+	    strlen (url_api_dest) 
+	    + strlen (field_options) 
+	    + strlen (playlistID) 
+	    + offset_length;
 
     requestURL = calloc (url_length, sizeof (char));
 
@@ -155,85 +155,83 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
     SpotifyPlaylist* new_playlist;
     new_playlist = spotify_playlist_init ();
     if (new_playlist == NULL)
-	{
-		fprintf (stderr, "Error occured when initializing spotify playlist.\n");
-		return NULL;
-	}
+    {
+	fprintf (stderr, "Error occured when initializing spotify playlist.\n");
+	return NULL;
+    }
 
     cJSON *json = cJSON_Parse (data);
     if (json == NULL)
-	{
-		fprintf (stderr, "Error parsing JSON.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error parsing JSON.\n");
+	goto cleanup;
+    }
 
     cJSON *name = cJSON_GetObjectItem (json, "name");
     if (name == NULL)
-	{
-		fprintf (stderr, "Error fetching 'name' from tracks object string.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error fetching 'name' from tracks object string.\n");
+	goto cleanup;
+    }
 
     cJSON *description = cJSON_GetObjectItem (json, "description");
     if (description == NULL)
-	{
-		fprintf (stderr, "Error fetching 'description' from tracks object string.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error fetching 'description' from tracks object string.\n");
+	goto cleanup;
+    }
 
     cJSON *tracks = cJSON_GetObjectItem (json, "tracks");
     if (tracks == NULL)
-	{
-		fprintf (stderr, "Error fetching 'description' from tracks object string.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error fetching 'description' from tracks object string.\n");
+	goto cleanup;
+    }
 
     cJSON *total_tracks = cJSON_GetObjectItem (tracks, "total");
     if (total_tracks == NULL)
-	{
-		fprintf (stderr,
-			"Error fetching 'description' from tracks object string.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error fetching 'description' from tracks object string.\n");
+	goto cleanup;
+    }
 
     new_playlist->name = malloc (strlen (name->valuestring) + 1);
     if (new_playlist->name == NULL)
-	{
-		fprintf (stderr,
-			"Error allocating memory for spotify playlist name\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error allocating memory for spotify playlist name\n");
+	goto cleanup;
+    }
 
     strcpy (new_playlist->name, name->valuestring);
 
     if (description->valuestring == NULL)
+    {
+	new_playlist->description = malloc (1);
+	if (new_playlist->description == NULL)
 	{
-		new_playlist->description = malloc (1);
-		if (new_playlist->description == NULL)
-		{
-			fprintf (stderr,
-					"Error allocating memory for spotify playlist description.\n");
-			goto cleanup;
-		}
-		new_playlist->description[0] = '\0';
+	    fprintf (stderr,
+			    "Error allocating memory for spotify playlist description.\n");
+	    goto cleanup;
 	}
+	new_playlist->description[0] = '\0';
+    }
     else
+    {
+	new_playlist->description = malloc (strlen(description->valuestring) + 1);
+	if (new_playlist->description == NULL)
 	{
-		new_playlist->description = malloc (strlen(description->valuestring) + 1);
-		if (new_playlist->description == NULL)
-		{
-			fprintf (stderr, "Error allocating memory for spotify playlist description.\n");
-			goto cleanup;
-		}
-		strcpy (new_playlist->description, description->valuestring);
+	    fprintf (stderr, "Error allocating memory for spotify playlist description.\n");
+	    goto cleanup;
 	}
+	strcpy (new_playlist->description, description->valuestring);
+    }
 
     new_playlist->total_tracks = total_tracks->valueint;
 
     cJSON_Delete (json);
     return new_playlist;
 
-  	cleanup:
+  cleanup:
     cJSON_Delete (json);
     free (new_playlist->name);
     free (new_playlist->description);
@@ -248,32 +246,32 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
  */
 int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
 {
-	int number_of_songs = 0;
+    int number_of_songs = 0;
     cJSON *json = cJSON_Parse (data);
     if (json == NULL)
-	{
-		fprintf (stderr, "Error parsing JSON.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error parsing JSON.\n");
+	goto cleanup;
+    }
 
     cJSON *items = cJSON_GetObjectItem (json, "items");
     if (items == NULL)
-	{
-		fprintf (stderr, "Error fetching 'items' object from tracks object string.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error fetching 'items' object from tracks object string.\n");
+	goto cleanup;
+    }
 
     cJSON *item = NULL;
     cJSON_ArrayForEach (item, items)
     {
-		cJSON *track = cJSON_GetObjectItem (item, "track");
-		if (track == NULL) continue;
+	cJSON *track = cJSON_GetObjectItem (item, "track");
+	if (track == NULL) continue;
 
-		number_of_songs++;	
-		handle_json_track_data(track, list_head);
+	number_of_songs++;	
+	handle_json_track_data(track, list_head);
     }
 
-  	cleanup:
+  cleanup:
     cJSON_Delete (json);
 
     return number_of_songs;
@@ -287,29 +285,31 @@ int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
  */
 void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head)
 {
-	cJSON *track_name = cJSON_GetObjectItem (track_obj, "name");
-	cJSON *album = cJSON_GetObjectItem (track_obj, "album");
-	cJSON *album_name = cJSON_GetObjectItem (album, "name");
-	cJSON *duration_ms = cJSON_GetObjectItem (track_obj, "duration_ms");
-	cJSON *preview_url = cJSON_GetObjectItem (track_obj, "preview_url");
-	cJSON *external_urls = cJSON_GetObjectItem (track_obj, "external_urls");
-	cJSON *spotify_url = cJSON_GetObjectItem (external_urls, "spotify");
+    cJSON *track_name = cJSON_GetObjectItem (track_obj, "name");
+    cJSON *album = cJSON_GetObjectItem (track_obj, "album");
+    cJSON *album_name = cJSON_GetObjectItem (album, "name");
+    cJSON *duration_ms = cJSON_GetObjectItem (track_obj, "duration_ms");
+    cJSON *preview_url = cJSON_GetObjectItem (track_obj, "preview_url");
+    cJSON *external_urls = cJSON_GetObjectItem (track_obj, "external_urls");
+    cJSON *spotify_url = cJSON_GetObjectItem (external_urls, "spotify");
 
-	cJSON *artists = cJSON_GetObjectItem (track_obj, "artists");
-	
-	char *artists_str = handle_artists_from_json(artists);
-	
-	if (!append_spotify_track (list_head,
-				track_name->valuestring,
-				album_name->valuestring,
-				artists_str,
-				duration_ms->valueint,
-				preview_url->valuestring,
-				spotify_url->valuestring))
-	{
-		printf ("Failed to add spotify track.\n");
-	}
-	free (artists_str);
+    cJSON *artists = cJSON_GetObjectItem (track_obj, "artists");
+    
+    char *artists_str = handle_artists_from_json(artists);
+    
+    if (!append_spotify_track (
+	list_head,
+	track_name->valuestring,
+	album_name->valuestring,
+	artists_str,
+	duration_ms->valueint,
+	preview_url->valuestring,
+	spotify_url->valuestring)
+	)
+    {
+	printf ("Failed to add spotify track.\n");
+    }
+    free (artists_str);
 }
 
 
@@ -319,70 +319,69 @@ void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head)
  */
 char* handle_artists_from_json(cJSON* artists_obj)
 {
-	int arr_size = cJSON_GetArraySize (artists_obj);
-	cJSON *artist = NULL;
-	char* artists_str;
-	int i = 0;
-	cJSON_ArrayForEach (artist, artists_obj)
+    int arr_size = cJSON_GetArraySize (artists_obj);
+    cJSON *artist = NULL;
+    char* artists_str;
+    int i = 0;
+    cJSON_ArrayForEach (artist, artists_obj)
+    {
+	if (artist == NULL)
 	{
-		if (artist == NULL)
-		{
-			fprintf (stderr, "Error getting artist\n");
-			i++;
-			continue;
-		}
-		cJSON *artist_name = cJSON_GetObjectItem (artist, "name");
-		if (artist_name == NULL)
-		{
-			fprintf (stderr, "Error getting artist name\n");
-			return NULL;
-		}
-
-		if (arr_size == 1)
-		{
-			artists_str =
-			calloc (strlen (artist_name->valuestring) + 1, sizeof (char));
-			
-			if (artists_str == NULL)
-			{
-				fprintf (stderr, "Error allocating Artists.\n");
-				return NULL;
-			}
-			strcpy (artists_str, artist_name->valuestring);
-			return artists_str;
-		}
-		
-		//Initializing string for first iteration
-		if (i == 0)
-		{
-			artists_str =
-			calloc (strlen (artist_name->valuestring) + 1, sizeof (char));
-			if (artists_str == NULL)
-			{
-				fprintf (stderr, "Error allocating Artists.\n");
-				return NULL;
-			}
-			strcpy (artists_str, artist_name->valuestring);
-			i++;
-			continue;
-		}
-
-		size_t artist_str_size =
-			strlen (artists_str) +
-			strlen (artist_name->valuestring) +
-			strlen (", ") + 1;
-		artists_str = realloc (artists_str, artist_str_size);
-		if (artists_str == NULL)
-		{
-			fprintf (stderr,
-				"Error reallocating memory for artists.\n");
-			return NULL;
-		}
-		strcat (artists_str, ", ");
-		strcat (artists_str, artist_name->valuestring);
-		i++;
+	    fprintf (stderr, "Error getting artist\n");
+	    i++;
+	    continue;
 	}
-	return artists_str;
+	cJSON *artist_name = cJSON_GetObjectItem (artist, "name");
+	if (artist_name == NULL)
+	{
+	    fprintf (stderr, "Error getting artist name\n");
+	    return NULL;
+	}
+
+	if (arr_size == 1)
+	{
+	    artists_str =
+	    calloc (strlen (artist_name->valuestring) + 1, sizeof (char));
+	    
+	    if (artists_str == NULL)
+	    {
+		fprintf (stderr, "Error allocating Artists.\n");
+		return NULL;
+	    }
+	    strcpy (artists_str, artist_name->valuestring);
+	    return artists_str;
+	}
+
+	//Initializing string for first iteration
+	if (i == 0)
+	{
+	    artists_str =
+	    calloc (strlen (artist_name->valuestring) + 1, sizeof (char));
+	    if (artists_str == NULL)
+	    {
+		fprintf (stderr, "Error allocating Artists.\n");
+		return NULL;
+	    }
+	    strcpy (artists_str, artist_name->valuestring);
+	    i++;
+	    continue;
+	}
+
+	size_t artist_str_size =
+	    strlen (artists_str) +
+	    strlen (artist_name->valuestring) +
+	    strlen (", ") + 1;
+	artists_str = realloc (artists_str, artist_str_size);
+	if (artists_str == NULL)
+	{
+	    fprintf (stderr, "Error reallocating memory for artists.\n");
+	    return NULL;
+	}
+	strcat (artists_str, ", ");
+	strcat (artists_str, artist_name->valuestring);
+	i++;
+    }
+    return artists_str;
 }
 
 
@@ -397,17 +396,17 @@ SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
     int total = 0;
     char *playlist_info = get_playlist_info_spotify (playlist_id, access);
     if (playlist_info == NULL)
-	{
-		fprintf (stderr, "No playlist info receaved from spotify.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "No playlist info receaved from spotify.\n");
+	goto cleanup;
+    }
 
     playlist = parce_spotify_playlist_data (playlist_info);
     if (playlist == NULL)
-	{
-		fprintf (stderr, "Error occurred when parcing playlist data.\n");
-		goto cleanup;
-	}
+    {
+	fprintf (stderr, "Error occurred when parcing playlist data.\n");
+	goto cleanup;
+    }
 
     free (playlist_info);
     playlist_info = NULL;
@@ -418,26 +417,26 @@ SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
     printf ("\tDescription: %s\n", playlist->description);
 
     do
+    {
+	char *content = get_playlist_content_spotify (playlist_id, access, total);
+	if (content == NULL)
 	{
-		char *content = get_playlist_content_spotify (playlist_id, access, total);
-		if (content == NULL)
-		{
-			fprintf (stderr, "No tracks receved from spotify.\n");
-			goto cleanup;
-		}
-
-		songs_recieved =
-			parce_spotify_track_data (content, &playlist->track_list);
-		total += songs_recieved;
-		printf ("\rReceved and parced %d of %d songs.", total,
-			playlist->total_tracks);
-		free (content);
-		content = NULL;
-		fflush (stdout);
+	    fprintf (stderr, "No tracks receved from spotify.\n");
+	    goto cleanup;
 	}
+
+	songs_recieved =
+	    parce_spotify_track_data (content, &playlist->track_list);
+	total += songs_recieved;
+	printf ("\rReceved and parced %d of %d songs.", total,
+	    playlist->total_tracks);
+	free (content);
+	content = NULL;
+	fflush (stdout);
+    }
     while (songs_recieved != 100);
     
-	printf ("\nFinished fetching data from playlist '%s'.\n", playlist->name);
+    printf ("\nFinished fetching data from playlist '%s'.\n", playlist->name);
     return playlist;
 
   cleanup:
