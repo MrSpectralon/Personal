@@ -1,5 +1,6 @@
 #include "../header_files/google_methods.h"
 #include <cjson/cJSON.h>
+#include <curl/curl.h>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -173,7 +174,11 @@ cleanup:
     return NULL;
 }
 
-int parce_youtube_playlist_data(YoutubePlaylist** playlist, char* data)
+/**
+ * Returns 0 if no errors occured.
+ * Returns 1 if an error occured.
+**/
+int parce_youtube_playlist_details(YoutubePlaylist** playlist, char* data)
 {
     cJSON* json = cJSON_Parse(data);
     if (json == NULL)
@@ -245,19 +250,22 @@ cleanup:
 char* get_youtube_playlist_details(char* playlist_id, OauthAccess* access)
 {
 
-
-
     return NULL;
 }
 
-YoutubePlaylist* get_youtube_playlist(OauthAccess *access, char *playlist_id)
+YoutubePlaylist* get_youtube_playlist(OauthAccess* access, char* playlist_id)
 {   
     char* playlist_details_json = NULL;
+
+    char* tracks_data = NULL;
+    char* next_page = NULL;
     
+    int tracks_recieved = 0;
+
     YoutubePlaylist* playlist = NULL;
     yt_playlist_init(&playlist);
     if (playlist == NULL) {
-        fprintf(stderr, "Failed to initialize youtube playlist object.\n");
+        goto cleanup;
     }
 
     playlist->id = strdup(playlist_id);
@@ -271,15 +279,25 @@ YoutubePlaylist* get_youtube_playlist(OauthAccess *access, char *playlist_id)
         goto cleanup;
     }
     
-    if (parce_youtube_playlist_data(&playlist, playlist_details_json)) goto cleanup;
+    if (parce_youtube_playlist_details(&playlist, playlist_details_json)) goto cleanup;
     
     free(playlist_details_json);
     
+    while (tracks_recieved < playlist->total_tracks) {
+        tracks_data = get_youtube_playlist_tracks(playlist->id, access, next_page);
+        free(next_page);
+        next_page = NULL;
+        tracks_recieved += parce_youtube_playlist_tracks(&playlist->track_list_head, tracks_data, &next_page);
+
+        printf ("\rReceved and parced %d of %d songs.", tracks_recieved, playlist->total_tracks);
+	fflush (stdout);
+    }
     
 
     return playlist;
   cleanup:
 
+    free(next_page);
     free(playlist_details_json);
     yt_playlist_free(&playlist);
     return  NULL;
@@ -288,5 +306,72 @@ YoutubePlaylist* get_youtube_playlist(OauthAccess *access, char *playlist_id)
 char* get_youtube_playlist_tracks(char* playlist_id, OauthAccess* access, char* page_token)
 {
     return NULL;
+}
+
+int parce_youtube_playlist_tracks(YoutubeTrackList** track_list, char* track_data, char** next_page)
+{
+    int tracks_parced = 0;
+    cJSON* json = cJSON_Parse(track_data);
+    if (json == NULL) goto cleanup;
+
+    cJSON* page_token = cJSON_GetObjectItem(json, "nextPageToken");
+    if (page_token == NULL) {
+        *next_page = NULL;
+    }
+    else {
+        *next_page = strdup(page_token->valuestring);
+        if (*next_page == NULL)
+        {
+            fprintf(stderr, "Failed to duplicate page token.\n");
+            goto cleanup;
+        }
+    }
+    
+    cJSON* items = cJSON_GetObjectItem(json, "items");
+    tracks_parced = cJSON_GetArraySize(items);
+    if(items == NULL) goto cleanup;
+    cJSON* item = NULL;
+    
+    cJSON_ArrayForEach(item, items){
+        cJSON* snippet = cJSON_GetObjectItem(item, "snippet");
+        if (snippet == NULL) continue;
+        
+        cJSON* resource_id = cJSON_GetObjectItem(snippet, "resourceId");
+        if (resource_id == NULL) {
+            fprintf(stderr, "Error getting resource ID from YT-playlist JSON.\n");
+            goto cleanup;
+        }
+        cJSON* video_id = cJSON_GetObjectItem(resource_id, "videoId");
+        if (video_id == NULL) {
+            fprintf(stderr, "Error getting video ID from YT-playlist JSON.\n");
+            goto cleanup;
+        }
+        cJSON* channel = cJSON_GetObjectItem(snippet, "videoOwnerChannelTitle");
+        if (channel == NULL) {
+            fprintf(stderr, "Error getting channel name from YT-playlist JSON.\n");
+            goto cleanup;
+        }
+        cJSON* title = cJSON_GetObjectItem(snippet, "title");
+        if (title == NULL) {
+            fprintf(stderr, "Error getting video title from YT-playlist JSON.\n");
+            goto cleanup;
+        }
+        
+
+        YtTrack* new_track = NULL;
+        new_track = yt_track_create(video_id->valuestring, 
+                                    title->valuestring, 
+                                    channel->valuestring, 
+                                    NULL, NULL);
+        if (new_track == NULL) goto cleanup;
+
+        if (yt_track_list_append(track_list, new_track)) goto cleanup;
+    }
+
+    cJSON_Delete(json);
+    return tracks_parced;
+cleanup:
+    cJSON_Delete(json);
+    return 1;
 }
 

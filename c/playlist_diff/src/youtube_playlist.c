@@ -115,13 +115,13 @@ int yt_track_list_append(YoutubeTrackList** track_list, YtTrack* track)
 {
     if ((*track_list)->track == NULL) {
         (*track_list)->track = track;
-        return 1;
+        return 0;
     }
 
     YoutubeTrackList* new_entry = malloc(sizeof(YoutubeTrackList));
     if (new_entry == NULL) {
         fprintf(stderr, "\nFailed to allocate memory for new youtube list entry.\n");
-        return 0;
+        return 1;
     }
     new_entry->track = track;
     
@@ -130,7 +130,7 @@ int yt_track_list_append(YoutubeTrackList** track_list, YtTrack* track)
         (*track_list)->prev = new_entry;
         new_entry->prev = NULL; 
         *track_list = new_entry;
-        return 1;
+        return 0;
     }
     
     new_entry->next = (*track_list)->next;
@@ -138,12 +138,17 @@ int yt_track_list_append(YoutubeTrackList** track_list, YtTrack* track)
 
     new_entry->prev = (*track_list)->prev;
     new_entry->prev->next = new_entry;
-    return 1;
+    return 0;
 }
 
 
 void yt_playlist_init(YoutubePlaylist** playlist)
 {
+    *playlist = malloc(sizeof(YoutubePlaylist));
+    if (playlist == NULL) {
+        fprintf(stderr, "Failed to allocate YoutubePlaylist\n");
+        return;
+    }
     (*playlist)->name = NULL;
     (*playlist)->description = NULL;
     (*playlist)->id = NULL;
