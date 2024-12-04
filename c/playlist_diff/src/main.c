@@ -19,9 +19,9 @@ void test();
 
 int main (void)
 {
-    FILE *fptr = NULL;
+    FILE* fptr = NULL;
     OauthAccess* google_access = NULL;
-    SpotifyPlaylist *spotify_playlist = NULL;
+    SpotifyPlaylist* spotify_playlist = NULL;
     OauthAccess* spotify_access = NULL;
 
     char* temp = NULL; //Volatile only to prevent optimilizations as the content needs a guarantee of being cleared in memory.
@@ -90,7 +90,7 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     {
 	fprintf (stderr, "Failed to allocate memory for service type.\n");
 	goto cleanup;
-    }       
+    }
     remove_new_line((char*)temp);
     service_str[0] = '\0';
     strcpy(service_str, temp);
@@ -237,20 +237,20 @@ cleanup:
 
 static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
 {
-    const int BUFFER_SIZE = 1800; 
     
-    char* service_acc = NULL;
-    size_t s_acc_len = 0;
-    
-    volatile char* s_acc_p_key= NULL;
-    size_t s_acc_p_key_len = 0;
-    
-    char* playlist_id = NULL;
-    size_t p_id_len = 0;
-
+    const int BUFFER_SIZE = 550;
     volatile char* temp = NULL;
-    
+    volatile char* clientID = NULL;
+
+    // Shall be redirect url (temporarily™)
+    volatile char* clientSecret = NULL;
+    char* playlist_id = NULL;
     char* auth_reply = NULL;
+    OauthAccess* access = NULL;
+    
+    size_t secret_len = 0;
+    size_t id_len = 0;
+    size_t pl_len = 0;
 
     temp = calloc(BUFFER_SIZE, sizeof(char));
     if (temp == NULL) {
@@ -259,53 +259,69 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
     
     fgets((char*)temp, BUFFER_SIZE, *file_ptr);
     remove_new_line((char*)temp);
-    s_acc_len = strlen((char*)temp);
-    service_acc = malloc(s_acc_len + 1);
-    if (service_acc == NULL) {
+    clientID = strdup((char*)temp);
+    if (clientID == NULL) {
         goto cleanup;
     }
-    service_acc[0] = '\0';
-    strcpy(service_acc, (char*)temp);
     
     memset((char*)temp, 0, BUFFER_SIZE); 
     fgets((char*)temp, BUFFER_SIZE, *file_ptr);
     remove_new_line((char*)temp);
-    s_acc_p_key_len = strlen((char*)temp);
-    s_acc_p_key= malloc(s_acc_p_key_len + 1);
-    if (s_acc_p_key== NULL) {
+    clientSecret = strdup((char*)temp);
+    if (clientSecret == NULL) {
         goto cleanup;
     }
-    s_acc_p_key[0] = '\0';
-    strcpy((char*)s_acc_p_key, (char*)temp);
+
     memset((char*)temp, 0, BUFFER_SIZE); 
     fgets((char*)temp, BUFFER_SIZE, *file_ptr);
     remove_new_line((char*)temp);
-    p_id_len = strlen((char*)temp);
-    playlist_id = malloc(p_id_len + 1);
+    playlist_id = strdup((char*)temp);
     if (playlist_id == NULL) {
         goto cleanup;
     }
-    playlist_id[0] = '\0';
-    strcpy(playlist_id, (char*)temp);
-    auth_reply = get_auth_token_google(service_acc, (char*)s_acc_p_key, s_acc_p_key_len);
+
+    //TODO: Make webserver to handle this step.
+    // auth_reply = get_auth_token_google(Some parameter.);
+
+    memset((char*)temp, 0, BUFFER_SIZE); 
+    printf("Paste in entire reply json: ");
+    if (!fgets((char*)temp, BUFFER_SIZE, stdin)) goto cleanup;
+    auth_reply = strdup((char*)temp);
     if (auth_reply == NULL) {
         goto cleanup;
     }
     memset((char*)temp, 0, BUFFER_SIZE);
+    
+    free((char*)clientID);
+    free((char*)clientSecret);
     free((char*)temp);
     temp = NULL;
+    clientID = NULL;
+    clientSecret = NULL;
+    
+    access = oauth_access_init(auth_reply, YOUTUBE, playlist_id);
+    if (access == NULL) {
+        fprintf(stderr, "Failed to initialize access object");
+        goto cleanup;
+    }
+    free(auth_reply);
+    auth_reply = NULL;
+    
+    free(playlist_id);
+    playlist_id = NULL;
+
+    return access;
 
 cleanup:
-    if (s_acc_p_key!= NULL) {
-        memset((char*)s_acc_p_key, 0, s_acc_p_key_len);
+    if (clientID != NULL) {
+        memset((char*)clientID, 0, strlen((char*)clientID));
     }
-    free((char*)s_acc_p_key);
     if (temp != NULL) {
         memset((char*)temp, 0, BUFFER_SIZE);
     }
     free((char*)temp);
+    free((char*)clientSecret);
     free(auth_reply);
-    free(service_acc);
     free(playlist_id);
 
     return NULL;

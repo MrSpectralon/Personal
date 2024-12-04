@@ -26,7 +26,7 @@ Implementation checklist:
       - [x] SHA256 encoding.
       - [x] HMAC-SHA256 encoding
   - [ ] Parce reply.
-  
+- [ ] Support for state parameter.
 - [ ] Request playlist data.
 
 - [ ] Parce reply data.
