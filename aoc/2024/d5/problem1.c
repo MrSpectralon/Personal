@@ -162,8 +162,52 @@ cleanup:
     return NULL;
 }
 
+int check_valid_page_order(int* page, int** rules, int location){
+    
+    // printf("\n%d must be before -> ", rules[0][0]);
+    // for (int q = 0; rules[1][q] != -1; q++) {
+    //         printf("%d, ", rules[1][q]);
+    // }
+    // printf("\n");
+    
+    for (int y = 0; rules[1][y] != -1; y++) {
+        for (int z = location-1; z >= 0; z--) {
+            
+            // printf("checking if pi %d = %d\n", page[z], rules[1][y]);
+            if (rules[1][y] == page[z]) {
+                // printf("Yes. Illegal - returning immediatly.\n");
+                return 0;
+            }
+        }
+
+    }
+    // printf("Found nothing illegal - Returning valid\n");
+    return 1;
+}
+
+int tired(int*** rules_map, int* integer_pages){
+    int j = 0;
+    for (; integer_pages[j] != -1; j++){}
+    
+    int middle = j/2;
+    for (; j >= 0; j--) {
+
+        for (int x = 0; rules_map[x] != NULL; x++) {
+                    
+            if (rules_map[x][0][0] != integer_pages[j]) {
+                continue;
+            }
+            int res = check_valid_page_order(integer_pages, rules_map[x], j);
+            if (!res) {
+                return 0;
+            }
+        }
+    }
+    return middle;
+}
+
 int eh(char** rules, int rules_len, char** pages, int pages_len){
-    // int sum = 0;
+    int sum = 0;
     int*** rules_map = NULL;
     int** integer_pages = NULL;
 
@@ -175,60 +219,37 @@ int eh(char** rules, int rules_len, char** pages, int pages_len){
     //  [amount_of_rules] -> [0] -> {rule_value}
     //  [amount_of_rules] -> [1] -> {allowed_after_rule_value, ...}
 
-    for (int i = 0; rules_map[i] != NULL; i++) {
-        printf("Rule: %d\n  Allowed: ", rules_map[i][0][0]);
-        for (int j = 0; rules_map[i][1][j] != -1; j++) {
-            printf("%d, ", rules_map[i][1][j]);
-        }
-        printf("\n");
-    }
+    // for (int i = 0; rules_map[i] != NULL; i++) {
+    //     printf("Rule: %d\n  Allowed: ", rules_map[i][0][0]);
+    //     for (int j = 0; rules_map[i][1][j] != -1; j++) {
+    //         printf("%d, ", rules_map[i][1][j]);
+    //     }
+    //     printf("\n");
+    // }
 
     integer_pages = convert_pages_to_int(pages, pages_len);
     if (integer_pages == NULL) goto cleanup;
     // Structure:
     //  [page_number] -> {num1, num2, ...}
-    for (int i = 0; integer_pages[i] != NULL; i++) {
-        printf("Page <%d> -> ", i);
-        for (int j = 0; integer_pages[i][j] != -1; j++) {
-            printf("%d, ",integer_pages[i][j]);
-        }
-        printf("\n");
-    }
+    
+    // for (int i = 0; integer_pages[i] != NULL; i++) {
+    //     printf("Page <%d> -> ", i);
+    //     for (int j = 0; integer_pages[i][j] != -1; j++) {
+    //         printf("%d, ",integer_pages[i][j]);
+    //     }
+    //     printf("\n");
+    // }
     
     for (int i = 0; integer_pages[i] != NULL; i++) {
-        int check = 0;
-        
-        for (int j = 0; integer_pages[i][j] != -1; j++) {
-            
-            for (int x = 0; rules_map[x] != NULL; x++) {
-                
-                if (rules_map[x][0][0] != integer_pages[i][j]) {
-                    printf("No approperiate rule found - Continuing\n");
-                    continue;
-                }
-                printf("Num: %d \nRules: ", integer_pages[i][j]);
-                for (int y = 0; rules_map[x][1][y] != -1; y++) {
-                    printf("%d, ", rules_map[x][1][y]);
-                }
-                printf("\n");
-                check = x;
-                break;
-            }
-            
-            for (int x = 0; rules_map[check][1][x] != -1; x++) {
-                if (integer_pages[i][j+1] == -1) {
-                    printf("Found nothing - ignoring %d\n", integer_pages[i][j+1]);
-                    break;
-                }
-                if (rules_map[check][1][x] == integer_pages[i][j+1]) {
-                    printf("%d is allowed.\n", integer_pages[i][j+1]);
-                    break;
-
-                }
-            }
-
-        }
+        int middle = tired(rules_map, integer_pages[i]);
+        if (middle > 0) {
+            // printf("Page %d is valid. -> Adding %d to sum(%d)\n", i, integer_pages[i][middle], sum);
+            sum += integer_pages[i][middle];
+        }   
     }
+    free_rules_map(rules_map);
+    free_int_pages(integer_pages);
+    return sum;
 
 cleanup:
     free_rules_map(rules_map);
