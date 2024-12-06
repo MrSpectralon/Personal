@@ -146,7 +146,6 @@ int** convert_pages_to_int(char** pages, int pages_len){
             val[1] = pages[i][j-1];
             val[2] = '\0';
             int num = atoi(val);
-            // printf("Adding value <%d> to index <%d>\n", num, indx);
             int_pages[i][indx] = num;
             indx++;
         }
@@ -163,25 +162,16 @@ cleanup:
 }
 
 int check_valid_page_order(int* page, int** rules, int location){
-    
-    // printf("\n%d must be before -> ", rules[0][0]);
-    // for (int q = 0; rules[1][q] != -1; q++) {
-    //         printf("%d, ", rules[1][q]);
-    // }
-    // printf("\n");
-    
+       
     for (int y = 0; rules[1][y] != -1; y++) {
         for (int z = location-1; z >= 0; z--) {
             
-            // printf("checking if pi %d = %d\n", page[z], rules[1][y]);
             if (rules[1][y] == page[z]) {
-                // printf("Yes. Illegal - returning immediatly.\n");
                 return 0;
             }
         }
 
     }
-    // printf("Found nothing illegal - Returning valid\n");
     return 1;
 }
 
@@ -219,31 +209,16 @@ int eh(char** rules, int rules_len, char** pages, int pages_len){
     //  [amount_of_rules] -> [0] -> {rule_value}
     //  [amount_of_rules] -> [1] -> {allowed_after_rule_value, ...}
 
-    // for (int i = 0; rules_map[i] != NULL; i++) {
-    //     printf("Rule: %d\n  Allowed: ", rules_map[i][0][0]);
-    //     for (int j = 0; rules_map[i][1][j] != -1; j++) {
-    //         printf("%d, ", rules_map[i][1][j]);
-    //     }
-    //     printf("\n");
-    // }
-
+    
     integer_pages = convert_pages_to_int(pages, pages_len);
     if (integer_pages == NULL) goto cleanup;
     // Structure:
     //  [page_number] -> {num1, num2, ...}
     
-    // for (int i = 0; integer_pages[i] != NULL; i++) {
-    //     printf("Page <%d> -> ", i);
-    //     for (int j = 0; integer_pages[i][j] != -1; j++) {
-    //         printf("%d, ",integer_pages[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-    
+        
     for (int i = 0; integer_pages[i] != NULL; i++) {
         int middle = tired(rules_map, integer_pages[i]);
         if (middle > 0) {
-            // printf("Page %d is valid. -> Adding %d to sum(%d)\n", i, integer_pages[i][middle], sum);
             sum += integer_pages[i][middle];
         }   
     }
@@ -297,7 +272,7 @@ int main(){
         }
     }
 
-    //gets rid of newline separator.
+    //gets rid of newline separator in between the rules and pages info.
     fgets(rule_buffer, PAGE_RULE_LEN, stdin);
 
     pages = malloc(num_of_pages * sizeof(char*));
