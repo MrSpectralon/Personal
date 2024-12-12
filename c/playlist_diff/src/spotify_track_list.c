@@ -1,4 +1,6 @@
 #include "../header_files/spotify_track_list.h"
+#include <stdio.h>
+#include <string.h>
 
 
 
@@ -340,3 +342,18 @@ void spotify_free_playlist (SpotifyPlaylist **playlist)
     free (*playlist);
     *playlist = NULL;
 }
+void print_spotify_playlist(SpotifyPlaylist* spl)
+{
+
+    if (spl == NULL) {
+        fprintf(stderr, "Tried printing uninitialized spotify playlist.\n");
+        return;
+    }
+    printf("Playlist:    %s\n", spl->name);
+    printf("Description: %s\n", spl->description);
+    printf("Total tracks: %d\n", spl->total_tracks);
+
+    print_list_content(spl->track_list);
+
+}
+

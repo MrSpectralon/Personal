@@ -1,4 +1,5 @@
 #include "../header_files/spotify_methods.h"
+#include <stdio.h>
 
 /**
  * Requests an authentication token from spotify.
@@ -44,8 +45,10 @@ char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
  * fetches information about a specified spotify playlist.
  * Needs a valid playlist ID and valid access token before use.
  */
-char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
+char* get_playlist_info_spotify (OauthAccess *access_data)
 {
+
+    printf("start\n%s\nend", access_data->playlist);
     //Preparing approperiate URL for fetching playlist data. 
     char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
     // At the moment hardcoded for Norwegian music licensing. (market=NO)
@@ -56,26 +59,22 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
     int g_type_len = (int) strlen (access_data->type);
 
     //Preparing authentification
-    char auth[] = "Authorization: ";
-    char type[g_type_len + 2];
-    type[0] = '\0';
-    strcat (type, access_data->type);
-    type[g_type_len] = ' ';
-    type[g_type_len + 1] = '\0';
+    char auth[] = "Authorization: Bearer ";
 
     int auth_length = strlen (auth) + g_type_len + strlen (access_data->token) + 2; 
     authorization = malloc (auth_length);
     authorization[0] = '\0';
     strcat (authorization, auth);
-    strcat (authorization, type);
     strcat (authorization, access_data->token);
 
-    int url_length = strlen (url_api_dest) + strlen (field_options) + strlen (playlistID);
+    int url_length = strlen (url_api_dest) + strlen (field_options) + strlen (access_data->playlist);
     requestURL = malloc (url_length + 1);
     requestURL[0] = '\0';
     strcat (requestURL, url_api_dest);
-    strcat (requestURL, playlistID);
+    strcat (requestURL, access_data->playlist);
     strcat (requestURL, field_options);
+    printf("SADDAN!: %s",requestURL);
+
     char* reply = curl_get_request (authorization, requestURL);
     free(authorization);
     free(requestURL);
@@ -88,7 +87,7 @@ char* get_playlist_info_spotify (char *playlistID, OauthAccess *access_data)
  * The offset parameter is used when the playlist contains more than 100 songs.
  * Offset should start at 0 and iterate by 100.
  */
-char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offset)
+char* get_playlist_content_spotify (OauthAccess *ad, int offset)
 {
 
     //Preparing approperiate URL for fetching playlist data. 
@@ -127,13 +126,13 @@ char* get_playlist_content_spotify (char *playlistID, OauthAccess *ad, int offse
     int url_length =
 	    strlen (url_api_dest) 
 	    + strlen (field_options) 
-	    + strlen (playlistID) 
+	    + strlen (ad->playlist) 
 	    + offset_length;
 
     requestURL = calloc (url_length, sizeof (char));
 
     strcat (requestURL, url_api_dest);
-    strcat (requestURL, playlistID);
+    strcat (requestURL, ad->playlist);
     strcat (requestURL, field_options);
     strcat (requestURL, offset_str);
 
@@ -159,7 +158,7 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
 	fprintf (stderr, "Error occured when initializing spotify playlist.\n");
 	return NULL;
     }
-
+    printf("reply: %s", data);
     cJSON *json = cJSON_Parse (data);
     if (json == NULL)
     {
@@ -388,13 +387,13 @@ char* handle_artists_from_json(cJSON* artists_obj)
 /**
  * Fetches a spotify playlist by ID.
  */
-SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
+SpotifyPlaylist* get_spotify_playlist (OauthAccess *access)
 {
     SpotifyPlaylist *playlist;
 
     int songs_recieved = 0;
     int total = 0;
-    char *playlist_info = get_playlist_info_spotify (playlist_id, access);
+    char *playlist_info = get_playlist_info_spotify(access);
     if (playlist_info == NULL)
     {
 	fprintf (stderr, "No playlist info receaved from spotify.\n");
@@ -418,7 +417,7 @@ SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
 
     do
     {
-	char *content = get_playlist_content_spotify (playlist_id, access, total);
+	char *content = get_playlist_content_spotify (access, total);
 	if (content == NULL)
 	{
 	    fprintf (stderr, "No tracks receved from spotify.\n");
@@ -434,7 +433,7 @@ SpotifyPlaylist* get_spotify_playlist (OauthAccess *access, char *playlist_id)
 	content = NULL;
 	fflush (stdout);
     }
-    while (songs_recieved != 100);
+    while (songs_recieved != playlist->total_tracks);
     
     printf ("\nFinished fetching data from playlist '%s'.\n", playlist->name);
     return playlist;

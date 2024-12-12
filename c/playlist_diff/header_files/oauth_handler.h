@@ -46,8 +46,8 @@ typedef struct {
     
 } OauthAccess;
 
+OauthAccess* oauth_access_init (const char* auth_reply, Service service, const char* playlist_id);
 
-OauthAccess* oauth_access_init(const char* auth_reply, Service service, const char* playlist_id);
 void oauth_access_delete(OauthAccess** access_obj);
 
 void oauth_access_print (OauthAccess *access_obj);

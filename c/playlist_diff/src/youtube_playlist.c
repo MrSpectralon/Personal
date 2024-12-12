@@ -126,18 +126,16 @@ int yt_track_list_append(YoutubeTrackList** track_list, YtTrack* track)
     new_entry->track = track;
     
     if ((*track_list)->next == NULL || (*track_list)->prev == NULL) {
-        new_entry->next = (*track_list);
+        new_entry->next = *track_list;
         (*track_list)->prev = new_entry;
         new_entry->prev = NULL; 
         *track_list = new_entry;
         return 0;
     }
-    
     new_entry->next = (*track_list)->next;
+    (*track_list)->next = new_entry;
     new_entry->next->prev = new_entry;
-
-    new_entry->prev = (*track_list)->prev;
-    new_entry->prev->next = new_entry;
+    new_entry->prev = *track_list;
     return 0;
 }
 
@@ -247,6 +245,7 @@ void yt_track_list_free(YoutubeTrackList** track_list)
 void yt_playlist_free(YoutubePlaylist** playlist)
 {
     if (*playlist == NULL) {
+        printf("Tried to free NULL youtube playlist.\n");
         return;
     }
     yt_track_list_free(&(*playlist)->track_list_head);

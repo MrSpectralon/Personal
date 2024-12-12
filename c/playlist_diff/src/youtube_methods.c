@@ -1,4 +1,4 @@
-#include "../header_files/google_methods.h"
+#include "../header_files/youtube_methods.h"
 #include <cjson/cJSON.h>
 #include <curl/curl.h>
 #include <stdlib.h>
@@ -180,6 +180,7 @@ cleanup:
 **/
 int parce_youtube_playlist_details(YoutubePlaylist** playlist, char* data)
 {
+    
     cJSON* json = cJSON_Parse(data);
     if (json == NULL)
     {
@@ -247,13 +248,46 @@ cleanup:
     return 1;
 }
 
-char* get_youtube_playlist_details(char* playlist_id, OauthAccess* access)
+char* get_youtube_playlist_details(OauthAccess* access)
 {
 
-    return NULL;
+    char url_api_destination[] = "https://youtube.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&fields=items(snippet(title,description),contentDetails)&id=";
+    
+    char auth[] = "Authorization: Bearer ";
+    char* authorization = NULL;
+    int authorization_len = 0;
+    char* request_url = NULL;
+    int request_url_len = 0;
+    
+    char* reply = NULL;
+
+
+    request_url_len = strlen(url_api_destination) + strlen(access->playlist);
+    request_url = malloc(request_url_len + 1);
+    if (request_url == NULL) {
+        return NULL;
+    }
+    request_url[0] = '\0';
+    strcat(request_url, url_api_destination);
+    strcat(request_url, access->playlist);
+    
+    authorization_len = strlen(auth) + strlen(access->token);
+    authorization = malloc(authorization_len + 1);
+    if (authorization == NULL) {
+        goto cleanup;
+    }
+    authorization[0] = '\0';
+    strcat(authorization, auth);
+    strcat(authorization, access->token);
+
+    reply = curl_get_request(authorization, request_url);
+    cleanup:
+    free(authorization);
+    free(request_url);
+    return reply;
 }
 
-YoutubePlaylist* get_youtube_playlist(OauthAccess* access, char* playlist_id)
+YoutubePlaylist* get_youtube_playlist(OauthAccess* access)
 {   
     char* playlist_details_json = NULL;
 
@@ -268,43 +302,108 @@ YoutubePlaylist* get_youtube_playlist(OauthAccess* access, char* playlist_id)
         goto cleanup;
     }
 
-    playlist->id = strdup(playlist_id);
+    playlist->id = strdup(access->playlist);
     if (playlist->id == NULL) {
         fprintf(stderr, "Failed to allocate youtube id in object.\n");
         goto cleanup;
     }
 
-    playlist_details_json = get_youtube_playlist_details(playlist_id, access);
+    playlist_details_json = get_youtube_playlist_details(access);
     if (playlist_details_json == NULL) {
         goto cleanup;
     }
-    
     if (parce_youtube_playlist_details(&playlist, playlist_details_json)) goto cleanup;
-    
-    free(playlist_details_json);
-    
+
     while (tracks_recieved < playlist->total_tracks) {
-        tracks_data = get_youtube_playlist_tracks(playlist->id, access, next_page);
+        tracks_data = get_youtube_playlist_tracks(access, next_page);
+        if (tracks_data == NULL) {
+            fprintf(stderr, "Failed to recieve youtube playlist tracks.\n");
+        }
         free(next_page);
         next_page = NULL;
-        tracks_recieved += parce_youtube_playlist_tracks(&playlist->track_list_head, tracks_data, &next_page);
-
-        printf ("\rReceved and parced %d of %d songs.", tracks_recieved, playlist->total_tracks);
+        int temp = parce_youtube_playlist_tracks(&(playlist)->track_list_head, tracks_data, &next_page);
+        if (!temp) {
+            fprintf(stderr, "Parced 0 tracks from youtube.\n");
+            goto cleanup;
+        }
+        free(tracks_data);
+        tracks_data = NULL;
+        tracks_recieved += temp;
+        printf ("\rReceved and parced %d of %d songs.\n", tracks_recieved, playlist->total_tracks);
 	fflush (stdout);
     }
     
+    free(tracks_data);
+    free(next_page);
+    free(playlist_details_json);
 
     return playlist;
   cleanup:
 
     free(next_page);
     free(playlist_details_json);
+    free(tracks_data);
     yt_playlist_free(&playlist);
     return  NULL;
 }
 
-char* get_youtube_playlist_tracks(char* playlist_id, OauthAccess* access, char* page_token)
+char* get_youtube_playlist_tracks(OauthAccess* access, char* page_token)
 {
+    char url_api_destination[] = "https://youtube.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&fields=nextPageToken,pageInfo(resultsPerPage),items(snippet(title,videoOwnerChannelTitle,resourceId(videoId)))&playlistId=";
+    char p_t[] = "&page_token=";
+    
+    char auth[] = "Authorization: Bearer ";
+    
+    char* authorization = NULL;
+    int authorization_len = 0;
+    char* request_url = NULL;
+    int request_url_len = 0;
+    
+    char* next_page_token = NULL;
+
+    char* reply = NULL;
+
+    if (page_token != NULL) {
+        request_url_len = strlen(p_t) + strlen(page_token);
+        next_page_token = malloc(request_url_len + 1);
+        next_page_token[0] = '\0';
+        strcat(next_page_token, p_t);
+        strcat(next_page_token, page_token);
+    }
+
+    request_url_len += strlen(url_api_destination) + strlen(access->playlist);
+    request_url = malloc(request_url_len + 1);
+    if (request_url == NULL) {
+        return NULL;
+    }
+    request_url[0] = '\0';
+    strcat(request_url, url_api_destination);
+    strcat(request_url, access->playlist);
+    
+    if (next_page_token != NULL) strcat(request_url, next_page_token);
+
+
+    authorization_len = strlen(auth) + strlen(access->token);
+    authorization = malloc(authorization_len + 1);
+    if (authorization == NULL) {
+        goto cleanup;
+    }
+    authorization[0] = '\0';
+    strcat(authorization, auth);
+    strcat(authorization, access->token);
+
+    reply = curl_get_request(authorization, request_url);
+    free(authorization);
+    free(request_url);
+    free(next_page_token);
+    return reply;
+
+
+cleanup:
+    free(request_url);
+    free(authorization);
+    free(next_page_token);
+
     return NULL;
 }
 
@@ -364,14 +463,16 @@ int parce_youtube_playlist_tracks(YoutubeTrackList** track_list, char* track_dat
                                     channel->valuestring, 
                                     NULL, NULL);
         if (new_track == NULL) goto cleanup;
-
-        if (yt_track_list_append(track_list, new_track)) goto cleanup;
+        if (yt_track_list_append(track_list, new_track)){
+            yt_track_free(&new_track);
+            goto cleanup;
+        }
     }
 
     cJSON_Delete(json);
     return tracks_parced;
 cleanup:
     cJSON_Delete(json);
-    return 1;
+    return 0;
 }
 

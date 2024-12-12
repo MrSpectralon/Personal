@@ -1,7 +1,7 @@
 
 #include "../header_files/helper_methods.h"
 #include "../header_files/spotify_methods.h"
-#include "../header_files/google_methods.h"
+#include "../header_files/youtube_methods.h"
 #include "../header_files/youtube_playlist.h"
 #include <curl/curl.h>
 #include <stddef.h>
@@ -23,12 +23,13 @@ int main (void)
     OauthAccess* google_access = NULL;
     SpotifyPlaylist* spotify_playlist = NULL;
     OauthAccess* spotify_access = NULL;
+    YoutubePlaylist* youtube_playlist = NULL;
 
     char* temp = NULL; //Volatile only to prevent optimilizations as the content needs a guarantee of being cleared in memory.
     
 
-    test();
-    goto cleanup;
+    // test();
+    // goto cleanup;
 
     fptr = fopen("hidden_from_git/secrets", "r");
     fprintf(stderr, "File opened.\n");
@@ -46,26 +47,32 @@ int main (void)
     }
     oauth_access_print(spotify_access);
 
-   
-    google_access = request_access_from_file(&fptr);
-    if (google_access == NULL) {
-        fprintf(stderr, "Failed to gain auth key.\n");
-	goto cleanup;
-    }
-    oauth_access_print(google_access);
+	//
+	//    google_access = request_access_from_file(&fptr);
+	//    if (google_access == NULL) {
+	//        fprintf(stderr, "Failed to gain auth key.\n");
+	// goto cleanup;
+	//    }
+	//    oauth_access_print(google_access);
     temp = NULL;
     fclose (fptr);
-
-    // spotify_playlist = get_spotify_playlist (spotify_access, splaylist_ID);
-    // print_list_content (spotify_playlist->track_list);
     
+    // youtube_playlist = get_youtube_playlist(google_access);
+    // yt_playlist_print(youtube_playlist);
+    
+
+    spotify_playlist = get_spotify_playlist(spotify_access);
+    // print_spotify_playlist(spotify_playlist);
+
+    
+
     cleanup:
 
     free((char*)temp);
     oauth_access_delete(&google_access);
     oauth_access_delete (&spotify_access);
     spotify_free_playlist (&spotify_playlist);
-
+    yt_playlist_free(&youtube_playlist);
     return 0;
 }
 
@@ -97,7 +104,6 @@ OauthAccess* request_access_from_file(FILE** file_pointer){
     free(temp);
     temp = NULL;
     
-    printf("Service string: %s\n", service_str); 
     if(string_compare_64b(service_str, "spotify"))
     {
         access = spotify_credentials_from_file(file_pointer);
@@ -248,9 +254,9 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
     char* auth_reply = NULL;
     OauthAccess* access = NULL;
     
-    size_t secret_len = 0;
-    size_t id_len = 0;
-    size_t pl_len = 0;
+    // size_t secret_len = 0;
+    // size_t id_len = 0;
+    // size_t pl_len = 0;
 
     temp = calloc(BUFFER_SIZE, sizeof(char));
     if (temp == NULL) {
@@ -287,9 +293,8 @@ static OauthAccess* ytm_credentials_from_file(FILE** file_ptr)
     printf("Paste in entire reply json: ");
     if (!fgets((char*)temp, BUFFER_SIZE, stdin)) goto cleanup;
     auth_reply = strdup((char*)temp);
-    if (auth_reply == NULL) {
-        goto cleanup;
-    }
+    if (auth_reply == NULL) goto cleanup;
+
     memset((char*)temp, 0, BUFFER_SIZE);
     
     free((char*)clientID);

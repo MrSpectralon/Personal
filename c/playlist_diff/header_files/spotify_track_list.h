@@ -41,7 +41,9 @@ void print_list_content(ListSpotifyTracks* list_head);
 
 void spotify_free_tracklist(ListSpotifyTracks** list_head);
 void spotify_free_playlist(SpotifyPlaylist** playlist);
+
 SpotifyPlaylist* spotify_playlist_init();
+void print_spotify_playlist(SpotifyPlaylist* spl);
 
 ListSpotifyTracks* find_same_track(ListSpotifyTracks* list_head, const SpotifyTrack* track);
 

@@ -9,9 +9,9 @@
 
 
 
-SpotifyPlaylist* get_spotify_playlist(OauthAccess *access, char *playlist_id);
+SpotifyPlaylist* get_spotify_playlist(OauthAccess *access);
 
-char* get_playlist_content_spotify(char* playlistID, OauthAccess* ad, int offset);
+char* get_playlist_content_spotify(OauthAccess* ad, int offset);
 int parce_spotify_track_data(char* data, ListSpotifyTracks** list_head);
 SpotifyPlaylist* parce_spotify_playlist_data(const char* data);
 
