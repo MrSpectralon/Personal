@@ -47,23 +47,21 @@ int main (void)
     }
     oauth_access_print(spotify_access);
 
-	//
-	//    google_access = request_access_from_file(&fptr);
-	//    if (google_access == NULL) {
-	//        fprintf(stderr, "Failed to gain auth key.\n");
-	// goto cleanup;
-	//    }
-	//    oauth_access_print(google_access);
+    google_access = request_access_from_file(&fptr);
+    if (google_access == NULL) {
+        fprintf(stderr, "Failed to gain auth key.\n");
+        goto cleanup;
+    }
+    oauth_access_print(google_access);
     temp = NULL;
     fclose (fptr);
     
-    // youtube_playlist = get_youtube_playlist(google_access);
-    // yt_playlist_print(youtube_playlist);
-    
+    youtube_playlist = get_youtube_playlist(google_access);
 
     spotify_playlist = get_spotify_playlist(spotify_access);
-    // print_spotify_playlist(spotify_playlist);
-
+    print_spotify_playlist(spotify_playlist);
+    yt_playlist_print(youtube_playlist);
+    
     
 
     cleanup:

@@ -18,12 +18,9 @@ typedef struct {
 
 } Investigate;
 
-
-
 const int BUFFER_LEN = 135;
 int* get_start_coordinates(char** lab_map);
 int check_visit(char** lab_map, Investigate* i);
-
 
 void rotate(Investigate** inv);
 int investigation_incr(Investigate** i);
@@ -186,7 +183,6 @@ int main(){
     printf("%d, %d\n", investigation->x, investigation->y);
     lab_map[investigation->y][investigation->x] = 'X';
 
-
     int investigating = 1;
     
     while (investigating) {
@@ -208,14 +204,11 @@ int main(){
                 break;
         }
     }
-    
     for (int i = 0; lab_map[i] != NULL; i++) {
         for (int j = 0; lab_map[i][j] != '\n'; j++) {
             if (lab_map[i][j] == 'X') sum++;
         }
-    
     }
-
     for (int i = 0; lab_map[i] != NULL; i++) {
         printf("%s", lab_map[i]);
     }
@@ -226,5 +219,4 @@ cleanup:
     free(start_coordinates);
     free_lab_map(lab_map);
     return 0;
-
 }
