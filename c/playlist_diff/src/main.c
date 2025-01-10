@@ -1,13 +1,13 @@
-
 #include "../header_files/helper_methods.h"
+#include "../header_files/playlist.h"
 #include "../header_files/spotify_methods.h"
 #include "../header_files/youtube_methods.h"
-#include "../header_files/youtube_playlist.h"
 #include <curl/curl.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 //Declaration for temporary functionality.
 OauthAccess* request_access_from_file(FILE** file_pointer);
@@ -21,9 +21,9 @@ int main (void)
 {
     FILE* fptr = NULL;
     OauthAccess* google_access = NULL;
-    SpotifyPlaylist* spotify_playlist = NULL;
+    Playlist* spotify_playlist = NULL;
     OauthAccess* spotify_access = NULL;
-    YoutubePlaylist* youtube_playlist = NULL;
+    Playlist* youtube_playlist = NULL;
 
     char* temp = NULL; //Volatile only to prevent optimilizations as the content needs a guarantee of being cleared in memory.
     
@@ -32,7 +32,7 @@ int main (void)
     // goto cleanup;
 
     fptr = fopen("hidden_from_git/secrets", "r");
-    fprintf(stderr, "File opened.\n");
+    // fprintf(stderr, "File opened.\n");
     if (fptr == NULL)
     {
 	fprintf (stderr, "Failed to open file.\n");
@@ -47,30 +47,28 @@ int main (void)
     }
     oauth_access_print(spotify_access);
 
-    google_access = request_access_from_file(&fptr);
-    if (google_access == NULL) {
-        fprintf(stderr, "Failed to gain auth key.\n");
-        goto cleanup;
-    }
-    oauth_access_print(google_access);
-    temp = NULL;
-    fclose (fptr);
-    
-    youtube_playlist = get_youtube_playlist(google_access);
+    // google_access = request_access_from_file(&fptr);
+    // if (google_access == NULL) {
+    //     fprintf(stderr, "Failed to gain auth key.\n");
+    //     goto cleanup;
+    // }
+    // oauth_access_print(google_access);
+    // temp = NULL;
+    // fclose (fptr);
+    //
+    // youtube_playlist = get_youtube_playlist(google_access);
 
     spotify_playlist = get_spotify_playlist(spotify_access);
-    print_spotify_playlist(spotify_playlist);
-    yt_playlist_print(youtube_playlist);
-    
-    
+    playlist_print(spotify_playlist);
+    // playlist_print(youtube_playlist);
 
     cleanup:
 
     free((char*)temp);
     oauth_access_delete(&google_access);
     oauth_access_delete (&spotify_access);
-    spotify_free_playlist (&spotify_playlist);
-    yt_playlist_free(&youtube_playlist);
+    playlist_free(&spotify_playlist);
+    playlist_free(&youtube_playlist);
     return 0;
 }
 
@@ -345,7 +343,7 @@ char* get_usr_input(char* print_msg)
 
     return temp;
 }
-
+/*
 void test()
 {
 
@@ -359,14 +357,11 @@ void test()
     char* artist = NULL; 
     char* id = NULL;
 
-    YoutubePlaylist* ytp = NULL;
-
-    char tmp[2];
-    ytp = malloc(sizeof(YoutubePlaylist));
+    Playlist* ytp = playlist_init();
     if (ytp == NULL) {
         goto end;
     }
-    yt_playlist_init(&ytp);
+    char tmp[2];
 
     printf("P - Set playlist data.\n");
     printf("T - Add track data.\n");
@@ -414,7 +409,7 @@ void test()
                 id = get_usr_input("\tID: ");
                 if(id == NULL) goto end; 
                 
-                YtTrack* new_track = yt_track_create(id, name, artist, description, duration);
+                Track* new_track = yt_track_create(id, name, artist, description, duration);
                 if (new_track == NULL) {
                     goto end;
                 }
@@ -457,4 +452,5 @@ end:
     free(id);
     yt_playlist_free(&ytp);
 }
+*/
 

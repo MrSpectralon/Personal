@@ -2,19 +2,8 @@
 
 //Only in this header file because it includes ctime for my LSP to stop complaining.
 #include <curl/curl.h> 
-
 #include <cjson/cJSON.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-
-typedef enum{
-	SPOTIFY,
-	YOUTUBE
-} Service;
-
+#include "./helper_methods.h"
 /**
  * struct OauthAccess - Represents an OAuth access token with associated metadata.
  *

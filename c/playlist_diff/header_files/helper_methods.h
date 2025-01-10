@@ -8,6 +8,14 @@
 
 typedef unsigned char b512_t[64];
 
+typedef enum
+{
+	NONE,
+	SPOTIFY,
+	YOUTUBE
+} Service;
+
+
 /*
 * Removes new line from end of string if `\n` is the last char of the string.
 * Remember to either use malloc before using this funcion, or do a +1 for correct data sizes when using strcpy or strcat etc.

@@ -1,5 +1,8 @@
 #include "../header_files/spotify_methods.h"
+#include "../header_files/curl_handler.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Requests an authentication token from spotify.
@@ -48,7 +51,6 @@ char* get_auth_token_spotify(const char *clientID, const char *clientSecret)
 char* get_playlist_info_spotify (OauthAccess *access_data)
 {
 
-    printf("start\n%s\nend", access_data->playlist);
     //Preparing approperiate URL for fetching playlist data. 
     char url_api_dest[] = "https://api.spotify.com/v1/playlists/";
     // At the moment hardcoded for Norwegian music licensing. (market=NO)
@@ -73,7 +75,6 @@ char* get_playlist_info_spotify (OauthAccess *access_data)
     strcat (requestURL, url_api_dest);
     strcat (requestURL, access_data->playlist);
     strcat (requestURL, field_options);
-    printf("SADDAN!: %s",requestURL);
 
     char* reply = curl_get_request (authorization, requestURL);
     free(authorization);
@@ -138,10 +139,10 @@ char* get_playlist_content_spotify (OauthAccess *ad, int offset)
 
     free (offset_str);
     offset_str = NULL;
-	char* request = curl_get_request(authorization, requestURL);
-	free(authorization);
-	free(requestURL);
-	return request;
+    char* request = curl_get_request(authorization, requestURL);
+    free(authorization);
+    free(requestURL);
+    return request;
 
 }
 
@@ -149,16 +150,16 @@ char* get_playlist_content_spotify (OauthAccess *ad, int offset)
  * Parces the JSON reply from spotify, adding all track information into a linked list of tracks.
  * 
  */
-SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
+Playlist* parce_spotify_playlist_data (const char *data)
 {
-    SpotifyPlaylist* new_playlist;
-    new_playlist = spotify_playlist_init ();
+    Playlist* new_playlist = playlist_init();
     if (new_playlist == NULL)
     {
 	fprintf (stderr, "Error occured when initializing spotify playlist.\n");
 	return NULL;
     }
-    printf("reply: %s", data);
+    new_playlist->service = SPOTIFY;
+
     cJSON *json = cJSON_Parse (data);
     if (json == NULL)
     {
@@ -208,8 +209,7 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
 	new_playlist->description = malloc (1);
 	if (new_playlist->description == NULL)
 	{
-	    fprintf (stderr,
-			    "Error allocating memory for spotify playlist description.\n");
+	    fprintf (stderr, "Error allocating memory for spotify playlist description.\n");
 	    goto cleanup;
 	}
 	new_playlist->description[0] = '\0';
@@ -243,7 +243,7 @@ SpotifyPlaylist* parce_spotify_playlist_data (const char *data)
  * As the name implies - Parces json and adds the findings into a linked list of tracks.
  * Returns the number of songs parced.
  */
-int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
+int parce_spotify_track_data (char *data, TrackList** list_head)
 {
     int number_of_songs = 0;
     cJSON *json = cJSON_Parse (data);
@@ -282,13 +282,13 @@ int parce_spotify_track_data (char *data, ListSpotifyTracks **list_head)
  * Looks through JSON objects for spotify track data.
  * Adds matching data into a list of tracks.
  */
-void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head)
+void handle_json_track_data(cJSON* track_obj, TrackList** list_head)
 {
     cJSON *track_name = cJSON_GetObjectItem (track_obj, "name");
     cJSON *album = cJSON_GetObjectItem (track_obj, "album");
     cJSON *album_name = cJSON_GetObjectItem (album, "name");
     cJSON *duration_ms = cJSON_GetObjectItem (track_obj, "duration_ms");
-    cJSON *preview_url = cJSON_GetObjectItem (track_obj, "preview_url");
+    // cJSON *preview_url = cJSON_GetObjectItem (track_obj, "preview_url");
     cJSON *external_urls = cJSON_GetObjectItem (track_obj, "external_urls");
     cJSON *spotify_url = cJSON_GetObjectItem (external_urls, "spotify");
 
@@ -296,19 +296,31 @@ void handle_json_track_data(cJSON* track_obj, ListSpotifyTracks** list_head)
     
     char *artists_str = handle_artists_from_json(artists);
     
-    if (!append_spotify_track (
-	list_head,
-	track_name->valuestring,
-	album_name->valuestring,
-	artists_str,
-	duration_ms->valueint,
-	preview_url->valuestring,
-	spotify_url->valuestring)
-	)
-    {
-	printf ("Failed to add spotify track.\n");
+    Track* new = track_init();
+    if (new == NULL) {
+	return;
     }
-    free (artists_str);
+    new->name = strdup(track_name->valuestring);
+    if (new->name == NULL) goto cleanup;
+
+    new->album = strdup(album_name->valuestring);
+    if (new->album == NULL) goto cleanup;
+    
+    new->artist = strdup(artists_str);
+    if (new->artist == NULL) goto cleanup;
+    
+    track_set_duration(&new, SPOTIFY, (void*)&duration_ms->valueint);
+    if (new->duration == NULL) goto cleanup;
+    
+    new->url = strdup(spotify_url->valuestring);
+    if (new->url == NULL) goto cleanup;
+    playlist_append(new, list_head);
+
+    return;
+
+cleanup:
+    track_free(&new);
+    fprintf(stderr, "Failed to add spotify track to list.\n");
 }
 
 
@@ -387,9 +399,9 @@ char* handle_artists_from_json(cJSON* artists_obj)
 /**
  * Fetches a spotify playlist by ID.
  */
-SpotifyPlaylist* get_spotify_playlist (OauthAccess *access)
+Playlist* get_spotify_playlist (OauthAccess *access)
 {
-    SpotifyPlaylist *playlist;
+    Playlist* playlist;
 
     int songs_recieved = 0;
     int total = 0;
@@ -400,7 +412,7 @@ SpotifyPlaylist* get_spotify_playlist (OauthAccess *access)
 	goto cleanup;
     }
 
-    playlist = parce_spotify_playlist_data (playlist_info);
+    playlist = parce_spotify_playlist_data(playlist_info);
     if (playlist == NULL)
     {
 	fprintf (stderr, "Error occurred when parcing playlist data.\n");
@@ -425,7 +437,7 @@ SpotifyPlaylist* get_spotify_playlist (OauthAccess *access)
 	}
 
 	songs_recieved =
-	    parce_spotify_track_data (content, &playlist->track_list);
+	    parce_spotify_track_data(content, &playlist->tracks);
 	total += songs_recieved;
 	printf ("\rReceved and parced %d of %d songs.", total,
 	    playlist->total_tracks);

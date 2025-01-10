@@ -1,4 +1,6 @@
 #include "../header_files/youtube_methods.h"
+#include "../header_files/curl_handler.h"
+
 #include <cjson/cJSON.h>
 #include <curl/curl.h>
 #include <stdlib.h>
@@ -178,7 +180,7 @@ cleanup:
  * Returns 0 if no errors occured.
  * Returns 1 if an error occured.
 **/
-int parce_youtube_playlist_details(YoutubePlaylist** playlist, char* data)
+int parce_youtube_playlist_details(Playlist** playlist, char* data)
 {
     
     cJSON* json = cJSON_Parse(data);
@@ -287,7 +289,7 @@ char* get_youtube_playlist_details(OauthAccess* access)
     return reply;
 }
 
-YoutubePlaylist* get_youtube_playlist(OauthAccess* access)
+Playlist* get_youtube_playlist(OauthAccess* access)
 {   
     char* playlist_details_json = NULL;
 
@@ -296,11 +298,8 @@ YoutubePlaylist* get_youtube_playlist(OauthAccess* access)
     
     int tracks_recieved = 0;
 
-    YoutubePlaylist* playlist = NULL;
-    yt_playlist_init(&playlist);
-    if (playlist == NULL) {
-        goto cleanup;
-    }
+    Playlist* playlist = playlist_init();
+    if (playlist == NULL) return NULL;
 
     playlist->id = strdup(access->playlist);
     if (playlist->id == NULL) {
@@ -321,7 +320,7 @@ YoutubePlaylist* get_youtube_playlist(OauthAccess* access)
         }
         free(next_page);
         next_page = NULL;
-        int temp = parce_youtube_playlist_tracks(&(playlist)->track_list_head, tracks_data, &next_page);
+        int temp = parce_youtube_playlist_tracks(&playlist->tracks, tracks_data, &next_page);
         if (!temp) {
             fprintf(stderr, "Parced 0 tracks from youtube.\n");
             goto cleanup;
@@ -343,7 +342,7 @@ YoutubePlaylist* get_youtube_playlist(OauthAccess* access)
     free(next_page);
     free(playlist_details_json);
     free(tracks_data);
-    yt_playlist_free(&playlist);
+    playlist_free(&playlist);
     return  NULL;
 }
 
@@ -407,7 +406,7 @@ cleanup:
     return NULL;
 }
 
-int parce_youtube_playlist_tracks(YoutubeTrackList** track_list, char* track_data, char** next_page)
+int parce_youtube_playlist_tracks(TrackList** track_list, char* track_data, char** next_page)
 {
     int tracks_parced = 0;
     cJSON* json = cJSON_Parse(track_data);
@@ -457,21 +456,20 @@ int parce_youtube_playlist_tracks(YoutubeTrackList** track_list, char* track_dat
         }
         
 
-        YtTrack* new_track = NULL;
-        new_track = yt_track_create(video_id->valuestring, 
-                                    title->valuestring, 
-                                    channel->valuestring, 
-                                    NULL, NULL);
+        Track* new_track = track_init();
         if (new_track == NULL) goto cleanup;
-        if (yt_track_list_append(track_list, new_track)){
-            yt_track_free(&new_track);
-            goto cleanup;
-        }
+        
+        new_track->id = strdup(video_id->valuestring);
+        new_track->name = strdup(title->valuestring);
+        new_track->artist = strdup(channel->valuestring);
+        playlist_append(new_track, track_list);
+
     }
 
     cJSON_Delete(json);
     return tracks_parced;
 cleanup:
+
     cJSON_Delete(json);
     return 0;
 }
