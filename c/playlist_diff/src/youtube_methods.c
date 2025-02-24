@@ -300,7 +300,7 @@ Playlist* get_youtube_playlist(OauthAccess* access)
 
     Playlist* playlist = playlist_init();
     if (playlist == NULL) return NULL;
-
+    playlist->service = YOUTUBE;
     playlist->id = strdup(access->playlist);
     if (playlist->id == NULL) {
         fprintf(stderr, "Failed to allocate youtube id in object.\n");
@@ -408,6 +408,8 @@ cleanup:
 
 int parce_youtube_playlist_tracks(TrackList** track_list, char* track_data, char** next_page)
 {
+    char* YOUTUBE_BASE_URL = "https://music.youtube.com/watch?v=";
+    int BASE_URL_LEN = strlen(YOUTUBE_BASE_URL);
     int tracks_parced = 0;
     cJSON* json = cJSON_Parse(track_data);
     if (json == NULL) goto cleanup;
@@ -437,35 +439,42 @@ int parce_youtube_playlist_tracks(TrackList** track_list, char* track_data, char
         cJSON* resource_id = cJSON_GetObjectItem(snippet, "resourceId");
         if (resource_id == NULL) {
             fprintf(stderr, "Error getting resource ID from YT-playlist JSON.\n");
-            goto cleanup;
+            continue;
         }
+
         cJSON* video_id = cJSON_GetObjectItem(resource_id, "videoId");
         if (video_id == NULL) {
             fprintf(stderr, "Error getting video ID from YT-playlist JSON.\n");
-            goto cleanup;
+            continue;
         }
         cJSON* channel = cJSON_GetObjectItem(snippet, "videoOwnerChannelTitle");
         if (channel == NULL) {
             fprintf(stderr, "Error getting channel name from YT-playlist JSON.\n");
-            goto cleanup;
+            continue;
         }
         cJSON* title = cJSON_GetObjectItem(snippet, "title");
         if (title == NULL) {
             fprintf(stderr, "Error getting video title from YT-playlist JSON.\n");
-            goto cleanup;
+            continue;
         }
-        
-
         Track* new_track = track_init();
         if (new_track == NULL) goto cleanup;
         
         new_track->id = strdup(video_id->valuestring);
         new_track->name = strdup(title->valuestring);
         new_track->artist = strdup(channel->valuestring);
+        new_track->url = malloc(strlen(new_track->id) + BASE_URL_LEN + 1);
+        /**
+        * TODO: Adding support for youtube track duration.
+        * Currently not implemented, as i require to send a new API call on every track with track-id.
+        */
+
+        strcpy(new_track->url, YOUTUBE_BASE_URL);
+        strcat(new_track->url, new_track->id);
+
         playlist_append(new_track, track_list);
 
     }
-
     cJSON_Delete(json);
     return tracks_parced;
 cleanup:

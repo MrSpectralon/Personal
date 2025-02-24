@@ -11,7 +11,8 @@ Playlist* get_youtube_playlist(OauthAccess* access);
 char* get_youtube_playlist_details(OauthAccess* access);
 int parce_youtube_playlist_details(Playlist** playlist, char* data);
 
-char* get_youtube_playlist_tracks(OauthAccess* access, char* page_token);
+	char* get_youtube_playlist_tracks(OauthAccess* access, char* page_token);
+
 int parce_youtube_playlist_tracks(TrackList** track_list, char* track_data, char** next_page);
 
 

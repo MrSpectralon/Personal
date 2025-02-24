@@ -306,7 +306,7 @@ void handle_json_track_data(cJSON* track_obj, TrackList** list_head)
     new->album = strdup(album_name->valuestring);
     if (new->album == NULL) goto cleanup;
     
-    new->artist = strdup(artists_str);
+    new->artist = artists_str;
     if (new->artist == NULL) goto cleanup;
     
     track_set_duration(&new, SPOTIFY, (void*)&duration_ms->valueint);

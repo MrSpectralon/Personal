@@ -47,6 +47,6 @@ void playlist_print_details(Playlist* playlist);
 void playlist_print(Playlist* playlist);
 
 void playlist_append(Track* track, TrackList** head);
-void playlist_pop(TrackList** node);
+void tracklist_pop(TrackList** node);
 
 void track_set_duration(Track** track, Service service, void* duration);

@@ -29,7 +29,6 @@ Track* track_init()
 void track_free(Track** track)
 {
     free((*track)->id);
-    printf("Freeing track:\t%s\n", (*track)->name);
     free((*track)->name);
     free((*track)->album);
     free((*track)->artist);
@@ -48,18 +47,24 @@ void track_print(Track* track)
 }
 
 void tracklist_free(TrackList **tracklist)
-{
-
-    while ((*tracklist)->next != NULL) {
-        TrackList* tmp = (*tracklist)->next;
-        if(tmp == NULL) break;
-
-        track_free(&tmp->track);
-        (*tracklist)->next = (tmp->next == NULL) ? NULL : tmp->next;
-        free(tmp);
+{    
+    TrackList* tmp = NULL;
+    if (*tracklist == NULL) {
+        return;
     }
-    if ((*tracklist)->track != NULL)
-        track_free(&(*tracklist)->track);
+    if ((*tracklist)->prev != NULL) {
+        fprintf(stderr, "Attempted to delete youtube track list from another point than head.");
+        return;
+    }
+    while ((*tracklist)->next != NULL)
+    {
+        tmp = (*tracklist)->next;
+        (*tracklist)->next = tmp->next;
+        track_free(&tmp->track);
+        free(tmp);
+        
+    }
+    track_free(&(*tracklist)->track);
     free(*tracklist);
     *tracklist = NULL;
 }
@@ -101,6 +106,7 @@ Playlist* playlist_init()
 
 void playlist_free(Playlist **playlist)
 {
+    if(*playlist == NULL) return;
     tracklist_free(&(*playlist)->tracks);
     free((*playlist)->id);
     free((*playlist)->name);
@@ -129,7 +135,7 @@ void playlist_append(Track *track, TrackList **head)
     *head = new;
 }
 
-void playlist_pop(TrackList **node)
+void tracklist_pop(TrackList **node)
 {
     if (node == NULL || *node == NULL) return;
 
@@ -175,7 +181,6 @@ static char* spotify_duration_conversion(int* duration)
     int minutes = (*duration - hours_ms) / (60*1000);
     int minutes_ms = minutes * 60 * 1000;
     int seconds = (*duration - (hours_ms + minutes_ms)) / 1000;
-    int ms = (*duration - (hours_ms + minutes_ms + (seconds*1000))) / 100;
     if (hours > 0) {
         sprintf(buffer, "%d", hours);
         len += strlen(buffer) + 2; // +1 because of : and + 1 because of \0
@@ -185,7 +190,7 @@ static char* spotify_duration_conversion(int* duration)
             return NULL;
         }
         strcat(duration_str, buffer);
-        duration_str[len-1] = ':';
+        strcat(duration_str, ":");
         memset(buffer, '\0', 10);
     }
     if (minutes > 0 || hours > 0) {
@@ -197,7 +202,7 @@ static char* spotify_duration_conversion(int* duration)
             return NULL;
         }
         strcat(duration_str, buffer);
-        duration_str[len-1] = ':';
+        strcat(duration_str, ":");
         memset(buffer, '\0', 10);
     }
 
@@ -209,17 +214,20 @@ static char* spotify_duration_conversion(int* duration)
         return NULL;
     }
     strcat(duration_str, buffer);
-    duration_str[len-1] = ',';
-    memset(buffer, '\0', 10);
-
-    sprintf(buffer, "%d", ms);
-    len += strlen(buffer) + 1; 
-    duration_str = realloc(duration_str, len);
-    if (duration_str == NULL) {
-        fprintf(stderr, "Failed to realloc duration_str.\n");
-        return NULL;
-    }
-    strcat(duration_str, buffer);
+    
+    //For appending fractional seconds.
+    // int ms = (*duration - (hours_ms + minutes_ms + (seconds*1000))) / 100;
+    // strcat(duration_str, ",");
+    // memset(buffer, '\0', 10);
+    //
+    // sprintf(buffer, "%d", ms);
+    // len += strlen(buffer) + 1; 
+    // duration_str = realloc(duration_str, len);
+    // if (duration_str == NULL) {
+    //     fprintf(stderr, "Failed to realloc duration_str.\n");
+    //     return NULL;
+    // }
+    // strcat(duration_str, buffer);
 
     return duration_str;
 }

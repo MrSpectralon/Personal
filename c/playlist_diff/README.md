@@ -1,6 +1,6 @@
 # Playlist diff
 
-A project made for the sole purpose of learning C - with the extra benefit of becomming a tool i can use to easily migrate my 1500 song playlist from Spotify to YouTube Music.
+A project made for the sole purpose of learning C - with the extra benefit of becoming a tool i can use to easily migrate my 1500 song playlist from Spotify to YouTube Music.
 
 The finished application should be able to find information about any playlist your account has access to on either YT(YouTube) or Spotify, and edit the playlists that you have management rights for.
 
@@ -25,12 +25,12 @@ Implementation checklist:
       - [x] Base 64 encoding.
       - [x] SHA256 encoding.
       - [x] HMAC-SHA256 encoding
-  - [ ] Parce reply.
+  - [x] Parce reply.
 - [ ] Support for state parameter.
-- [ ] Request playlist data.
+- [x] Request playlist data.
 
-- [ ] Parce reply data.
-- [ ] Save reply data.
+- [x] Parce reply data.
+- [x] Save reply data.
 - [ ] Track lookup.
 - [ ] Add track to playlist.
 

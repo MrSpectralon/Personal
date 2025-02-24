@@ -1,11 +1,10 @@
 #include "../header_files/oauth_handler.h"
 #include <cjson/cJSON.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-const char* SERVICES[] = {"Spotify", "YouTube Music"};
+const char* SERVICES[] = {"None/NA", "Spotify", "YouTube Music"};
 
 /**
  * In hindsight this function does way more than just simply initialize the struct...
@@ -118,7 +117,7 @@ OauthAccess* oauth_access_init (const char* auth_reply, Service service, const c
 /**
  * Prints whatever is in the OauthAccess object in a somewhat presentable manner.
  */
-void oauth_access_print (OauthAccess *access_obj)
+void oauth_access_print(OauthAccess *access_obj)
 {
     char time_str[100];
     strftime (time_str, sizeof (time_str), "%Y-%m-%d %H:%M:%S",
