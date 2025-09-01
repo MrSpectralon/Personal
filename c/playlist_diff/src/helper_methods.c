@@ -139,7 +139,7 @@ uint32_t bit_rotate_right(const uint32_t data, const int rotations)
     uint32_t temp = data;
     unsigned char flip = 0b10000000;
     uint8_t* byte_ptr = (uint8_t*)&temp;
-    for (size_t i = 0; i < rotations; i++)
+    for (int i = 0; i < rotations; i++)
     {
         if(temp & 1)
         {

@@ -136,8 +136,8 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
     OauthAccess* access = NULL;
     
     size_t secret_len = 0;
-    size_t id_len = 0;
-    size_t pl_len = 0;
+    size_t client_id_len = 0;
+    size_t playlist_id_len = 0;
 
     temp = calloc(BUFFER_LEN, sizeof(char));
     if (temp == NULL) {
@@ -145,9 +145,9 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
     }
 
     fgets ((char*)temp, BUFFER_LEN, *file_ptr);
-    id_len = strlen((const char*)temp);
+    client_id_len = strlen((const char*)temp);
 
-    clientID = malloc(id_len + 1);
+    clientID = malloc(client_id_len + 1);
     if (clientID == NULL)
     {
 	fprintf (stderr, "Failed to allocate memory for clientID.\n");
@@ -171,9 +171,9 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
 
     memset((char*)temp, 0, BUFFER_LEN);
     fgets((char*)temp, BUFFER_LEN, *file_ptr);
-    pl_len = strlen((const char*)temp);
+    playlist_id_len = strlen((const char*)temp);
 
-    playlist_id = malloc(pl_len);
+    playlist_id = malloc(playlist_id_len);
     if (playlist_id == NULL) {
         goto cleanup;
     }
@@ -191,7 +191,7 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
         goto cleanup;
     }
 
-    memset ((char*)clientID, '\0', id_len);
+    memset ((char*)clientID, '\0', client_id_len);
     memset ((char*)clientSecret, '\0', secret_len);
     free ((char*)clientID);
     free ((char*)clientSecret);
@@ -207,8 +207,6 @@ static OauthAccess* spotify_credentials_from_file(FILE** file_ptr)
     memset (auth_reply, '\0', strlen ((const char*)auth_reply));
     free (auth_reply);
     auth_reply = NULL;
-
-
 
     free(playlist_id);
     playlist_id = NULL;

@@ -4,8 +4,7 @@
 
 
 
-int add_playlist_info (const char *name, const char *description,
-		   const int number_of_tracks)
+int add_playlist_info (const char *name, const char *description, const int number_of_tracks)
 {
     return 0;
 }
@@ -13,12 +12,13 @@ int add_playlist_info (const char *name, const char *description,
 /**
  * Appends track data into a linked list of spotify tracks.
  */
-int append_spotify_track (ListSpotifyTracks **list_head,
-		      const char *name,
-		      const char *album,
-		      const char *artist,
-		      const int duration,
-		      const char *preview_url, const char *external_url)
+int append_spotify_track (ListSpotifyTracks **list_head, 
+						  const char *name, 
+						  const char *album,
+						  const char *artist,
+						  const int duration,
+						  const char *preview_url,
+						  const char *external_url)
 {
 
     const char NOT_ADDED[] = "NA";
@@ -210,8 +210,8 @@ void pop_spotify_track (ListSpotifyTracks *track_node, ListSpotifyTracks *list_h
             track_node->next->prev = track_node->prev;
         }
     }
-    free_spotify_track (&track_node->track);
-    free (track_node);
+    free_spotify_track(&track_node->track);
+    free(track_node);
     track_node = NULL;
 }
 
@@ -223,12 +223,12 @@ void free_spotify_track (SpotifyTrack **track)
     if (!*track)
 	return;
 
-    free ((*track)->name);
-    free ((*track)->album);
-    free ((*track)->artist);
-    free ((*track)->preview_url);
-    free ((*track)->external_url);
-    free ((*track));
+    free((*track)->name);
+    free((*track)->album);
+    free((*track)->artist);
+    free((*track)->preview_url);
+    free((*track)->external_url);
+    free((*track));
     *track = NULL;
 }
 

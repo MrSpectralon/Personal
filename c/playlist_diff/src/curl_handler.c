@@ -1,6 +1,4 @@
 #include "../header_files/curl_handler.h"
-
-
 /**
  * Simple initialiation function for the response buffer used in curl calls.
  */
@@ -121,12 +119,7 @@ char* curl_get_request (const char* header, const char* requestURL)
  * @return char* The response data as a null-terminated string
  * @return NULL if an error occurs.
  */
-char* curl_post_request(
-
-    const char* destination_url,
-    const char* content_type,
-    const char* post_field, 
-    const long request_len)
+char* curl_post_request( const char* destination_url, const char* content_type, const char* post_field, const long request_len)
 {
     //Initialize buffer struct.
     ResponseBuffer res_buf;

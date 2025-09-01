@@ -54,3 +54,13 @@ sudo apt install libcurl4-openssl-dev
 
 # Compiling the application.
 Running `make` will do it. It currently have several development flags enabled though.
+
+# hidden_from_git
+## secret file setup
+```
+service -> spotify of youtube
+clientID
+client_secret
+playlistID
+```
+
