@@ -55,7 +55,7 @@ sudo apt install libcurl4-openssl-dev
 # Compiling the application.
 Running `make` will do it. It currently have several development flags enabled though.
 
-# hidden_from_git
+# hidden_from_git folder:
 ## secret file setup
 ```
 service -> spotify of youtube
@@ -63,4 +63,10 @@ clientID
 client_secret
 playlistID
 ```
-
+## .env file for Flask server (Temporary solution until i've implemented a web server in c for token exchanges)
+```
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+GOOGLE_DISCOVERY_URL=https://accounts.google.com/.well-known/openid-configuration
+SECRET_KEY=your_flask_secret_key
+```

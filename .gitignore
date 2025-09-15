@@ -8,3 +8,4 @@ rust/learning_rust/*/target
 c/playlist_diff/.vscode/*
 c/playlist_diff/hidden_from_git
 c/playlist_diff/out
+c/playlist_diff/reply.json

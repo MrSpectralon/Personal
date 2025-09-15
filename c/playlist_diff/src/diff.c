@@ -1,4 +1,1 @@
-
-
-
-void compare(){};
+void compare(){}

@@ -124,7 +124,6 @@ char* create_JWT(const char* service_account, const char* user_email, const char
     free(payload_b64);
 
     return NULL;
-    
 
 }
 
@@ -139,8 +138,6 @@ char* get_auth_token_google (const char* service_account, const char* service_ac
         fprintf(stderr, "Error occured whilst making JWT for google.\n");
         goto cleanup;
     }
-    
-
 
     const char grantTypeAndClientID[] = "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=";
     const char content_type[] = "Content-Type: application/x-www-form-urlencoded";
