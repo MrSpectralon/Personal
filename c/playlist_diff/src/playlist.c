@@ -20,7 +20,9 @@ Track* track_init()
     return new;
 }
 
-
+/*
+ *	Frees up all memory allocated from the Track object.
+ */
 void track_free(Track **track)
 {
     free((*track)->id);
@@ -33,22 +35,15 @@ void track_free(Track **track)
     *track = NULL;
 }
 
-void tracklist_free(TrackList **tracklist)
+void track_print(Track *track)
 {
-
-    TrackList* tmp = NULL;
-    while ((*tracklist)->next != NULL) {
-        tmp = (*tracklist)->next;
-        (*tracklist)->next = tmp->next;
-        
-        track_free(&tmp->track);
-        free(tmp);
-    }
-    if ((*tracklist)->track != NULL)
-        track_free(&(*tracklist)->track);
-    free(*tracklist);
-    *tracklist = NULL;
+	printf("\tArtist: %s\n", track->artist);
+	printf("\tName: %s\n", track->name);
+	printf("\tAlbum: %s\n", track->album);
+	printf("\tDuration WIP - Needs to convert values: %p\n", track->duration);
+	printf("\tPreview URL: %s\n", track->url);
 }
+
 
 Playlist* playlist_init()
 {
@@ -73,6 +68,23 @@ Playlist* playlist_init()
     new->tracks->next = NULL;
     new->tracks->prev = NULL;
     return new;
+}
+
+void tracklist_free(TrackList **tracklist)
+{
+
+    TrackList* tmp = NULL;
+    while ((*tracklist)->next != NULL) {
+        tmp = (*tracklist)->next;
+        (*tracklist)->next = tmp->next;
+        
+        track_free(&tmp->track);
+        free(tmp);
+    }
+    if ((*tracklist)->track != NULL)
+        track_free(&(*tracklist)->track);
+    free(*tracklist);
+    *tracklist = NULL;
 }
 
 void playlist_free(Playlist **playlist)
