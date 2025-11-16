@@ -58,7 +58,7 @@ Running `make` will do it. It currently have several development flags enabled t
 # hidden_from_git folder:
 ## secret file setup
 ```
-service -> spotify of youtube
+service -> spotify or youtube
 clientID
 client_secret
 playlistID

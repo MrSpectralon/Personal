@@ -12,6 +12,9 @@ typedef unsigned char b512_t[64];
 * Removes new line from end of string if `\n` is the last char of the string.
 * Remember to either use malloc before using this funcion, or do a +1 for correct data sizes when using strcpy or strcat etc.
 */
+
+size_t readline(FILE** file, char** dest);
+
 void remove_new_line(char* str);
 
 uint32_t bit_rotate_right(const uint32_t data, const int rotations);

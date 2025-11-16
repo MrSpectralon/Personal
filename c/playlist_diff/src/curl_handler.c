@@ -79,8 +79,7 @@ char* curl_get_request (const char* header, const char* requestURL)
     curl_easy_setopt (hnd, CURLOPT_HTTPHEADER, slist1);
     curl_easy_setopt (hnd, CURLOPT_USERAGENT, "curl/8.5.0");
     curl_easy_setopt (hnd, CURLOPT_MAXREDIRS, 50L);
-    curl_easy_setopt (hnd, CURLOPT_HTTP_VERSION,
-		      (long) CURL_HTTP_VERSION_2TLS);
+    curl_easy_setopt (hnd, CURLOPT_HTTP_VERSION, (long) CURL_HTTP_VERSION_2TLS);
     curl_easy_setopt (hnd, CURLOPT_CUSTOMREQUEST, "GET");
     curl_easy_setopt (hnd, CURLOPT_FTP_SKIP_PASV_IP, 1L);
     curl_easy_setopt (hnd, CURLOPT_TCP_KEEPALIVE, 1L);
